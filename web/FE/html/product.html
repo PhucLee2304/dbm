@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management</title>
+    <link rel="stylesheet" href="../css/product.css">
+</head>
+<body>
+    <div class="sidebar">
+        <ul>
+            <li><a href="./dashboard.html">Dashboard</a></li>
+            <li><a href="./staff.html">Staff</a></li>
+            <li><a href="./product.html"><strong>Product</strong></a></li>
+            <li><a href="./order.html">Order</a></li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <h1>Product Management</h1>
+        
+        <!-- Search Bar -->
+        <div class="search-box">
+            <input type="text" placeholder="Search for products...">
+            <button>Search</button>
+        </div>
+        
+        <!-- Add Product Button -->
+        <button class="add-btn">Add Product</button>
+        
+        <!-- Product List Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Product Name</th>
+                    <th>Size</th>
+                    <th>Price</th>
+                    <th>Branch 1</th>
+                    <th>Branch 2</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Men's T-Shirt</td>
+                    <td>S</td>
+                    <td>250,000 VND</td>
+                    <td>1000</td>
+                    <td>2000</td>
+                    <td>
+                        <button class="edit-btn">Edit</button>
+                        <button class="delete-btn">Delete</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Jeans</td>
+                    <td>M</td>
+                    <td>400,000 VND</td>
+                    <td>1000</td>
+                    <td>2000</td>
+                    <td>
+                        <button class="edit-btn">Edit</button>
+                        <button class="delete-btn">Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
