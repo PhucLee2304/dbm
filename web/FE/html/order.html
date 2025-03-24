@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Order Management</title>
+    <link rel="stylesheet" href="../css/order.css">
+</head>
+<body>
+    <div class="sidebar">
+        <ul>
+            <li><a href="./dashboard.html">Dashboard</a></li>
+            <li><a href="./staff.html">User</a></li>
+            <li><a href="./product.html">Product</a></li>
+            <li><a href="./order.html"><strong>Order</strong></a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="content">
+            <h1>Quản lý đơn hàng</h1>
+            <input type="text" id="searchInput" placeholder="Search orders...">
+            <table id="ordersTable">
+                <thead>
+                    <tr>
+                        <th>Branch Name</th>
+                        <th>Order ID</th>
+                        <th>Customer Name</th>
+                        <th>Phone</th>
+                        <th>Employee Name</th>
+                        <th>Employee Code</th>
+                        <th>Product</th>
+                        <th>Size</th>
+                        <th>Quantity</th>
+                        <th>Total Price</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Orders will be dynamically inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal for editing order -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Edit Order</h2>
+            <form id="editOrderForm">
+                <label for="editBranchName">Branch Name:</label>
+                <input type="text" id="editBranchName" name="branchName" required>
+                <label for="editOrderID">Order ID:</label>
+                <input type="text" id="editOrderID" name="orderID" required readonly>
+                <label for="editCustomerName">Customer Name:</label>
+                <input type="text" id="editCustomerName" name="customerName" required>
+                <label for="editPhone">Phone:</label>
+                <input type="text" id="editPhone" name="phone" required>
+                <label for="editEmployeeName">Employee Name:</label>
+                <input type="text" id="editEmployeeName" name="employeeName" required>
+                <label for="editEmployeeCode">Employee Code:</label>
+                <input type="text" id="editEmployeeCode" name="employeeCode" required>
+                <label for="editProduct">Product:</label>
+                <input type="text" id="editProduct" name="product" required>
+                <label for="editSize">Size:</label>
+                <input type="text" id="editSize" name="size" required>
+                <label for="editQuantity">Quantity:</label>
+                <input type="number" id="editQuantity" name="quantity" required>
+                <label for="editTotalPrice">Total Price:</label>
+                <input type="number" id="editTotalPrice" name="totalPrice" required>
+                <button type="submit">Apply</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
