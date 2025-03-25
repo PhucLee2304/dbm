@@ -30,7 +30,7 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
     private static final String []PUBLIC_ENDPOINTS = {
-
+        "/category/**",
     };
 
     private static final String []STAFF_ENDPOINTS = {
@@ -76,7 +76,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://127.0.0.1:5500", "http://127.0.0.1:3000", "http://127.0.0.1:5501"));
+        configuration.setAllowedOrigins(List.of("http://127.0.0.1:5500", "http://127.0.0.1:3000", "http://127.0.0.1:5501", "*"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*", "Content-Type"));
         configuration.setAllowCredentials(true);
