@@ -22,6 +22,9 @@ public class CategoryService implements CategoryInterface {
 
     @Override
     public ResponseData addCategory(AddCategoryRequest request) {
+        if (categoryRepository.existsByName(request.getName())) {
+            return ResponseData.error("Category already exists with name: " + request.getName());
+        }
         Category category = new Category();
         category.setName(request.getName());
         try {
@@ -40,6 +43,11 @@ public class CategoryService implements CategoryInterface {
 
     @Override
     public ResponseData getAllCategories() {
-        return null;
+        try {
+            return ResponseData.success("Fetched all categories", categoryRepository.findAll());
+        } catch (Exception e) {
+            log.error("Error fetching categories: {}", e.getMessage());
+            return ResponseData.error("Failed to fetch categories: " + e.getMessage());
+        }
     }
 }
