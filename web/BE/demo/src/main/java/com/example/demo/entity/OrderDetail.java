@@ -30,4 +30,13 @@ public class OrderDetail {
 
     @Column(nullable = false)
     double price;
+
+    public void setKeyOrderDetail(Long id, Long branchId, Long productId) {
+        KeyOrderDetail keyOrderDetail = new KeyOrderDetail();
+        keyOrderDetail.setOrder_id(id);
+        keyOrderDetail.setBranch_id(branchId);
+        keyOrderDetail.setProduct_id(productId);
+
+        this.keyOrderDetail = keyOrderDetail;
+    }
 }
