@@ -30,7 +30,8 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
     private static final String []PUBLIC_ENDPOINTS = {
-
+        "/auth/public/**",
+            "/home/public/**",
     };
 
     private static final String []STAFF_ENDPOINTS = {
@@ -38,7 +39,7 @@ public class SecurityConfig {
     };
 
     private static final String []ADMIN_ENDPOINTS = {
-
+        "/auth/admin/**",
     };
 
     private final CustomJwtDecoder jwtDecoder;
