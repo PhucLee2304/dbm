@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface CustomerHomePageInterface {
     ResponseData getAllCategories();
+
+    ResponseData getRandomProduct(int quantity);
 }
