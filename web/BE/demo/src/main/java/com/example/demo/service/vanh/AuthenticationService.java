@@ -111,7 +111,6 @@ public class AuthenticationService implements AuthenticationInterface {
             user.setRole(RoleEnum.STAFF);
 
             userRepository.save(user);
-//            log.info(user.toString());
 
             Optional<Branch> branchOptional = branchRepository.findById(request.getBranchId());
             if (branchOptional.isEmpty()) {
@@ -119,33 +118,14 @@ public class AuthenticationService implements AuthenticationInterface {
             }
             Branch branch = branchOptional.get();
 
-//            Optional<Staff> staffOptional = staffRepository.findByUserId(user.getId());
-//            if (staffOptional.isPresent()) {
-//                return ResponseData.error("Staff with this userId exists");
-//            }
-
             Staff staff = new Staff();
             staff.setUser(user);
             staff.setBranch(branchOptional.get());
             staff.setExpiryDate(LocalDate.parse(request.getExpiryDate()));
             staff.setSalary(request.getSalary());
-
-//            log.info("DBM" + branch.getAddress() + user.getId());
-            if (staffRepository.existsByCode("DBM" + branch.getAddress() + user.getId())) {
-                return ResponseData.error("Staff already exists");
-            }
             staff.setCode("DBM" + branch.getAddress() + user.getId());
 
-//            log.info("Here");
             staffRepository.save(staff);
-
-//            log.info("Here 1: " + staff.toString());
-
-//            staff.setCode("DBM" + branch.getAddress() + staff.getId());
-
-//            staffRepository.save(staff);
-
-//            log.info("Here 2: " + staff.getCode());
 
             return ResponseData.success("Registered new staff successfully", staffToStaffDTO(staff));
 

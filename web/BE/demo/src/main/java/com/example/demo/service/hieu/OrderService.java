@@ -4,7 +4,7 @@ import com.example.demo.entity.*;
 import com.example.demo.enums.OrderStatusEnum;
 import com.example.demo.interfaces.hieu.OrderInterface;
 import com.example.demo.repository.*;
-import com.example.demo.request.hieu.AddOfflineOrderRequest;
+import com.example.demo.request.hieu.AddOrderOfflineRequest;
 import com.example.demo.request.hieu.PrepareOrderOnlineRequest;
 import com.example.demo.utils.ResponseData;
 import com.example.demo.utils.UserUtil;
@@ -99,7 +99,7 @@ public class OrderService implements OrderInterface {
     }
 
     @Override
-    public ResponseData addOfflineOrder(AddOfflineOrderRequest request) {
+    public ResponseData addOrderOffline(AddOrderOfflineRequest request) {
         try{
             ResponseData getUserInfoResponse = userUtil.getUserInfo();
             if(!getUserInfoResponse.isSuccess()){

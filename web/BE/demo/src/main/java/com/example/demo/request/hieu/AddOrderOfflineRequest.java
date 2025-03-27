@@ -8,6 +8,6 @@ import java.util.Map;
 
 @Getter
 @Setter
-public class AddOfflineOrderRequest {
+public class AddOrderOfflineRequest {
     List<Map<Long, Integer>> items;
 }

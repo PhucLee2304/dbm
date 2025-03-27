@@ -1,7 +1,7 @@
 package com.example.demo.controller.hieu;
 
 import com.example.demo.interfaces.hieu.OrderInterface;
-import com.example.demo.request.hieu.AddOfflineOrderRequest;
+import com.example.demo.request.hieu.AddOrderOfflineRequest;
 import com.example.demo.request.hieu.PrepareOrderOnlineRequest;
 import com.example.demo.utils.ResponseData;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class OrderController {
     }
 
     @PostMapping("/staff/add")
-    public ResponseEntity<?> addOfflineOrder(@RequestBody AddOfflineOrderRequest request) {
+    public ResponseEntity<?> addOrderOffline(@RequestBody AddOrderOfflineRequest request) {
         ResponseData responseData = orderInterface.addOfflineOrder(request);
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
