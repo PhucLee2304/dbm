@@ -13,9 +13,12 @@ import com.example.demo.request.vanh.LoginRequest;
 import com.example.demo.utils.JwtUtil;
 import com.example.demo.utils.ResponseData;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService implements AuthenticationInterface {
@@ -92,8 +96,8 @@ public class AuthenticationService implements AuthenticationInterface {
 
     @Override
     public ResponseData addStaff(AddStaffRequest request) {
-        try{
-            if(userRepository.existsByEmail(request.getEmail().toLowerCase())){
+        try {
+            if (userRepository.existsByEmail(request.getEmail().toLowerCase())) {
                 return ResponseData.error("Email already exists");
             }
 
@@ -104,12 +108,12 @@ public class AuthenticationService implements AuthenticationInterface {
             user.setAddress(request.getAddress());
             user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setActive(true);
-            user.setRole(RoleEnum.CUSTOMER);
+            user.setRole(RoleEnum.STAFF);
 
             userRepository.save(user);
 
             Optional<Branch> branchOptional = branchRepository.findById(request.getBranchId());
-            if(branchOptional.isEmpty()){
+            if (branchOptional.isEmpty()) {
                 return ResponseData.error("Branch not found");
             }
             Branch branch = branchOptional.get();
@@ -119,17 +123,13 @@ public class AuthenticationService implements AuthenticationInterface {
             staff.setBranch(branchOptional.get());
             staff.setExpiryDate(LocalDate.parse(request.getExpiryDate()));
             staff.setSalary(request.getSalary());
-            staff.setCode("DBM");
-
-            staffRepository.save(staff);
-
-            staff.setCode("DBM" + branch.getAddress() + staff.getId());
+            staff.setCode("DBM" + branch.getAddress() + user.getId());
 
             staffRepository.save(staff);
 
             return ResponseData.success("Registered new staff successfully", staffToStaffDTO(staff));
 
-        }catch (Exception e){
+        } catch (Exception e){
             return ResponseData.error(e.getMessage());
         }
     }
