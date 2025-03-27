@@ -57,6 +57,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(request ->
                 request.requestMatchers(PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(ADMIN_ENDPOINTS).hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(STAFF_ENDPOINTS).hasAuthority("ROLE_STAFF")
                         .anyRequest().authenticated());
 
         http.oauth2ResourceServer(oauth2 ->

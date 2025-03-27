@@ -1,6 +1,7 @@
 package com.example.demo.controller.hieu;
 
 import com.example.demo.interfaces.hieu.OrderInterface;
+import com.example.demo.request.hieu.AddOfflineOrderRequest;
 import com.example.demo.request.hieu.PrepareOrderOnlineRequest;
 import com.example.demo.utils.ResponseData;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,12 @@ public class OrderController {
     @PostMapping("/add/temp")
     public ResponseEntity<?> prepareOrderOnline(@RequestBody PrepareOrderOnlineRequest request) {
         ResponseData responseData = orderInterface.prepareOrderOnline(request);
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
+    @PostMapping("/staff/add")
+    public ResponseEntity<?> addOfflineOrder(@RequestBody AddOfflineOrderRequest request) {
+        ResponseData responseData = orderInterface.addOfflineOrder(request);
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 }

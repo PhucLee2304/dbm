@@ -21,7 +21,7 @@ public class Staff {
     @JoinColumn(name = "user_id")
     User user;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "branch_id")
     Branch branch;
 
