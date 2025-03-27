@@ -1,6 +1,6 @@
 package com.example.demo.entity;
 
-import com.example.demo.enums.OrderStatus;
+import com.example.demo.enums.OrderStatusEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
@@ -22,10 +22,16 @@ public class Order {
     @Min(0)
     double subtotal;
 
+    @Column(nullable = false)
+    double shippingFee;
+
+    @Column(nullable = false)
+    double total;
+
     @Column(nullable = false, updatable = false)
     LocalDateTime created;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    OrderStatus status;
+    OrderStatusEnum status;
 }

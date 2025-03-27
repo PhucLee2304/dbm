@@ -12,6 +12,9 @@ import lombok.experimental.FieldDefaults;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BranchProduct {
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    Long id;
+
     @EmbeddedId
     KeyBranchProduct keyBranchProduct;
 
