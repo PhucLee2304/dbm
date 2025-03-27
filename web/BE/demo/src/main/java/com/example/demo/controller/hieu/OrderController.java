@@ -30,7 +30,7 @@ public class OrderController {
 
     @PostMapping("/staff/add")
     public ResponseEntity<?> addOrderOffline(@RequestBody AddOrderOfflineRequest request) {
-        ResponseData responseData = orderInterface.addOfflineOrder(request);
+        ResponseData responseData = orderInterface.addOrderOffline(request);
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 }
