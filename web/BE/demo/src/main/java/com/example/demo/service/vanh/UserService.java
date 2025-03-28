@@ -28,7 +28,7 @@ public class UserService implements UserInterface {
     private final CustomerRepository customerRepository;
     private final StaffRepository staffRepository;
     private final UserUtil userUtil;
-    private final PasswordEncoder passwordEncoder;
+//    private final PasswordEncoder passwordEncoder;
     private final BranchRepository branchRepository;
     private final SupplierRepository supplierRepository;
 
@@ -92,7 +92,8 @@ public class UserService implements UserInterface {
             user.setEmail(request.getEmail());
             user.setPhone(request.getPhone());
             user.setAddress(request.getAddress());
-            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            user.setPassword(request.getPassword());
+//            user.setPassword(passwordEncoder.encode(request.getPassword()));
 
             userRepository.save(user);
 

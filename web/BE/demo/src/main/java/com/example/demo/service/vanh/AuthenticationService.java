@@ -31,7 +31,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthenticationService implements AuthenticationInterface {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+//    private final PasswordEncoder passwordEncoder;
     private final CustomerRepository customerRepository;
     private final BranchRepository branchRepository;
     private final StaffRepository staffRepository;
@@ -53,7 +53,8 @@ public class AuthenticationService implements AuthenticationInterface {
             user.setName(request.getName());
             user.setPhone(request.getPhone());
             user.setAddress(request.getAddress());
-            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            user.setPassword(request.getPassword());
+//            user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setActive(true);
             user.setRole(RoleEnum.CUSTOMER);
 
@@ -93,7 +94,8 @@ public class AuthenticationService implements AuthenticationInterface {
             user.setName(request.getName());
             user.setPhone(request.getPhone());
             user.setAddress(request.getAddress());
-            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            user.setPassword(request.getPassword());
+//            user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setActive(true);
             user.setRole(RoleEnum.STAFF);
 
@@ -177,7 +179,11 @@ public class AuthenticationService implements AuthenticationInterface {
             }
             User user = userOptional.get();
 
-            if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
+//            if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
+//                return ResponseData.error("Wrong password");
+//            }
+
+            if(!request.getPassword().equals(user.getPassword())){
                 return ResponseData.error("Wrong password");
             }
 
