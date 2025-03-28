@@ -11,5 +11,5 @@ public interface UserInterface {
     ResponseData updateCustomer(UpdateCustomerRequest request);
     ResponseData updateStaff(UpdateStaffRequest request);
     ResponseData updateSupplier(UpdateSupplierRequest request);
-    ResponseData blockUser();
+    ResponseData blockUser(Long userId);
 }

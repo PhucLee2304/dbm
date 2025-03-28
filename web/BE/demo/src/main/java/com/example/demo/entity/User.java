@@ -36,4 +36,7 @@ public class User {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     RoleEnum role;
+
+    public void setBlocked(boolean b) {
+    }
 }
