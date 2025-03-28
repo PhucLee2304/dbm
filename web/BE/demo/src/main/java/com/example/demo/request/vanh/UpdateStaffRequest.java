@@ -9,11 +9,12 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateStaffRequest {
+    Long id;
     String name;
     String email;
     String phone;
     String address;
-    String password;
+//    String password;
     Long branchId;
     //    int contractTerm;
     String expiryDate;

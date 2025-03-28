@@ -81,19 +81,6 @@ public class AuthenticationService implements AuthenticationInterface {
         }
     }
 
-    private ResponseData customerToCustomerDTO(Customer customer){
-        CustomerDTO customerDTO = new CustomerDTO();
-        customerDTO.setId(customer.getId());
-        customerDTO.setEmail(customer.getUser().getEmail());
-        customerDTO.setName(customer.getUser().getName());
-        customerDTO.setPhone(customer.getUser().getPhone());
-        customerDTO.setAddress(customer.getUser().getAddress());
-        customerDTO.setRole(customer.getUser().getRole().toString());
-        customerDTO.setActive(customer.getUser().isActive());
-
-        return ResponseData.success("Convert customer successfully", customerDTO);
-    }
-
     @Override
     public ResponseData addStaff(AddStaffRequest request) {
         try {
