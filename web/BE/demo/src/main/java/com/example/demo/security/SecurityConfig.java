@@ -40,6 +40,7 @@ public class SecurityConfig {
 
     private static final String []ADMIN_ENDPOINTS = {
         "/auth/admin/**",
+            "/category/admin/**",
     };
 
     private final CustomJwtDecoder jwtDecoder;
