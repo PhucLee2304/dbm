@@ -12,8 +12,9 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class HomeProductDTO {
-    Long category_id;
-    Long supplier_id;
+//    Long category_id;
+//    Long supplier_id;
+    String categoryName;
     String name;
     Double price;
 }
