@@ -35,12 +35,13 @@ public class SecurityConfig {
     };
 
     private static final String []STAFF_ENDPOINTS = {
-
+        "/order/staff/**",
     };
 
     private static final String []ADMIN_ENDPOINTS = {
         "/auth/admin/**",
             "/category/admin/**",
+            "/user/admin/**",
     };
 
     private final CustomJwtDecoder jwtDecoder;
