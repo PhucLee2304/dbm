@@ -8,8 +8,9 @@ import com.example.demo.utils.ResponseData;
 public interface UserInterface {
     ResponseData getAllCustomers();
     ResponseData getAllStaff();
+    ResponseData getAllSuppliers();
     ResponseData updateCustomer(UpdateCustomerRequest request);
     ResponseData updateStaff(UpdateStaffRequest request);
     ResponseData updateSupplier(UpdateSupplierRequest request);
-    ResponseData blockUser();
+    ResponseData blockUser(Long userId);
 }

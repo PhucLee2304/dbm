@@ -4,7 +4,7 @@ import com.example.demo.entity.*;
 import com.example.demo.enums.OrderStatusEnum;
 import com.example.demo.interfaces.hieu.OrderInterface;
 import com.example.demo.repository.*;
-import com.example.demo.request.hieu.AddOfflineOrderRequest;
+import com.example.demo.request.hieu.AddOrderOfflineRequest;
 import com.example.demo.request.hieu.PrepareOrderOnlineRequest;
 import com.example.demo.utils.ResponseData;
 import com.example.demo.utils.UserUtil;
@@ -37,7 +37,7 @@ public class OrderService implements OrderInterface {
             }
             User user = (User)getUserInfoResponse.getData();
 
-            Optional<Customer> customerOptional = customerRepository.findByUser(user);
+            Optional<Customer> customerOptional = customerRepository.findByUserId(user.getId());
             if(customerOptional.isEmpty()){
                 return ResponseData.error("Customer not found");
             }
@@ -97,8 +97,9 @@ public class OrderService implements OrderInterface {
             return ResponseData.error(e.getMessage());
         }
     }
+
     @Override
-    public ResponseData addOfflineOrder(AddOfflineOrderRequest request){
+    public ResponseData addOrderOffline(AddOrderOfflineRequest request) {
         try{
             ResponseData getUserInfoResponse = userUtil.getUserInfo();
             if(!getUserInfoResponse.isSuccess()){
@@ -109,7 +110,6 @@ public class OrderService implements OrderInterface {
             if(!user.getRole().toString().equals("STAFF")){
                 return ResponseData.error("Only staff can add offline order");
             }
-
             Optional<Staff> staffOptional = staffRepository.findByUserId(user.getId());
             if(staffOptional.isEmpty()){
                 return ResponseData.error("Staff not found");
@@ -176,11 +176,13 @@ public class OrderService implements OrderInterface {
 
             order.setSubtotal(subtotal);
             order.setTotal(subtotal);
+            order.setStatus(OrderStatusEnum.COMPLETED);
 
             orderRepository.save(order);
 
             return ResponseData.success("Add new order offline successfully", order);
-        }catch (Exception e){
+
+        } catch (Exception e) {
             return ResponseData.error(e.getMessage());
         }
     }

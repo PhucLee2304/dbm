@@ -20,7 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ApplicationInitConfig {
-    PasswordEncoder passwordEncoder;
+//    PasswordEncoder passwordEncoder;
     UserRepository userRepository;
     BranchRepository branchRepository;
 
@@ -33,7 +33,7 @@ public class ApplicationInitConfig {
                 user.setName("admin");
                 user.setPhone("0123456789");
                 user.setAddress("PTIT");
-                user.setPassword(passwordEncoder.encode("admin"));
+                user.setPassword("admin");
                 user.setActive(true);
                 user.setRole(RoleEnum.ADMIN);
 

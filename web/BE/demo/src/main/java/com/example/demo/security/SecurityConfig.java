@@ -35,11 +35,13 @@ public class SecurityConfig {
     };
 
     private static final String []STAFF_ENDPOINTS = {
-
+        "/order/staff/**",
     };
 
     private static final String []ADMIN_ENDPOINTS = {
         "/auth/admin/**",
+            "/category/admin/**",
+            "/user/admin/**",
     };
 
     private final CustomJwtDecoder jwtDecoder;
@@ -57,6 +59,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(request ->
                 request.requestMatchers(PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(ADMIN_ENDPOINTS).hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(STAFF_ENDPOINTS).hasAuthority("ROLE_STAFF")
                         .anyRequest().authenticated());
 
         http.oauth2ResourceServer(oauth2 ->
@@ -111,8 +114,8 @@ public class SecurityConfig {
         return jwtAuthenticationConverter;
     }
 
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10);
-    }
+//    @Bean
+//    PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder(10);
+//    }
 }

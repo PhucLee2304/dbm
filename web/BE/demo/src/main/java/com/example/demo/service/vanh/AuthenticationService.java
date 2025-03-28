@@ -13,9 +13,12 @@ import com.example.demo.request.vanh.LoginRequest;
 import com.example.demo.utils.JwtUtil;
 import com.example.demo.utils.ResponseData;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,11 +26,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService implements AuthenticationInterface {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+//    private final PasswordEncoder passwordEncoder;
     private final CustomerRepository customerRepository;
     private final BranchRepository branchRepository;
     private final StaffRepository staffRepository;
@@ -49,7 +53,8 @@ public class AuthenticationService implements AuthenticationInterface {
             user.setName(request.getName());
             user.setPhone(request.getPhone());
             user.setAddress(request.getAddress());
-            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            user.setPassword(request.getPassword());
+//            user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setActive(true);
             user.setRole(RoleEnum.CUSTOMER);
 
@@ -77,23 +82,10 @@ public class AuthenticationService implements AuthenticationInterface {
         }
     }
 
-    private ResponseData customerToCustomerDTO(Customer customer){
-        CustomerDTO customerDTO = new CustomerDTO();
-        customerDTO.setId(customer.getId());
-        customerDTO.setEmail(customer.getUser().getEmail());
-        customerDTO.setName(customer.getUser().getName());
-        customerDTO.setPhone(customer.getUser().getPhone());
-        customerDTO.setAddress(customer.getUser().getAddress());
-        customerDTO.setRole(customer.getUser().getRole().toString());
-        customerDTO.setActive(customer.getUser().isActive());
-
-        return ResponseData.success("Convert customer successfully", customerDTO);
-    }
-
     @Override
     public ResponseData addStaff(AddStaffRequest request) {
-        try{
-            if(userRepository.existsByEmail(request.getEmail().toLowerCase())){
+        try {
+            if (userRepository.existsByEmail(request.getEmail().toLowerCase())) {
                 return ResponseData.error("Email already exists");
             }
 
@@ -102,14 +94,15 @@ public class AuthenticationService implements AuthenticationInterface {
             user.setName(request.getName());
             user.setPhone(request.getPhone());
             user.setAddress(request.getAddress());
-            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            user.setPassword(request.getPassword());
+//            user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setActive(true);
-            user.setRole(RoleEnum.CUSTOMER);
+            user.setRole(RoleEnum.STAFF);
 
             userRepository.save(user);
 
             Optional<Branch> branchOptional = branchRepository.findById(request.getBranchId());
-            if(branchOptional.isEmpty()){
+            if (branchOptional.isEmpty()) {
                 return ResponseData.error("Branch not found");
             }
             Branch branch = branchOptional.get();
@@ -119,17 +112,13 @@ public class AuthenticationService implements AuthenticationInterface {
             staff.setBranch(branchOptional.get());
             staff.setExpiryDate(LocalDate.parse(request.getExpiryDate()));
             staff.setSalary(request.getSalary());
-            staff.setCode("DBM");
-
-            staffRepository.save(staff);
-
-            staff.setCode("DBM" + branch.getAddress() + staff.getId());
+            staff.setCode("DBM" + branch.getAddress() + user.getId());
 
             staffRepository.save(staff);
 
             return ResponseData.success("Registered new staff successfully", staffToStaffDTO(staff));
 
-        }catch (Exception e){
+        } catch (Exception e){
             return ResponseData.error(e.getMessage());
         }
     }
@@ -190,7 +179,11 @@ public class AuthenticationService implements AuthenticationInterface {
             }
             User user = userOptional.get();
 
-            if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
+//            if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
+//                return ResponseData.error("Wrong password");
+//            }
+
+            if(!request.getPassword().equals(user.getPassword())){
                 return ResponseData.error("Wrong password");
             }
 

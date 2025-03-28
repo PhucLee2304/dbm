@@ -17,11 +17,11 @@ public class Staff {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     User user;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "branch_id")
     Branch branch;
 
