@@ -40,4 +40,13 @@ public class CustomerHomePageController {
         ResponseData responseData = productDetailInterface.getProductDetail(id);
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
+
+    @GetMapping("/public/product/search")
+    public ResponseEntity<?> getProductSearch(@RequestParam String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return new ResponseEntity<>(ResponseData.error("Keyword must not be empty"), HttpStatus.BAD_REQUEST);
+        }
+        ResponseData responseData = customerHomePageInterface.getProductByKeyword(keyword);
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
 }
