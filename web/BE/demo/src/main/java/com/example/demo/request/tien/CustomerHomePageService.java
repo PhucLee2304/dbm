@@ -68,6 +68,34 @@ public class CustomerHomePageService implements CustomerHomePageInterface {
         }
     }
 
+    @Override
+    public ResponseData getProductByKeyword(String keyword) {
+        try {
+            List<Product> products = productRepository.findByNameContainingIgnoreCaseAndBranchId(keyword);
+            if (products.isEmpty()) {
+                return ResponseData.success("No products found with the given keyword for branch ID 1", null);
+            }
+            Collections.shuffle(products);
+            List<Product> hundredProducts = products.stream()
+                    .limit(100)
+                    .toList();
+
+            List<HomeProductDTO> productDTOs = hundredProducts.stream()
+                    .map(product -> {
+                        HomeProductDTO dto = new HomeProductDTO();
+                        dto.setCategoryName(product.getCategory().getName());
+                        dto.setName(product.getName());
+                        dto.setPrice(product.getPrice());
+                        return dto;
+                    })
+                    .toList();
+
+            return ResponseData.success("Fetched products successfully", productDTOs);
+        } catch (Exception e) {
+            return ResponseData.error(e.getMessage());
+        }
+    }
+
     private HomeProductDTO convertToHomeProductDTO(BranchProduct branchProduct) {
         HomeProductDTO dto = new HomeProductDTO();
         dto.setCategoryName(branchProduct.getProduct().getCategory().getName());
