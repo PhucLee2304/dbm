@@ -1,27 +1,35 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Đăng nhập</title>
-    <link rel="stylesheet" href="../css/login.css">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/login.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
 </head>
 <body>
-    <div class="login-container">
-        <h2>Đăng nhập</h2>
-        <form id="form">
-            <input id="email" type="text" placeholder="Email">
-            <input id="password" type="password" placeholder="Password">
-            <!-- <a href="staff.html"> -->
-            <button type="submit" class="nav-btn">Login</button>
-            <!-- </a> -->
-        </form>
-    </div>
+<div class="background-overlay"></div>
+<div class="login-container">
+    <h2>👗 Chào mừng bạn</h2>
+    <form id="form">
+        <div class="input-group">
+            <i class="fas fa-envelope"></i>
+            <input id="email" type="text" placeholder="Email" required />
+        </div>
+        <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input id="password" type="password" placeholder="Mật khẩu" required />
+        </div>
+        <button type="submit" class="nav-btn">Đăng nhập</button>
+        <div class="login-link">
+            Bạn chưa có tài khoản? <a href="register.html">Đăng ký</a>
+        </div>
+    </form>
+</div>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="../js/login.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="../js/login.js"></script>
 </body>
 </html>
