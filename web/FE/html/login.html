@@ -8,14 +8,20 @@
     
 </head>
 <body>
-    
     <div class="login-container">
         <h2>Đăng nhập</h2>
-        <input type="text" placeholder="Tên đăng nhập">
-        <input type="password" placeholder="Mật khẩu">
-        <a href="staff.html">
-            <button class="nav-btn">Đăng nhập</button>
-        </a>
+        <form id="form">
+            <input id="email" type="text" placeholder="Email">
+            <input id="password" type="password" placeholder="Password">
+            <!-- <a href="staff.html"> -->
+            <button type="submit" class="nav-btn">Login</button>
+            <!-- </a> -->
+        </form>
     </div>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../js/login.js"></script>
 </body>
 </html>
