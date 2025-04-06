@@ -21,7 +21,13 @@ public class CustomerHomePageController {
 
     @GetMapping("/public/category/all")
     public ResponseEntity<?> getAllCategories() {
-        ResponseData responseData =customerHomePageInterface.getAllCategories();
+        ResponseData responseData = customerHomePageInterface.getAllCategories();
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
+    @GetMapping("/public/product/random")
+    public ResponseEntity<?> getRandomProduct() {
+        ResponseData responseData = customerHomePageInterface.getRandomProduct();
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 }

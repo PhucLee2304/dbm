@@ -6,10 +6,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface BranchProductRepository extends JpaRepository<BranchProduct, Long> {
     @Query("SELECT bp FROM BranchProduct bp WHERE bp.keyBranchProduct.branch_id = :branchId AND bp.keyBranchProduct.product_id = :productId")
     Optional<BranchProduct> findByBranchIdAndProductId(@Param("branchId") Long branchId, @Param("productId") Long productId);
+
+    @Query("SELECT bp FROM BranchProduct bp WHERE bp.keyBranchProduct.branch_id = :branchId")
+    List<BranchProduct> findByBranchId(@Param("branchId") Long branchId);
 }

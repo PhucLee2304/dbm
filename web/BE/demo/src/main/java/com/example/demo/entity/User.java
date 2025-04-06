@@ -38,5 +38,6 @@ public class User {
     RoleEnum role;
 
     public void setBlocked(boolean b) {
+        
     }
 }

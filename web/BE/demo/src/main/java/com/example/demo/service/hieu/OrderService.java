@@ -37,7 +37,7 @@ public class OrderService implements OrderInterface {
             }
             User user = (User)getUserInfoResponse.getData();
 
-            Optional<Customer> customerOptional = customerRepository.findByUser(user);
+            Optional<Customer> customerOptional = customerRepository.findByUserId(user.getId());
             if(customerOptional.isEmpty()){
                 return ResponseData.error("Customer not found");
             }
@@ -176,6 +176,7 @@ public class OrderService implements OrderInterface {
 
             order.setSubtotal(subtotal);
             order.setTotal(subtotal);
+            order.setStatus(OrderStatusEnum.COMPLETED);
 
             orderRepository.save(order);
 

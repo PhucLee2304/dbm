@@ -35,11 +35,13 @@ public class SecurityConfig {
     };
 
     private static final String []STAFF_ENDPOINTS = {
-
+        "/order/staff/**",
     };
 
     private static final String []ADMIN_ENDPOINTS = {
         "/auth/admin/**",
+            "/category/admin/**",
+            "/user/admin/**",
     };
 
     private final CustomJwtDecoder jwtDecoder;
@@ -112,8 +114,8 @@ public class SecurityConfig {
         return jwtAuthenticationConverter;
     }
 
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10);
-    }
+//    @Bean
+//    PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder(10);
+//    }
 }

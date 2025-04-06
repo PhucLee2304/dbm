@@ -1,5 +1,7 @@
 package com.example.demo.service.vanh;
 
+import com.example.demo.dto.vanh.CustomerDTO;
+import com.example.demo.dto.vanh.StaffDTO;
 import com.example.demo.entity.*;
 import com.example.demo.interfaces.vanh.UserInterface;
 import com.example.demo.repository.*;
@@ -7,6 +9,7 @@ import com.example.demo.request.vanh.UpdateCustomerRequest;
 import com.example.demo.request.vanh.UpdateStaffRequest;
 import com.example.demo.request.vanh.UpdateSupplierRequest;
 import com.example.demo.utils.ResponseData;
+import com.example.demo.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -24,19 +27,22 @@ public class UserService implements UserInterface {
     private final UserRepository userRepository;
     private final CustomerRepository customerRepository;
     private final StaffRepository staffRepository;
+    private final UserUtil userUtil;
+//    private final PasswordEncoder passwordEncoder;
     private final BranchRepository branchRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
     private final SupplierRepository supplierRepository;
-
 
     @Override
     public ResponseData getAllCustomers() {
         try {
             List<Customer> customers = customerRepository.findAll();
+            if (customers.isEmpty()) {
+                return ResponseData.error("No customers found");
+            }
+
             return ResponseData.success("Fetched all customers successfully", customers);
         } catch (Exception e) {
-            return ResponseData.error("Error fetching customers: " + e.getMessage());
+            return ResponseData.error(e.getMessage());
         }
     }
 
@@ -44,149 +50,164 @@ public class UserService implements UserInterface {
     public ResponseData getAllStaff() {
         try {
             List<Staff> staffs = staffRepository.findAll();
+            if (staffs.isEmpty()) {
+                return ResponseData.error("No staffs found");
+            }
+
             return ResponseData.success("Fetched all staffs successfully", staffs);
         } catch (Exception e) {
-            return ResponseData.error("Error fetching customers: " + e.getMessage());
+            return ResponseData.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseData getAllSuppliers() {
+        try{
+            List<Supplier> suppliers = supplierRepository.findAll();
+            if(suppliers.isEmpty()){
+                return ResponseData.error("No suppliers found");
+            }
+
+            return ResponseData.success("Fetched all suppliers successfully", suppliers);
+        }catch (Exception e){
+            return ResponseData.error(e.getMessage());
         }
     }
 
     @Override
     public ResponseData updateCustomer(UpdateCustomerRequest request) {
-        try {
-            Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
-            if (optionalUser.isEmpty()) {
+        try{
+            ResponseData getUserInfoResponse = userUtil.getUserInfo();
+            if(!getUserInfoResponse.isSuccess()){
+                return getUserInfoResponse;
+            }
+            User user = (User) getUserInfoResponse.getData();
+
+            Optional<Customer> customerOptional = customerRepository.findByUserId(user.getId());
+            if(customerOptional.isEmpty()){
                 return ResponseData.error("Customer not found");
             }
-
-            User user = optionalUser.get();
-            Optional<Customer> optionalCustomer = customerRepository.findByUser(user);
-            if (optionalCustomer.isEmpty()) {
-                return ResponseData.error("Customer record not found");
-            }
-
-            // Update user details
+            Customer customer = customerOptional.get();
             user.setName(request.getName());
+            user.setEmail(request.getEmail());
             user.setPhone(request.getPhone());
             user.setAddress(request.getAddress());
-
-            if (request.getPassword() != null && !request.getPassword().isEmpty()) {
-                user.setPassword(passwordEncoder.encode(request.getPassword()));
-            }
+            user.setPassword(request.getPassword());
+//            user.setPassword(passwordEncoder.encode(request.getPassword()));
 
             userRepository.save(user);
 
-            return ResponseData.success("Customer updated successfully", user);
-        } catch (Exception e) {
-            return ResponseData.error("Error updating customer: " + e.getMessage());
+            customer.setUser(user);
+
+            customerRepository.save(customer);
+
+            return ResponseData.success("Update customer successfully", customerToCustomerDTO(customer));
+
+        }catch (Exception e){
+            return ResponseData.error(e.getMessage());
         }
+    }
+
+    private ResponseData customerToCustomerDTO(Customer customer){
+        CustomerDTO customerDTO = new CustomerDTO();
+        customerDTO.setId(customer.getId());
+        customerDTO.setEmail(customer.getUser().getEmail());
+        customerDTO.setName(customer.getUser().getName());
+        customerDTO.setPhone(customer.getUser().getPhone());
+        customerDTO.setAddress(customer.getUser().getAddress());
+        customerDTO.setRole(customer.getUser().getRole().toString());
+        customerDTO.setActive(customer.getUser().isActive());
+
+        return ResponseData.success("Convert customer successfully", customerDTO);
     }
 
     @Override
     public ResponseData updateStaff(UpdateStaffRequest request) {
-        try {
-            // 1. Tìm User dựa vào email
-            Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
-            if (optionalUser.isEmpty()) {
+        try{
+            Optional<Staff> staffOptional = staffRepository.findById(request.getId());
+            if(staffOptional.isEmpty()){
                 return ResponseData.error("Staff not found");
             }
 
-            User user = optionalUser.get();
-
-            // 2. Tìm Staff dựa vào User
-            Optional<Staff> optionalStaff = staffRepository.findByUser(user);
-            if (optionalStaff.isEmpty()) {
-                return ResponseData.error("Staff record not found");
+            Optional<Branch> branchOptional = branchRepository.findById(request.getBranchId());
+            if(branchOptional.isEmpty()){
+                return ResponseData.error("Branch not found");
             }
 
-            Staff staff = optionalStaff.get();
-
-            // 3. Cập nhật thông tin User
-            user.setName(request.getName());
-            user.setPhone(request.getPhone());
-            user.setAddress(request.getAddress());
-
-            if (request.getPassword() != null && !request.getPassword().isEmpty()) {
-                user.setPassword(passwordEncoder.encode(request.getPassword()));
-            }
-
-            // 4. Cập nhật thông tin Staff
-            if (request.getBranchId() != null) {
-                Optional<Branch> optionalBranch = branchRepository.findById(request.getBranchId());
-                if (optionalBranch.isEmpty()) {
-                    return ResponseData.error("Branch not found");
-                }
-                staff.setBranch(optionalBranch.get());
-            }
-
-            if (request.getExpiryDate() != null) {
-                staff.setExpiryDate(LocalDate.parse(request.getExpiryDate()));
-            }
-
+            Staff staff = staffOptional.get();
+            staff.getUser().setName(request.getName());
+            staff.getUser().setEmail(request.getEmail());
+            staff.getUser().setPhone(request.getPhone());
+            staff.getUser().setAddress(request.getAddress());
+            staff.setBranch(branchOptional.get());
+            staff.setExpiryDate(LocalDate.parse(request.getExpiryDate()));
             staff.setSalary(request.getSalary());
 
-            // 5. Lưu dữ liệu
-            userRepository.save(user);
             staffRepository.save(staff);
 
-            return ResponseData.success("Staff updated successfully", staff);
+            return ResponseData.success("Update staff successfully", staffToStaffDTO(staff));
+
         } catch (Exception e) {
-            return ResponseData.error("Error updating staff: " + e.getMessage());
+            return ResponseData.error(e.getMessage());
         }
+    }
 
+    private ResponseData staffToStaffDTO(Staff staff){
+        StaffDTO staffDTO = new StaffDTO();
+        staffDTO.setId(staff.getId());
+        staffDTO.setEmail(staff.getUser().getEmail());
+        staffDTO.setName(staff.getUser().getName());
+        staffDTO.setPhone(staff.getUser().getPhone());
+        staffDTO.setAddress(staff.getUser().getAddress());
+        staffDTO.setBranchName(staff.getBranch().getAddress());
+        staffDTO.setCode(staff.getCode());
+        staffDTO.setExpiryDate(staff.getExpiryDate());
+        staffDTO.setSalary(staff.getSalary());
+        staffDTO.setRole(staff.getUser().getRole().toString());
+        staffDTO.setActive(staff.getUser().isActive());
 
+        return ResponseData.success("Convert staff successfully", staffDTO);
     }
 
     @Override
     public ResponseData updateSupplier(UpdateSupplierRequest request) {
-        try {
-
-            Optional<Supplier> optionalSupplier = supplierRepository.findByEmail(request.getEmail());
-            if (optionalSupplier.isEmpty()) {
+        try{
+            Optional<Supplier> supplierOptional = supplierRepository.findById(request.getId());
+            if(supplierOptional.isEmpty()){
                 return ResponseData.error("Supplier not found");
             }
 
-            Supplier supplier = optionalSupplier.get();
-
-            // Kiểm tra dữ liệu trùng lặp trước khi cập nhật
-            if (!supplier.getPhone().equals(request.getPhone()) && supplierRepository.existsByPhone(request.getPhone())) {
-                return ResponseData.error("Phone number already exists");
-            }
-            if (!supplier.getAddress().equals(request.getAddress()) && supplierRepository.existsByAddress(request.getAddress())) {
-                return ResponseData.error("Address already exists");
-            }
-
-            // Cập nhật thông tin
+            Supplier supplier = supplierOptional.get();
             supplier.setName(request.getName());
+            supplier.setEmail(request.getEmail());
             supplier.setPhone(request.getPhone());
             supplier.setAddress(request.getAddress());
 
-            // Lưu cập nhật
             supplierRepository.save(supplier);
 
-            return ResponseData.success("Supplier updated successfully", supplier);
+            return ResponseData.success("Update supplier successfully", supplier);
+
         } catch (Exception e) {
-            return ResponseData.error("Error updating supplier: " + e.getMessage());
+            return ResponseData.error(e.getMessage());
         }
     }
 
     @Override
-    public ResponseData blockUser(Long userId) {
-        try {
-            Optional<User> optionalUser = userRepository.findById(userId);
-            if (optionalUser.isEmpty()) {
+    public ResponseData blockUser(Long id) {
+        try{
+            Optional<User> userOptional = userRepository.findById(id);
+            if(userOptional.isEmpty()){
                 return ResponseData.error("User not found");
             }
 
-            User user = optionalUser.get();
-            user.setBlocked(true);  // Cập nhật trạng thái
+            User user = userOptional.get();
+            user.setActive(false);
             userRepository.save(user);
 
-            return ResponseData.success("User blocked successfully", user);
+            return ResponseData.success("Blocked user successfully", user);
+
         } catch (Exception e) {
-            return ResponseData.error("Error blocking user: " + e.getMessage());
+            return ResponseData.error(e.getMessage());
         }
     }
-
 }
-
-
