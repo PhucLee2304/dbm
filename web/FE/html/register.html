@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Đăng Ký</title>
+    <link rel="stylesheet" href="../css/register.css" />
+</head>
+<body>
+<div class="container">
+    <form class="register-form" id="registerForm">
+        <h2>🚀 Đăng Ký Tài Khoản</h2>
+
+        <label for="name">👤 Họ và tên</label>
+        <input type="text" id="name" placeholder="Nhập họ và tên" required>
+
+        <label for="email">📧 Email</label>
+        <input type="email" id="email" placeholder="example@email.com" required>
+
+        <label for="phone">📞 Số điện thoại</label>
+        <input type="tel" id="phone" placeholder="0123456789" pattern="[0-9]{10,11}" required>
+
+        <label for="address">🏠 Địa chỉ</label>
+        <input type="text" id="address" placeholder="Nhập địa chỉ của bạn" required>
+
+        <label for="password">🔐 Mật khẩu</label>
+        <div class="password-wrapper">
+            <input type="password" id="password" placeholder="Tối thiểu 6 ký tự" required>
+            <span class="toggle-password" onclick="togglePassword('password')">👁️</span>
+        </div>
+
+        <label for="confirmPassword">🔁 Nhập lại mật khẩu</label>
+        <div class="password-wrapper">
+            <input type="password" id="confirmPassword" placeholder="Nhập lại mật khẩu" required>
+            <span class="toggle-password" onclick="togglePassword('confirmPassword')">👁️</span>
+        </div>
+
+        <button type="submit">Đăng ký</button>
+
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
+
+        <div class="login-link">
+            Bạn đã có tài khoản? <a href="login.html">Đăng nhập</a>
+        </div>
+    </form>
+</div>
+<script src="../js/register.js"></script>
+</body>
+</html>

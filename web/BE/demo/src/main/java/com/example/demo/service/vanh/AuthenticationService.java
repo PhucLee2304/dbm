@@ -71,8 +71,9 @@ public class AuthenticationService implements AuthenticationInterface {
             }
             String token = generateTokenResponse.getData().toString();
 
-//            Map<String, Object> data = new HashMap<>();
-//            data.put("token", token);
+            Map<String, Object> data = new HashMap<>();
+            data.put("token", token);
+            data.put("role", RoleEnum.CUSTOMER.toString());
 //            data.put("customer", customerToCustomerDTO(customer));
 
             return ResponseData.success("Registered new customer successfully", token);
@@ -197,11 +198,15 @@ public class AuthenticationService implements AuthenticationInterface {
             }
 
             String token = generateTokenResponse.getData().toString();
-            return ResponseData.success("Login successfully", token);
-//            Map<String, Object> data = new HashMap<>();
-//            data.put("token", token);
-//
-//            String role = user.getRole().toString();
+//            return ResponseData.success("Login successfully", token);
+            Map<String, Object> data = new HashMap<>();
+            data.put("token", token);
+
+            String role = user.getRole().toString();
+            data.put("role", role);
+
+            return ResponseData.success("Login successfully", data);
+
 //            if(role.equals("ADMIN")){
 //                data.put("admin", user);
 //            } else if (role.equals("CUSTOMER")) {
