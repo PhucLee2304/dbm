@@ -11,16 +11,16 @@
     <header class="header">
         <h1>Clothing Store</h1>
         <nav>
-            <a href="index.html">Trang chủ</a> |
-            <a href="#">Giới thiệu</a> |
-            <a href="#">Liên hệ</a>
+            <a href="home.html">Home</a> |
+            <a href="login.html">Login</a>
         </nav>
     </header>
 
     <div class="filters">
         <input type="text" id="search-name" placeholder="Search by Name">
+        <button onclick="searchProducts()">Search</button>
+        <!--
         <input type="text" id="search-id" placeholder="Search by Product ID">
-        
         <select id="filter-category">
             <option value="" selected>All Categories</option>
             <option value="pants">Pants</option>
@@ -37,17 +37,20 @@
             <option value="20">20 per page</option>
             <option value="50">50 per page</option>
         </select>
-
-        <button onclick="applyFilters()">Apply</button>
+        <button onclick="applyFilters()">Apply</button> 
+        -->
+        <button onclick="randomProducts()">Random Product</button>
     </div>
 
-    <div class="product-list" id="product-list"></div>
+    <div class="product-list" id="product-list">
 
-    <div class="pagination">
+    </div>
+
+    <!-- <div class="pagination">
         <button id="prev-page">Previous</button>
         <span id="page-info"></span>
         <button id="next-page">Next</button>
-    </div>
+    </div> -->
 
     <footer class="footer">
         <p>&copy; 2025 Clothing Store</p>
