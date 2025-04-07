@@ -1,5 +1,6 @@
 package com.example.demo.repository;
 
+import com.example.demo.dto.hoang.ProductDTO;
 import com.example.demo.entity.Product;
 import com.example.demo.dto.tien.ProductDetailDTO;
 import org.springframework.data.jpa.repository.JpaRepository;

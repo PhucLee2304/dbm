@@ -42,6 +42,7 @@ public class SecurityConfig {
         "/auth/admin/**",
             "/category/admin/**",
             "/user/admin/**",
+            "/product/admin/**",
     };
 
     private final CustomJwtDecoder jwtDecoder;
