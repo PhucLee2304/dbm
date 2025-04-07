@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
@@ -28,4 +29,15 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 //        );
 //    """, nativeQuery = true)
 //    ArrayList<HomeProductDTO> getRandomProductByBranchAddress(@Param("quantity") int quantity);
+
+    // @Query("SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    // List<Product> findByNameContainingIgnoreCase(@Param("keyword") String keyword);
+
+    @Query("""
+        SELECT p 
+        FROM Product p 
+        JOIN BranchProduct bp ON p.id = bp.keyBranchProduct.product_id 
+        WHERE bp.keyBranchProduct.branch_id = 1 AND LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+    """)
+    List<Product> findByNameContainingIgnoreCaseAndBranchId(@Param("keyword") String keyword);
 }
