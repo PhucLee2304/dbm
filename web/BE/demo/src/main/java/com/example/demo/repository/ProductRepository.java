@@ -36,4 +36,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
         WHERE bp.keyBranchProduct.branch_id = 1 AND p.id = :id
     """)
     Optional<ProductDetailDTO> findProductByIdOnBranchOnline(@Param("id") Long id);
+
+    @Query("""
+        SELECT new com.example.demo.dto.tien.ProductDetailDTO(p.id, p.name, p.price, p.category.name, p.supplier.name, bp.stock)
+        FROM Product p
+        JOIN BranchProduct bp ON p.id = bp.keyBranchProduct.product_id
+        WHERE bp.keyBranchProduct.branch_id = :branchId AND LOWER(REPLACE(TRIM(p.name), ' ', '')) LIKE LOWER(CONCAT('%', REPLACE(:keyword, ' ', ''), '%'))
+    """)
+    List<ProductDetailDTO> findAllProductByBranchId(@Param("branchId") Long branchId, @Param("keyword") String keyword);
 }

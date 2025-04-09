@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.example.demo.dto.tien.ProductDetailDTO;
+import com.example.demo.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,13 +22,6 @@ import com.example.demo.entity.Staff;
 import com.example.demo.entity.User;
 import com.example.demo.enums.OrderStatusEnum;
 import com.example.demo.interfaces.hieu.OrderInterface;
-import com.example.demo.repository.BranchProductRepository;
-import com.example.demo.repository.CustomerRepository;
-import com.example.demo.repository.OrderDetailRepository;
-import com.example.demo.repository.OrderOfflineRepository;
-import com.example.demo.repository.OrderOnlineRepository;
-import com.example.demo.repository.OrderRepository;
-import com.example.demo.repository.StaffRepository;
 import com.example.demo.request.hieu.AddOrderOfflineRequest;
 import com.example.demo.request.hieu.PrepareOrderOnlineRequest;
 import com.example.demo.utils.ResponseData;
@@ -45,6 +40,7 @@ public class OrderService implements OrderInterface {
     private final OrderDetailRepository orderDetailRepository;
     private final StaffRepository staffRepository;
     private final OrderOfflineRepository orderOfflineRepository;
+    private final ProductRepository productRepository;
 
     @Override
     @Transactional
@@ -118,6 +114,38 @@ public class OrderService implements OrderInterface {
     }
 
     @Override
+    public ResponseData getProductByKeyword(String keyword) {
+        try{
+            ResponseData getUserInfoResponse = userUtil.getUserInfo();
+            if(!getUserInfoResponse.isSuccess()){
+                return getUserInfoResponse;
+            }
+            User user = (User)getUserInfoResponse.getData();
+
+            if(!user.getRole().toString().equals("STAFF")){
+                return ResponseData.error("Only staff can action");
+            }
+
+            Optional<Staff> staffOptional = staffRepository.findByUserId(user.getId());
+            if(staffOptional.isEmpty()){
+                return ResponseData.error("Staff not found");
+            }
+            Staff staff = staffOptional.get();
+
+            List<ProductDetailDTO> products = productRepository.findAllProductByBranchId(staff.getBranch().getId(), keyword);
+
+            if(products.isEmpty()){
+                return ResponseData.error("Product not found");
+            }
+
+            return ResponseData.success("Fetched all products successfully", products);
+
+        }catch (Exception e){
+            return ResponseData.error(e.getMessage());
+        }
+    }
+
+    @Override
     public ResponseData addOrderOffline(AddOrderOfflineRequest request) {
         try{
             ResponseData getUserInfoResponse = userUtil.getUserInfo();
@@ -129,6 +157,7 @@ public class OrderService implements OrderInterface {
             if(!user.getRole().toString().equals("STAFF")){
                 return ResponseData.error("Only staff can add offline order");
             }
+
             Optional<Staff> staffOptional = staffRepository.findByUserId(user.getId());
             if(staffOptional.isEmpty()){
                 return ResponseData.error("Staff not found");
