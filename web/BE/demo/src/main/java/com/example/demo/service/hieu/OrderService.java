@@ -99,6 +99,7 @@ public class OrderService implements OrderInterface {
     }
 
     @Override
+    @Transactional
     public ResponseData addOrderOffline(AddOrderOfflineRequest request) {
         try{
             ResponseData getUserInfoResponse = userUtil.getUserInfo();
@@ -123,13 +124,13 @@ public class OrderService implements OrderInterface {
             order.setCreated(LocalDateTime.now());
             order.setStatus(OrderStatusEnum.PENDING);
 
-            orderRepository.save(order);
+//            orderRepository.save(order);
 
             OrderOffline orderOffline = new OrderOffline();
             orderOffline.setOrder(order);
             orderOffline.setStaff(staff);
 
-            orderOfflineRepository.save(orderOffline);
+//            orderOfflineRepository.save(orderOffline);
 
             List<Map<BranchProduct, Integer>> branchProductQuantities = new ArrayList<>();
             for(Map<Long, Integer> item: request.getItems()){
@@ -152,12 +153,20 @@ public class OrderService implements OrderInterface {
                 }
             }
 
+            orderRepository.save(order);
+            orderOfflineRepository.save(orderOffline);
+
+
+
             List<OrderDetail> orderDetails = new ArrayList<>();
             double subtotal = 0;
             for (Map<BranchProduct, Integer> branchProductMap : branchProductQuantities) {
                 for (Map.Entry<BranchProduct, Integer> entry : branchProductMap.entrySet()) {
                     BranchProduct branchProduct = entry.getKey();
                     Integer quantity = entry.getValue();
+
+                    branchProduct.setStock(branchProduct.getStock() - quantity);
+                    branchProductRepository.save(branchProduct);
 
                     OrderDetail orderDetail = new OrderDetail();
                     orderDetail.setKeyOrderDetail(order.getId(), branchProduct.getBranch().getId(), branchProduct.getProduct().getId());
