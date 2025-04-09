@@ -178,6 +178,9 @@ public class OrderService implements OrderInterface {
                     BranchProduct branchProduct = entry.getKey();
                     Integer quantity = entry.getValue();
 
+                    branchProduct.setStock(branchProduct.getStock() - quantity);
+                    branchProductRepository.save(branchProduct);
+
                     OrderDetail orderDetail = new OrderDetail();
                     orderDetail.setKeyOrderDetail(order.getId(), branchProduct.getBranch().getId(), branchProduct.getProduct().getId());
                     orderDetail.setOrder(order);
