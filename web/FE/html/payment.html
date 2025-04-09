@@ -3,54 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clothing Store Checkout</title>
+    <title>Thanh toán tại cửa hàng</title>
     <link rel="stylesheet" href="../css/payment.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
 </head>
 <body>
     <div class="checkout-container">
-        <h1>Checkout</h1>
+        <h1>Thanh toán tại cửa hàng</h1>
         <form id="checkoutForm">
             <div class="form-group">
-                <label for="branchName">Branch Name:</label>
-                <input type="text" id="branchName" required>
-            </div>
-            <div class="form-group">
-                <label for="userName">Customer Name:</label>
-                <input type="text" id="userName" required>
-            </div>
-            <div class="form-group">
-                <label for="userPhone">Phone Number:</label>
-                <input type="tel" id="userPhone" required>
-            </div>
-            <div class="form-group">
-                <label for="employeeName">Employee Name:</label>
-                <input type="text" id="employeeName" required>
-            </div>
-            <div class="form-group">
-                <label for="employeeCode">Employee Code:</label>
-                <input type="text" id="employeeCode" required>
-            </div>
-            <div class="form-group">
-                <label for="productSearch">Search Products:</label>
-                <input list="productList" id="productSearch" class="form-control" required>
+                <label for="productSearch">Tìm kiếm sản phẩm:</label>
+                <input id="productSearch" class="form-control" placeholder="Nhập tên sản phẩm..." required>
                 <ul id="productResults" class="product-results"></ul>
-                <label for="productSize">Size:</label>
-                <select id="productSize" required>
-                    <option value="M">M</option>
-                    <option value="L">L</option>
-                    <option value="XL">XL</option>
-                    <option value="XXL">XXL</option>
-                </select>
-                <button type="button" id="addProductButton">Add Product</button>
+                <button type="button" id="addProductButton">Thêm sản phẩm</button>
             </div>
             <div id="selectedProductsContainer"></div>
             <div class="form-group">
-                <h4>Total Price: <span id="totalPrice">0</span> VND</h4>
+                <h4>Tổng tiền: <span id="totalPrice">0</span> VND</h4>
             </div>
-            <button type="button" id="generateReceipt">Generate Receipt</button>
+            <button type="button" id="generateReceipt">Tạo đơn hàng</button>
         </form>
         <div id="receipt" class="receipt"></div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="../js/payment.js"></script>
 </body>
 </html>

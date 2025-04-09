@@ -38,7 +38,6 @@ $(document).ready(function() {
                     if(response.data.role === "ADMIN"){
                         setTimeout(function() {
                             window.location.href = "../html/dashboard.html";
-                            // window.location.href = "../adminItem.html";
                         }, 1000);
                     }else if(response.data.role === "STAFF"){
                         setTimeout(function() {

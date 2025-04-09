@@ -1,19 +1,33 @@
 package com.example.demo.service.hieu;
 
-import com.example.demo.entity.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import com.example.demo.dto.tien.ProductDetailDTO;
+import com.example.demo.repository.*;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.example.demo.entity.BranchProduct;
+import com.example.demo.entity.Customer;
+import com.example.demo.entity.Order;
+import com.example.demo.entity.OrderDetail;
+import com.example.demo.entity.OrderOffline;
+import com.example.demo.entity.OrderOnline;
+import com.example.demo.entity.Staff;
+import com.example.demo.entity.User;
 import com.example.demo.enums.OrderStatusEnum;
 import com.example.demo.interfaces.hieu.OrderInterface;
-import com.example.demo.repository.*;
 import com.example.demo.request.hieu.AddOrderOfflineRequest;
 import com.example.demo.request.hieu.PrepareOrderOnlineRequest;
 import com.example.demo.utils.ResponseData;
 import com.example.demo.utils.UserUtil;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.*;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +40,7 @@ public class OrderService implements OrderInterface {
     private final OrderDetailRepository orderDetailRepository;
     private final StaffRepository staffRepository;
     private final OrderOfflineRepository orderOfflineRepository;
+    private final ProductRepository productRepository;
 
     @Override
     @Transactional
@@ -99,6 +114,38 @@ public class OrderService implements OrderInterface {
     }
 
     @Override
+    public ResponseData getProductByKeyword(String keyword) {
+        try{
+            ResponseData getUserInfoResponse = userUtil.getUserInfo();
+            if(!getUserInfoResponse.isSuccess()){
+                return getUserInfoResponse;
+            }
+            User user = (User)getUserInfoResponse.getData();
+
+            if(!user.getRole().toString().equals("STAFF")){
+                return ResponseData.error("Only staff can action");
+            }
+
+            Optional<Staff> staffOptional = staffRepository.findByUserId(user.getId());
+            if(staffOptional.isEmpty()){
+                return ResponseData.error("Staff not found");
+            }
+            Staff staff = staffOptional.get();
+
+            List<ProductDetailDTO> products = productRepository.findAllProductByBranchId(staff.getBranch().getId(), keyword);
+
+            if(products.isEmpty()){
+                return ResponseData.error("Product not found");
+            }
+
+            return ResponseData.success("Fetched all products successfully", products);
+
+        }catch (Exception e){
+            return ResponseData.error(e.getMessage());
+        }
+    }
+
+    @Override
     public ResponseData addOrderOffline(AddOrderOfflineRequest request) {
         try{
             ResponseData getUserInfoResponse = userUtil.getUserInfo();
@@ -110,6 +157,7 @@ public class OrderService implements OrderInterface {
             if(!user.getRole().toString().equals("STAFF")){
                 return ResponseData.error("Only staff can add offline order");
             }
+
             Optional<Staff> staffOptional = staffRepository.findByUserId(user.getId());
             if(staffOptional.isEmpty()){
                 return ResponseData.error("Staff not found");
@@ -123,13 +171,9 @@ public class OrderService implements OrderInterface {
             order.setCreated(LocalDateTime.now());
             order.setStatus(OrderStatusEnum.PENDING);
 
-            orderRepository.save(order);
-
             OrderOffline orderOffline = new OrderOffline();
             orderOffline.setOrder(order);
             orderOffline.setStaff(staff);
-
-            orderOfflineRepository.save(orderOffline);
 
             List<Map<BranchProduct, Integer>> branchProductQuantities = new ArrayList<>();
             for(Map<Long, Integer> item: request.getItems()){
@@ -152,12 +196,19 @@ public class OrderService implements OrderInterface {
                 }
             }
 
+            orderRepository.save(order);
+            
+            orderOfflineRepository.save(orderOffline);
+
             List<OrderDetail> orderDetails = new ArrayList<>();
             double subtotal = 0;
             for (Map<BranchProduct, Integer> branchProductMap : branchProductQuantities) {
                 for (Map.Entry<BranchProduct, Integer> entry : branchProductMap.entrySet()) {
                     BranchProduct branchProduct = entry.getKey();
                     Integer quantity = entry.getValue();
+
+                    branchProduct.setStock(branchProduct.getStock() - quantity);
+                    branchProductRepository.save(branchProduct);
 
                     OrderDetail orderDetail = new OrderDetail();
                     orderDetail.setKeyOrderDetail(order.getId(), branchProduct.getBranch().getId(), branchProduct.getProduct().getId());

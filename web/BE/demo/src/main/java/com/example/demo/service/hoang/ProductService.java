@@ -1,72 +1,84 @@
 package com.example.demo.service.hoang;
 
+import com.example.demo.dto.hoang.BranchStockDTO;
+import com.example.demo.dto.hoang.ProductDTO;
+import com.example.demo.entity.Branch;
+import com.example.demo.entity.BranchProduct;
 import com.example.demo.entity.Product;
 import com.example.demo.interfaces.hoang.ProductInterface;
+import com.example.demo.repository.BranchProductRepository;
+import com.example.demo.repository.CategoryRepository;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.request.hoang.AddProductRequest;
-import com.example.demo.request.hoang.UpdateProductRequest;
 import com.example.demo.utils.ResponseData;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProductService implements ProductInterface {
     private final ProductRepository productRepository;
+    private final BranchProductRepository branchProductRepository;
+    private final CategoryRepository categoryRepository;
+
+    private List<ProductDTO> toProductDTOs(List<BranchProduct> branchProducts) {
+        Map<Long, ProductDTO> map = new HashMap<>();
+
+        for(BranchProduct branchProduct : branchProducts) {
+            Long id = branchProduct.getProduct().getId();
+            String categoryName = branchProduct.getProduct().getCategory().getName();
+            String supplierName = branchProduct.getProduct().getSupplier().getName();
+            String name = branchProduct.getProduct().getName();
+            double price = branchProduct.getProduct().getPrice();
+
+            ProductDTO productDTO = map.get(id);
+            if(productDTO == null) {
+                productDTO = new ProductDTO(id, categoryName, supplierName, name, price, new ArrayList<>());
+                map.put(id, productDTO);
+            }
+
+            Branch branch = branchProduct.getBranch();
+            Long stock = branchProduct.getStock();
+            BranchStockDTO branchStockDTO = new BranchStockDTO(branch, stock);
+            productDTO.getBranchStockDTOs().add(branchStockDTO);
+        }
+
+        return new ArrayList<>(map.values());
+    }
 
     @Override
     public ResponseData addProduct(AddProductRequest request) {
+        return null;
+    }
+
+    @Override
+    public ResponseData updateProduct(AddProductRequest request) {
+        return null;
+    }
+
+    @Override
+    public ResponseData getAllProducts() {
         try{
-            if(productRepository.existsByName(request.getName())){
-                return ResponseData.error("Product name already exist");
-            }
+            List<BranchProduct> branchProducts = branchProductRepository.findAll();
 
-            Product product = new Product();
-            product.setName(request.getName());
-            productRepository.save(product);
+            List<ProductDTO> productDTOs = toProductDTOs(branchProducts);
 
-            return ResponseData.success("Add new product successfully", product);
+            return ResponseData.success("Fetch all products successfully", productDTOs);
+
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
         }
     }
 
     @Override
-    public ResponseData updateProduct(Long id, UpdateProductRequest request) {
-        try{
-            Optional<Product> optionalProduct = productRepository.findById(id);
-            if(optionalProduct.isEmpty()){
-                return ResponseData.error("Product not found");
-            }
-            Product product = optionalProduct.get();
-
-            if(productRepository.existsByName(product.getName())){
-                return ResponseData.error("Product name already exist");
-            }
-
-            product.setName(request.getName());
-            productRepository.save(product);
-
-            return ResponseData.success("Update product successfully", product);
-        }catch (Exception e){
-            return ResponseData.error(e.getMessage());
-        }
-    }
-
-    @Override
-    public ResponseData getAllCategories() {
-        try{
-            List<Product> categories = productRepository.findAll();
-            if(categories.isEmpty()){
-                return ResponseData.error("No categories found");
-            }
-
-            return ResponseData.success("Fetched all categories successfully", categories);
-        }catch (Exception e){
-            return ResponseData.error(e.getMessage());
-        }
+    public ResponseData deleteProduct(Long id) {
+        return null;
     }
 }
