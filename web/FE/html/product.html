@@ -7,67 +7,73 @@
     <link rel="stylesheet" href="../css/product.css">
 </head>
 <body>
-    <div class="sidebar">
-        <ul>
-            <li><a href="./dashboard.html">Dashboard</a></li>
-            <li><a href="./staff.html">Staff</a></li>
-            <li><a href="./product.html"><strong>Product</strong></a></li>
-            <li><a href="./order.html">Order</a></li>
-        </ul>
+<div class="sidebar">
+    <ul>
+        <li><a href="./dashboard.html">Dashboard</a></li>
+        <li><a href="./staff.html">Staff</a></li>
+        <li><a href="./product.html"><strong>Product</strong></a></li>
+        <li><a href="./order.html">Order</a></li>
+    </ul>
+</div>
+
+<div class="container">
+    <h1>Product Management</h1>
+
+    <!-- Search Bar -->
+    <div class="search-box">
+        <input type="text" placeholder="Search for products...">
+        <button>Search</button>
     </div>
 
-    <div class="container">
-        <h1>Product Management</h1>
-        
-        <!-- Search Bar -->
-        <div class="search-box">
-            <input type="text" placeholder="Search for products...">
-            <button>Search</button>
-        </div>
-        
-        <!-- Add Product Button -->
-        <button class="add-btn">Add Product</button>
-        
-        <!-- Product List Table -->
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Product Name</th>
-                    <th>Size</th>
-                    <th>Price</th>
-                    <th>Branch 1</th>
-                    <th>Branch 2</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Men's T-Shirt</td>
-                    <td>S</td>
-                    <td>250,000 VND</td>
-                    <td>1000</td>
-                    <td>2000</td>
-                    <td>
-                        <button class="edit-btn">Edit</button>
-                        <button class="delete-btn">Delete</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Jeans</td>
-                    <td>M</td>
-                    <td>400,000 VND</td>
-                    <td>1000</td>
-                    <td>2000</td>
-                    <td>
-                        <button class="edit-btn">Edit</button>
-                        <button class="delete-btn">Delete</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <!-- Add Product Button -->
+    <button class="add-btn">Add Product</button>
+
+    <!-- Product List Table -->
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Product Name</th>
+            <th>Size</th>
+            <th>Price</th>
+            <th>Branch 1</th>
+            <th>Branch 2</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Table data will be generated dynamically -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Form -->
+<div class="modal" id="product-modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modal-title">Add Product</h2>
+        <form id="product-form">
+            <input type="hidden" id="product-id">
+            <label>Product Name:</label>
+            <input type="text" id="product-name" required>
+
+            <label>Size:</label>
+            <input type="text" id="product-size" required>
+
+            <label>Price:</label>
+            <input type="text" id="product-price" required>
+
+            <label>Branch 1 Quantity:</label>
+            <input type="number" id="product-branch1" required>
+
+            <label>Branch 2 Quantity:</label>
+            <input type="number" id="product-branch2" required>
+
+            <button type="submit" id="save-btn">Save</button>
+        </form>
     </div>
+</div>
+
+<script src="../js/product.js"></script>
 </body>
 </html>
