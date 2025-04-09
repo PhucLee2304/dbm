@@ -1,19 +1,38 @@
 package com.example.demo.service.hieu;
 
-import com.example.demo.entity.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.example.demo.entity.BranchProduct;
+import com.example.demo.entity.Customer;
+import com.example.demo.entity.Order;
+import com.example.demo.entity.OrderDetail;
+import com.example.demo.entity.OrderOffline;
+import com.example.demo.entity.OrderOnline;
+import com.example.demo.entity.Staff;
+import com.example.demo.entity.User;
 import com.example.demo.enums.OrderStatusEnum;
 import com.example.demo.interfaces.hieu.OrderInterface;
-import com.example.demo.repository.*;
+import com.example.demo.repository.BranchProductRepository;
+import com.example.demo.repository.CustomerRepository;
+import com.example.demo.repository.OrderDetailRepository;
+import com.example.demo.repository.OrderOfflineRepository;
+import com.example.demo.repository.OrderOnlineRepository;
+import com.example.demo.repository.OrderRepository;
+import com.example.demo.repository.StaffRepository;
 import com.example.demo.request.hieu.AddOrderOfflineRequest;
 import com.example.demo.request.hieu.PrepareOrderOnlineRequest;
 import com.example.demo.utils.ResponseData;
 import com.example.demo.utils.UserUtil;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.*;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -123,13 +142,9 @@ public class OrderService implements OrderInterface {
             order.setCreated(LocalDateTime.now());
             order.setStatus(OrderStatusEnum.PENDING);
 
-            orderRepository.save(order);
-
             OrderOffline orderOffline = new OrderOffline();
             orderOffline.setOrder(order);
             orderOffline.setStaff(staff);
-
-            orderOfflineRepository.save(orderOffline);
 
             List<Map<BranchProduct, Integer>> branchProductQuantities = new ArrayList<>();
             for(Map<Long, Integer> item: request.getItems()){
@@ -151,6 +166,10 @@ public class OrderService implements OrderInterface {
                     branchProductQuantities.add(branchProductQuantitiesMap);
                 }
             }
+
+            orderRepository.save(order);
+            
+            orderOfflineRepository.save(orderOffline);
 
             List<OrderDetail> orderDetails = new ArrayList<>();
             double subtotal = 0;
