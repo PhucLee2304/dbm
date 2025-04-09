@@ -1,5 +1,6 @@
 package com.example.demo.dto.tien;
 
+import com.example.demo.entity.Product;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,6 +12,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductDetailDTO {
+    Long id;
     String name;
     Double price;
     String categoryName;

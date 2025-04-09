@@ -1,10 +1,24 @@
-function togglePassword(fieldId) {
-    const field = document.getElementById(fieldId);
-    field.type = field.type === "password" ? "text" : "password";
+function showToast(title, message, type, duration) {
+    Toastify({
+        text: `${title}: ${message}`,
+        duration: duration || 5000,
+        close: false,
+        gravity: "top",
+        position: "right",
+        style: {
+            backgroundColor: type == "success" ? "green" : type == "error" ? "red" : "yellow",
+            position: "fixed",
+            zIndex: 9999,
+            right: "20px", 
+            top: "20px",
+        }
+    }).showToast();
 }
 
-document.getElementById('registerForm').addEventListener('submit', function(e) {
+document.getElementById('form').addEventListener('submit', function(e) {
     e.preventDefault();
+
+    localStorage.clear();
 
     const name = document.getElementById('name').value.trim();
     const email = document.getElementById('email').value.trim();
@@ -12,24 +26,49 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
     const address = document.getElementById('address').value.trim();
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
-    const errorMessage = document.getElementById('errorMessage');
-    const successMessage = document.getElementById('successMessage');
-
-    errorMessage.textContent = '';
-    successMessage.textContent = '';
 
     if (password !== confirmPassword) {
-        errorMessage.textContent = '❌ Mật khẩu không khớp. Vui lòng nhập lại.';
+        showToast("Error", "Password and confirm password do not match", "error");
         return;
     }
 
-    if (password.length < 6) {
-        errorMessage.textContent = '❌ Mật khẩu phải có ít nhất 6 ký tự.';
-        return;
-    }
+    const request = {
+        name: name,
+        email: email,
+        phone: phone,
+        address: address,
+        password: password,
+    };
 
-    console.log({ name, email, phone, address, password });
-
-    successMessage.textContent = '✅ Đăng ký thành công!';
-    this.reset();
+    $.ajax({
+        type: "POST",
+        url: "http://localhost:8080/auth/public/add/customer",
+        contentType: "application/json",
+        data: JSON.stringify(request),
+        success: function(response) {
+            if(response.success){
+                localStorage.setItem("token", response.data.token);
+                showToast("Success", response.message, "success", 1000);
+                if(response.data.role === "ADMIN"){
+                    setTimeout(function() {
+                        window.location.href = "../html/dashboard.html";
+                    }, 1000);
+                }else if(response.data.role === "STAFF"){
+                    setTimeout(function() {
+                        window.location.href = "../html/payment.html";
+                    }, 1000);
+                }else{
+                    setTimeout(function() {
+                        window.location.href = "../html/home.html";
+                    }, 1000); 
+                }
+                
+            } else {
+                showToast("Server error", response.message, "error");
+            }
+        },
+        error: function(error){
+            console.error("Client error: " + error);
+        },
+    });
 });

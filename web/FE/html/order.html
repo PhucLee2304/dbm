@@ -3,37 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Order Management</title>
+    <title>Admin - Quản lý đơn hàng</title>
     <link rel="stylesheet" href="../css/order.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
 </head>
 <body>
     <div class="sidebar">
         <ul>
             <li><a href="./dashboard.html">Dashboard</a></li>
-            <li><a href="./staff.html">User</a></li>
-            <li><a href="./product.html">Product</a></li>
-            <li><a href="./order.html"><strong>Order</strong></a></li>
+            <li><a href="./staff.html">Nhân viên</a></li>
+            <li><a href="./product.html">Sản phẩm</a></li>
+            <li><a href="./order.html"><strong>Đơn hàng</strong></a></li>
         </ul>
     </div>
 
     <div class="main-content">
         <div class="content">
             <h1>Quản lý đơn hàng</h1>
-            <input type="text" id="searchInput" placeholder="Search orders...">
+            <input type="text" id="searchInput" placeholder="Tìm kiếm đơn hàng...">
             <table id="ordersTable">
                 <thead>
                     <tr>
-                        <th>Branch Name</th>
-                        <th>Order ID</th>
-                        <th>Customer Name</th>
-                        <th>Phone</th>
-                        <th>Employee Name</th>
-                        <th>Employee Code</th>
-                        <th>Product</th>
-                        <th>Size</th>
-                        <th>Quantity</th>
-                        <th>Total Price</th>
-                        <th>Action</th>
+                        <th>Chi nhánh</th>
+                        <th>Mã đơn hàng</th>
+                        <th>Khách hàng</th>
+                        <th>Số điện thoại</th>
+                        <th>Nhân viên</th>
+                        <th>Trạng thái</th>
+                        <th>Ngày tạo</th>
+                        <th>Tổng tiền</th>
+                        <th>Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,37 +42,49 @@
         </div>
     </div>
 
-    <!-- Modal for editing order -->
-    <div id="editModal" class="modal">
+    <!-- Modal for viewing order details -->
+    <div id="viewModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2>Edit Order</h2>
-            <form id="editOrderForm">
-                <label for="editBranchName">Branch Name:</label>
-                <input type="text" id="editBranchName" name="branchName" required>
-                <label for="editOrderID">Order ID:</label>
-                <input type="text" id="editOrderID" name="orderID" required readonly>
-                <label for="editCustomerName">Customer Name:</label>
-                <input type="text" id="editCustomerName" name="customerName" required>
-                <label for="editPhone">Phone:</label>
-                <input type="text" id="editPhone" name="phone" required>
-                <label for="editEmployeeName">Employee Name:</label>
-                <input type="text" id="editEmployeeName" name="employeeName" required>
-                <label for="editEmployeeCode">Employee Code:</label>
-                <input type="text" id="editEmployeeCode" name="employeeCode" required>
-                <label for="editProduct">Product:</label>
-                <input type="text" id="editProduct" name="product" required>
-                <label for="editSize">Size:</label>
-                <input type="text" id="editSize" name="size" required>
-                <label for="editQuantity">Quantity:</label>
-                <input type="number" id="editQuantity" name="quantity" required>
-                <label for="editTotalPrice">Total Price:</label>
-                <input type="number" id="editTotalPrice" name="totalPrice" required>
-                <button type="submit">Apply</button>
-            </form>
+            <h2>Chi tiết đơn hàng</h2>
+            <div id="orderDetails">
+                <div class="order-info">
+                    <p><strong>Mã đơn hàng:</strong> <span id="viewOrderID"></span></p>
+                    <p><strong>Chi nhánh:</strong> <span id="viewBranchName"></span></p>
+                    <p><strong>Khách hàng:</strong> <span id="viewCustomerName"></span></p>
+                    <p><strong>Số điện thoại:</strong> <span id="viewPhone"></span></p>
+                    <p><strong>Nhân viên:</strong> <span id="viewEmployeeName"></span></p>
+                    <p><strong>Trạng thái:</strong> <span id="viewStatus"></span></p>
+                    <p><strong>Ngày tạo:</strong> <span id="viewCreated"></span></p>
+                </div>
+                <h3>Sản phẩm</h3>
+                <table id="orderItemsTable">
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Số lượng</th>
+                            <th>Đơn giá</th>
+                            <th>Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Order items will be inserted here -->
+                    </tbody>
+                </table>
+                <div class="order-summary">
+                    <p><strong>Tổng tiền hàng:</strong> <span id="viewSubtotal"></span> VND</p>
+                    <p><strong>Phí vận chuyển:</strong> <span id="viewShippingFee"></span> VND</p>
+                    <p><strong>Tổng thanh toán:</strong> <span id="viewTotal"></span> VND</p>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button id="updateStatusBtn">Cập nhật trạng thái</button>
+            </div>
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../js/order.js"></script>
 </body>
 </html>

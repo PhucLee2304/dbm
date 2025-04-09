@@ -12,4 +12,9 @@ import lombok.experimental.FieldDefaults;
 public class BranchStockDTO {
     Branch branch;
     Long stock;
+
+    public BranchStockDTO(Branch branch, Long stock) {
+        this.branch = branch;
+        this.stock = stock;
+    }
 }

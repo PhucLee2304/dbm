@@ -48,6 +48,10 @@ public class AuthenticationService implements AuthenticationInterface {
                 return ResponseData.error("Email already exists");
             }
 
+            if(userRepository.existsByPhone(request.getPhone().toLowerCase())){
+                return ResponseData.error("Phone already exists");
+            }
+
             User user = new User();
             user.setEmail(request.getEmail().toLowerCase());
             user.setName(request.getName());
