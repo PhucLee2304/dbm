@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         const id = idInput.value;
 
-        const newProduct = {
+        const request = {
             id: id ? parseInt(id) : nextId++,
             name: nameInput.value,
             size: sizeInput.value,
@@ -93,11 +93,27 @@ document.addEventListener("DOMContentLoaded", () => {
             branch2: parseInt(branch2Input.value)
         };
 
+        // call api add
+          $.ajax({
+                    type: "POST",
+                    url: "http://localhost:8080/auth/public/login",
+                    contentType: "application/json",
+                    data: JSON.stringify(request);,
+                    credentials: "include",
+                    success: function(response) {
+                       //todo
+                       console.log("success ");
+                        products.push(newProduct);
+                    },
+                    error: function(error){
+                        console.error("Client error: " + error);
+                    },
+                });
         if (id) {
             const index = products.findIndex(p => p.id === parseInt(id));
             products[index] = newProduct;
         } else {
-            products.push(newProduct);
+
         }
 
         modal.style.display = "none";
@@ -109,6 +125,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const filtered = products.filter(p => p.name.toLowerCase().includes(query));
         renderTable(filtered);
     });
-
+    // call api get
     renderTable(products);
 });

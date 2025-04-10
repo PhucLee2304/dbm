@@ -24,4 +24,21 @@ public class ProductController {
         ResponseData responseData = productInterface.getAllProducts();
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
+    @PostMapping("/add")
+    public ResponseEntity<?> addProduct(@RequestBody AddProductRequest request) {
+        ResponseData responseData = productInterface.addProduct(request);
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestBody UpdateProductRequest request) {
+        ResponseData responseData = productInterface.updateProduct(id, request);
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
+        ResponseData responseData = productInterface.deleteProduct(id);
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
 }
