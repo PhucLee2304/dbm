@@ -30,4 +30,12 @@ public class BranchProduct {
     @Column(nullable = false)
     @Min(0)
     Long stock;
+
+//    public void setKeyBranchProduct(Long branchId, Long productId) {
+//        KeyBranchProduct keyBranchProduct = new KeyBranchProduct();
+//        keyBranchProduct.setBranch_id(branchId);
+//        keyBranchProduct.setProduct_id(productId);
+//
+//        this.keyBranchProduct = keyBranchProduct;
+//    }
 }
