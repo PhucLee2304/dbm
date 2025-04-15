@@ -51,4 +51,21 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Transactional
     @Query("DELETE FROM Product p WHERE p.id = :productId")
     void deleteProductById(@Param("productId") Long productId);
+
+    @Modifying
+    @Transactional
+    @Query(value = """
+    -- First delete from order_detail
+    DELETE FROM order_detail 
+    WHERE product_id = :productId;
+    
+    -- Then delete from branch_product
+    DELETE FROM branch_product 
+    WHERE product_id = :productId;
+    
+    -- Finally delete the product
+    DELETE FROM product 
+    WHERE id = :productId;
+    """, nativeQuery = true)
+    void deleteProductAndAllReferences(@Param("productId") Long productId);
 }
