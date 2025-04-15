@@ -29,4 +29,16 @@ public class ProductController {
         ResponseData responseData = productInterface.addProduct(request);
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateProduct(@PathVariable("id") Long id, @RequestBody AddProductRequest request){
+        ResponseData responseData = productInterface.updateProduct(id, request);
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteProduct(@PathVariable("id") Long id){
+        ResponseData responseData = productInterface.deleteProduct(id);
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
 }

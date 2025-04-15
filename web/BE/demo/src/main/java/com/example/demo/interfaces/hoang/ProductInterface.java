@@ -5,7 +5,7 @@ import com.example.demo.utils.ResponseData;
 
 public interface ProductInterface {
     ResponseData addProduct(AddProductRequest request);
-    ResponseData updateProduct(AddProductRequest request);
+    ResponseData updateProduct(Long id, AddProductRequest request);
     ResponseData getAllProducts();
     ResponseData deleteProduct(Long id);
 }

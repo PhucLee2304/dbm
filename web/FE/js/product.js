@@ -1,13 +1,99 @@
-function showToast(message, type = "success") {
+function showToast(title, message, type, duration) {
     Toastify({
-        text: message,
-        duration: 3000,
+        text: `${title}: ${message}`,
+        duration: duration || 5000,
+        close: true,
         gravity: "top",
         position: "right",
-        backgroundColor: type === "success" ? "#4CAF50" : "#f44336",
-        stopOnFocus: true,
+        style: {
+            backgroundColor: type == "success" ? "green" : type == "error" ? "red" : "yellow",
+        }
     }).showToast();
 }
+
+// {
+//     "status": 200,
+//     "success": true,
+//     "message": "Fetch all products successfully",
+//     "data": [
+//         {
+//             "id": 2,
+//             "categoryName": "Category 1",
+//             "supplierName": "Staff1",
+//             "name": "Product 1",
+//             "price": 100.0,
+//             "branchStockDTOs": [
+//                 {
+//                     "branch": {
+//                         "id": 1,
+//                         "address": "ONLINE"
+//                     },
+//                     "stock": 50
+//                 },
+//                 {
+//                     "branch": {
+//                         "id": 2,
+//                         "address": "VINHPHUC"
+//                     },
+//                     "stock": 0
+//                 }
+//             ]
+//         },
+//         {
+//             "id": 3,
+//             "categoryName": "Category 1",
+//             "supplierName": "Staff2",
+//             "name": "Product 2",
+//             "price": 200.0,
+//             "branchStockDTOs": [
+//                 {
+//                     "branch": {
+//                         "id": 1,
+//                         "address": "ONLINE"
+//                     },
+//                     "stock": 30
+//                 },
+//                 {
+//                     "branch": {
+//                         "id": 2,
+//                         "address": "VINHPHUC"
+//                     },
+//                     "stock": 10
+//                 }
+//             ]
+//         },
+//         {
+//             "id": 4,
+//             "categoryName": "Category 1",
+//             "supplierName": "Staff2",
+//             "name": "Product Example",
+//             "price": 150.0,
+//             "branchStockDTOs": [
+//                 {
+//                     "branch": {
+//                         "id": 1,
+//                         "address": "ONLINE"
+//                     },
+//                     "stock": 1000
+//                 },
+//                 {
+//                     "branch": {
+//                         "id": 2,
+//                         "address": "VINHPHUC"
+//                     },
+//                     "stock": 3000
+//                 },
+//                 {
+//                     "branch": {
+//                         "id": 3,
+//                         "address": "PHUTHO"
+//                     },
+//                     "stock": 2000
+//                 }
+//             ]
+//         }
+//     ]
+// }
 
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -37,8 +123,9 @@ document.addEventListener("DOMContentLoaded", () => {
         $.ajax({
             type: "GET",
             url: "http://localhost:8080/product/admin/all",
+            headers: {"Authorization": "Bearer " + localStorage.getItem("token")},
             success: function(response) {
-                if (response.status === "SUCCESS") {
+                if (response.status) {
                     products = response.data;
                     renderTable(products);
                 } else {
@@ -61,7 +148,6 @@ document.addEventListener("DOMContentLoaded", () => {
             row.innerHTML = `
                 <td>${product.id}</td>
                 <td>${product.name}</td>
-                <td>${product.size}</td>
                 <td>${product.price}</td>
                 <td>${product.branch1 || 0}</td>
                 <td>${product.branch2 || 0}</td>

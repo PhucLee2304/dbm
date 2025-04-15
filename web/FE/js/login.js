@@ -37,7 +37,7 @@ $(document).ready(function() {
                     showToast("Success", response.message, "success", 1000);
                     if(response.data.role === "ADMIN"){
                         setTimeout(function() {
-                            window.location.href = "../html/dashboard.html";
+                            window.location.href = "../html/product.html";
                         }, 1000);
                     }else if(response.data.role === "STAFF"){
                         setTimeout(function() {

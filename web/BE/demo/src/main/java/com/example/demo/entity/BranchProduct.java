@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "branch_product")
@@ -20,11 +22,15 @@ public class BranchProduct {
 
     @ManyToOne
     @JoinColumn(name = "branch_id", insertable = false, updatable = false)
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    @JoinColumn(insertable = false, updatable = false)
     @JsonBackReference
     Branch branch;
 
     @ManyToOne
     @JoinColumn(name = "product_id", insertable = false, updatable = false)
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    @JoinColumn(insertable = false, updatable = false)
     Product product;
 
     @Column(nullable = false)
