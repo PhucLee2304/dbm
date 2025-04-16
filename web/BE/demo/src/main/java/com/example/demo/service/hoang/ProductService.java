@@ -173,23 +173,15 @@ public class ProductService implements ProductInterface {
     }
 
     @Override
+    @Transactional
     public ResponseData deleteProduct(Long id) {
         try{
             if(!productRepository.existsById(id)) {
                 return ResponseData.error("Product does not exist");
             }
 
-//            List<BranchProduct> branchProducts = branchProductRepository.findByProductId(id);
-//            for (BranchProduct bp : branchProducts) {
-//                orderDetailRepository.deleteByBranchIdAndProductId(
-//                        bp.getKeyBranchProduct().getBranch_id(),
-//                        bp.getKeyBranchProduct().getProduct_id()
-//                );
-//            }
-//
-//            branchProductRepository.deleteByProductId(id);
-//            productRepository.deleteById(id);
-            productRepository.deleteProductAndAllReferences(id);
+            branchProductRepository.deleteByProductId(id);
+            productRepository.deleteProductById(id);
 
             return ResponseData.success("Deleted product successfully", null);
 
