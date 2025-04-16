@@ -14,20 +14,23 @@ import org.hibernate.annotations.OnDeleteAction;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BranchProduct {
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    Long id;
+
     @EmbeddedId
     KeyBranchProduct keyBranchProduct;
 
     @ManyToOne
-//    @JoinColumn(name = "branch_id", insertable = false)
+    @JoinColumn(name = "branch_id", insertable = false, updatable = false)
 //    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(insertable = false, updatable = false)
+//    @JoinColumn(insertable = false, updatable = false)
     @JsonBackReference
     Branch branch;
 
     @ManyToOne
-//    @JoinColumn(name = "product_id", insertable = false)
+    @JoinColumn(name = "product_id", insertable = false, updatable = false)
 //    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(insertable = false, updatable = false)
+//    @JoinColumn(insertable = false, updatable = false)
     Product product;
 
     @Column(nullable = false)
