@@ -24,6 +24,6 @@ public interface BranchProductRepository extends JpaRepository<BranchProduct, Lo
 
     @Modifying
     @Transactional
-    @Query("DELETE FROM BranchProduct bp WHERE bp.keyBranchProduct.product_id = :productId")
+    @Query("DELETE FROM BranchProduct bp WHERE bp.product.id = :productId")
     void deleteByProductId(@Param("productId") Long productId);
 }

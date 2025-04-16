@@ -23,7 +23,6 @@ public class ProductService implements ProductInterface {
     private final CategoryRepository categoryRepository;
     private final SupplierRepository supplierRepository;
     private final BranchRepository branchRepository;
-    private final OrderDetailRepository orderDetailRepository;
 
     private List<ProductDTO> toProductDTOs(List<BranchProduct> branchProducts) {
         Map<Long, ProductDTO> map = new HashMap<>();
@@ -31,9 +30,7 @@ public class ProductService implements ProductInterface {
         for(BranchProduct branchProduct : branchProducts) {
             Long id = branchProduct.getProduct().getId();
             String categoryName = branchProduct.getProduct().getCategory().getName();
-            String supplierName = Optional.ofNullable(branchProduct.getProduct().getSupplier())
-                    .map(Supplier::getName)
-                    .orElse("Không có nhà cung cấp");
+            String supplierName = branchProduct.getProduct().getSupplier().getName();
             String name = branchProduct.getProduct().getName();
             double price = branchProduct.getProduct().getPrice();
 
@@ -173,6 +170,7 @@ public class ProductService implements ProductInterface {
     }
 
     @Override
+    @Transactional
     public ResponseData deleteProduct(Long id) {
         try{
             if(!productRepository.existsById(id)) {
@@ -180,7 +178,7 @@ public class ProductService implements ProductInterface {
             }
 
             branchProductRepository.deleteByProductId(id);
-            productRepository.deleteById(id);
+            productRepository.deleteProductById(id);
 
             return ResponseData.success("Deleted product successfully", null);
 
