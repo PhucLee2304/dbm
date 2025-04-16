@@ -170,6 +170,7 @@ public class ProductService implements ProductInterface {
     }
 
     @Override
+    @Transactional
     public ResponseData deleteProduct(Long id) {
         try{
             if(!productRepository.existsById(id)) {
@@ -177,7 +178,7 @@ public class ProductService implements ProductInterface {
             }
 
             branchProductRepository.deleteByProductId(id);
-            productRepository.deleteById(id);
+            productRepository.deleteProductById(id);
 
             return ResponseData.success("Deleted product successfully", null);
 
