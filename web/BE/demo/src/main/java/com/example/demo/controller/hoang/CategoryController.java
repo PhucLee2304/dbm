@@ -4,11 +4,13 @@ import com.example.demo.interfaces.hoang.CategoryInterface;
 import com.example.demo.request.hoang.AddCategoryRequest;
 import com.example.demo.request.hoang.UpdateCategoryRequest;
 import com.example.demo.utils.ResponseData;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/category")
 public class CategoryController {
@@ -19,7 +21,8 @@ public class CategoryController {
     }
 
     @PostMapping("/admin/add")
-    public ResponseEntity<?> addCategory(AddCategoryRequest request) {
+    public ResponseEntity<?> addCategory(@RequestBody AddCategoryRequest request) {
+        log.info("Here" + request.getName());
         ResponseData responseData = categoryInterface.addCategory(request);
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }

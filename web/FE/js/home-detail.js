@@ -1,42 +1,10 @@
-// all_product script
+let url = `http://localhost:8080/home/public/product/random`;
 
-let currentPage = 1;
-let totalPages = 1;
-
-async function fetchProducts() {
-    const pageSize = document.getElementById("items-per-page").value;
-    const searchName = document.getElementById("search-name").value;
-    const searchId = document.getElementById("search-id").value;
-    const category = document.getElementById("filter-category").value;
-    const sortType = document.getElementById("filter-sort").value;
-
-    // let url = `http://localhost:8080/api/products?page=${currentPage}&size=${pageSize}`;
-    // if (searchName) url += `&name=${encodeURIComponent(searchName)}`;
-    // if (searchId) url += `&id=${encodeURIComponent(searchId)}`;
-    // if (category) url += `&category=${encodeURIComponent(category)}`;
-    // if (sortType) url += `&sort=${encodeURIComponent(filter-sort)}`;
+async function fetchProducts(url) {
     try {
-        // const response = await fetch(url);
-        // const data = await response.json();
-        const data = {
-            "products": [
-                { "id": "50", "name": "Casual Shirt", "category": "shirts", "price": 200000, "image": "https://picsum.photos/200/300?random=1" },
-                { "id": "51", "name": "Formal Pants", "category": "pants", "price": 350000, "image": "https://picsum.photos/200/300?random=2" },
-                { "id": "52", "name": "Denim Jacket", "category": "shirts", "price": 500000, "image": "https://picsum.photos/200/300?random=3" },
-                { "id": "53", "name": "Chino Pants", "category": "pants", "price": 400000, "image": "https://picsum.photos/200/300?random=4" },
-                { "id": "54", "name": "Graphic T-Shirt", "category": "shirts", "price": 150000, "image": "https://picsum.photos/200/300?random=5" },
-                { "id": "55", "name": "Slim Fit Jeans", "category": "pants", "price": 500000, "image": "https://picsum.photos/200/300?random=6" },
-                { "id": "56", "name": "Polo Shirt", "category": "shirts", "price": 280000, "image": "https://picsum.photos/200/300?random=7" },
-                { "id": "57", "name": "Jogger Pants", "category": "pants", "price": 450000, "image": "https://picsum.photos/200/300?random=8" },
-                { "id": "58", "name": "Hoodie", "category": "shirts", "price": 600000, "image": "https://picsum.photos/200/300?random=9" },
-                { "id": "59", "name": "Shorts", "category": "pants", "price": 320000, "image": "https://picsum.photos/200/300?random=10" }
-            ],
-            "totalPages": 100000,
-            "totalProduct": 1000000
-        };
-        renderProducts(data.products);
-        totalPages = data.totalPages;
-        updatePagination();
+        const response = await fetch(url);
+        const data = await response.json();
+        renderProducts(data.data);
     } catch (error) {
         console.error("Error fetching products:", error);
     }
@@ -44,15 +12,15 @@ async function fetchProducts() {
 
 function renderProducts(products) {
     const productList = document.getElementById("product-list");
+    if (!productList) return;
     productList.innerHTML = "";
     products.forEach(product => {
         const productCard = document.createElement("div");
         productCard.classList.add("product-card");
         productCard.innerHTML = `
-            <a href="product.html?id=${product.id}">
-                <img src="${product.image}" alt="${product.name}" width="100%">
+            <a href="detail.html?id=${product.id}">
+                <img src="${product.name}" alt="${product.name}" width="100%">
                 <h3>${product.name}</h3>
-                <p>ID: ${product.id}</p>
                 <p>Price: ${product.price} VND</p>
             </a>
         `;
@@ -60,70 +28,64 @@ function renderProducts(products) {
     });
 }
 
-function updatePagination() {
-    document.getElementById("page-info").textContent = `Page ${currentPage} of ${totalPages}`;
-    document.getElementById("prev-page").disabled = currentPage === 1;
-    document.getElementById("next-page").disabled = currentPage === totalPages;
+async function searchProducts() {
+    const searchInput = document.getElementById("search-name");
+    if (!searchInput) return;
+
+    const searchName = searchInput.value;
+    if (searchName) {
+        let url = `http://localhost:8080/home/public/product/search?keyword=${encodeURIComponent(searchName)}`;
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            const data = await response.json();
+            renderProducts(data.data);
+        } catch (error) {
+            console.error("Error fetching products:", error);
+        }
+    }
 }
 
-document.getElementById("prev-page").addEventListener("click", () => {
-    if (currentPage > 1) {
-        currentPage--;
-        fetchProducts();
-    }
-});
+function randomProducts() {
+    fetchProducts(url);
+}
 
-document.getElementById("next-page").addEventListener("click", () => {
-    if (currentPage < totalPages) {
-        currentPage++;
-        fetchProducts();
-    }
-});
-
-document.getElementById("items-per-page").addEventListener("change", () => {
-    currentPage = 1;
-    fetchProducts();
-});
-
-window.applyFilters = () => {
-    currentPage = 1;
-    fetchProducts();
-};
-
-fetchProducts();
-
-// product script
+if (document.getElementById("product-list")) {
+    fetchProducts(url);
+}
 
 async function fetchProductDetail() {
-const urlParams = new URLSearchParams(window.location.search);
-const productId = urlParams.get("id");
-if (!productId) {
-    document.getElementById("product-detail").innerHTML = "<h2>Product not found</h2>";
-    return;
-}
-try {
-    // const response = await fetch(`http://localhost:8080/api/products/${productId}`);
-    // const product = await response.json();
-    const product = {
-        id: 50,
-        name: "Casual Shirt",
-        category: "shirts",
-        price: 200000,
-        image: "https://picsum.photos/200/300?random=1"
-    };
-    document.getElementById("product-detail").innerHTML = `
-        <img src="${product.image}" alt="${product.name}">
-        <div class="product-info">
-            <h2>${product.name}</h2>
-            <p><strong>Category:</strong> ${product.category}</p>
-            <p><strong>Price:</strong> ${product.price} VND</p>
-            <p><strong>Description:</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        </div>
-    `;
-} catch (error) {
-    document.getElementById("product-detail").innerHTML = "<h2>Error loading product details</h2>";
-    console.error("Error fetching product details:", error);
-}
+    const productDetail = document.getElementById("product-detail");
+    if (!productDetail) return;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get("id");
+    if (!productId) {
+        productDetail.innerHTML = "<h2>Product not found</h2>";
+        return;
+    }
+    try {
+        const response = await fetch(`http://localhost:8080/home/public/product/${productId}`);
+        const data = await response.json();
+        productDetail.innerHTML = `
+            <img src="${data.data.name}" alt="${data.data.name}">
+            <div class="product-info">
+                <h2>${data.data.name}</h2>
+                <p><strong>Category:</strong> ${data.data.categoryName}</p>
+                <p><strong>Price:</strong> ${data.data.price} VND</p>
+                <p><strong>Supplier:</strong> ${data.data.supplierName}</p>
+                <p><strong>Stock:</strong> ${data.data.stock} VND</p>
+                <button class="buy-button" onclick="">Buy</button>
+            </div>
+        `;
+    } catch (error) {
+        productDetail.innerHTML = "<h2>Error loading product details</h2>";
+        console.error("Error fetching product details:", error);
+    }
 }
 
 fetchProductDetail();

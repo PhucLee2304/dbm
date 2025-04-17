@@ -4,9 +4,11 @@ import com.example.demo.dto.hoang.ProductDTO;
 import com.example.demo.entity.Product;
 import com.example.demo.dto.tien.ProductDetailDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,4 +46,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
         WHERE bp.keyBranchProduct.branch_id = :branchId AND LOWER(REPLACE(TRIM(p.name), ' ', '')) LIKE LOWER(CONCAT('%', REPLACE(:keyword, ' ', ''), '%'))
     """)
     List<ProductDetailDTO> findAllProductByBranchId(@Param("branchId") Long branchId, @Param("keyword") String keyword);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Product p WHERE p.id = :productId")
+    void deleteProductById(@Param("productId") Long productId);
 }

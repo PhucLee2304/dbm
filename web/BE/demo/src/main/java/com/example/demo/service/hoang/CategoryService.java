@@ -43,7 +43,7 @@ public class CategoryService implements CategoryInterface {
             }
             Category category = optionalCategory.get();
 
-            if(categoryRepository.existsByName(category.getName())){
+            if(categoryRepository.existsByName(request.getName())){
                 return ResponseData.error("Category name already exist");
             }
 

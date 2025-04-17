@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "order_detail")
@@ -16,12 +18,19 @@ public class OrderDetail {
     KeyOrderDetail keyOrderDetail;
 
     @ManyToOne
-    @JoinColumn(name = "order_id", insertable = false, updatable = false)
+    @JoinColumn(insertable = false, updatable = false)
     @JsonBackReference
+    @OnDelete(action = OnDeleteAction.CASCADE)
     Order order;
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
+//    @JoinColumn(insertable = false, updatable = false)
 //    @JoinColumn(name = "branch_product_id", insertable = false, updatable = false)
+    @JoinColumns({
+            @JoinColumn(name = "branch_id", referencedColumnName = "branch_id", insertable = false, updatable = false),
+            @JoinColumn(name = "product_id", referencedColumnName = "product_id", insertable = false, updatable = false)
+    })
     BranchProduct branchProduct;
 
     @Column(nullable = false)
