@@ -23,6 +23,54 @@ document.addEventListener('DOMContentLoaded', function() {
     // Store product information for selected products
     const selectedProducts = {};
 
+    // // Kiểm tra xác thực và vai trò staff
+    // function checkAuthentication() {
+    //     const token = localStorage.getItem('token');
+    //     if (!token) {
+    //         showToast("Error", "Vui lòng đăng nhập để sử dụng chức năng này", "error");
+    //         setTimeout(() => {
+    //             window.location.href = "../html/login.html";
+    //         }, 2000);
+    //         return false;
+    //     }
+
+    //     try {
+    //         const base64Url = token.split('.')[1];
+    //         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    //         const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+    //             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    //         }).join(''));
+
+    //         const payload = JSON.parse(jsonPayload);
+    //         console.log("Token payload:", payload); // Thêm log để kiểm tra
+            
+    //         // Kiểm tra role với nhiều cách ghi khác nhau
+    //         const role = payload.role || payload.Role || '';
+    //         const roleStr = typeof role === 'string' ? role.toUpperCase() : '';
+            
+    //         if (roleStr !== 'STAFF') {
+    //             showToast("Error", `Bạn không có quyền truy cập trang này. Vai trò hiện tại: ${roleStr}`, "error");
+    //             setTimeout(() => {
+    //                 window.location.href = "../html/home.html";
+    //             }, 2000);
+    //             return false;
+    //         }
+    //         return true;
+    //     } catch (e) {
+    //         console.error("Error parsing token:", e);
+    //         showToast("Error", "Token không hợp lệ, vui lòng đăng nhập lại", "error");
+    //         setTimeout(() => {
+    //             window.location.href = "../html/login.html";
+    //         }, 2000);
+    //         return false;
+    //     }
+    // }
+
+    // // Kiểm tra xác thực khi trang tải
+    // if(!checkAuthentication()) {
+    //     return;
+    // }
+
     productSearch.addEventListener('input', function() {
         const query = productSearch.value.toLowerCase();
         if (query.length > 0) {
@@ -33,11 +81,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function fetchProducts(query) {
+        // if (!checkAuthentication()) return;
+        
         const token = localStorage.getItem('token');
         
         $.ajax({
-            type: "GET",
-            url: `http://localhost:8080/product/search?query=${encodeURIComponent(query)}`,
+            type: "POST",
+            url: `http://localhost:8080/order/staff/product/search?keyword=${encodeURIComponent(query)}`,
             headers: {
                 "Authorization": "Bearer " + token
             },
@@ -135,6 +185,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     generateReceiptButton.addEventListener('click', function() {
+        if (!checkAuthentication()) return;
+        
         const selectedItems = selectedProductsContainer.querySelectorAll('.selected-product');
         if (selectedItems.length === 0) {
             showToast("Error", "Vui lòng chọn ít nhất một sản phẩm", "error");
@@ -171,7 +223,7 @@ document.addEventListener('DOMContentLoaded', function() {
             data: JSON.stringify(orderRequest),
             success: function(response) {
                 if (response.success) {
-                    showToast("Success", response.message, "success");
+                    showToast("Success", "Đã tạo đơn hàng thành công", "success");
                     displayReceipt(response.data);
                 } else {
                     showToast("Server error", response.message || "Không thể tạo đơn hàng", "error");
@@ -187,16 +239,10 @@ document.addEventListener('DOMContentLoaded', function() {
     function displayReceipt(order) {
         let productsHtml = '';
         
-        // Kiểm tra cấu trúc dữ liệu trả về
+        // Hiển thị chi tiết đơn hàng
         if (order.orderDetails && order.orderDetails.length > 0) {
-            // Trường hợp backend trả về order với orderDetails
             order.orderDetails.forEach(item => {
                 productsHtml += `<p>Sản phẩm: ${item.branchProduct.product.name}, Số lượng: ${item.quantity}, Giá: ${item.price.toLocaleString('vi-VN')} VND</p>`;
-            });
-        } else if (order.items && order.items.length > 0) {
-            // Giữ lại xử lý cũ cho trường hợp dữ liệu mẫu
-            order.items.forEach(item => {
-                productsHtml += `<p>Sản phẩm: ${item.productName}, Số lượng: ${item.quantity}, Giá: ${item.price.toLocaleString('vi-VN')} VND</p>`;
             });
         } else {
             productsHtml = '<p>Không có thông tin sản phẩm</p>';

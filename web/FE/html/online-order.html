@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặt Hàng Online - Tạm Thời</title>
+    <link rel="stylesheet" href="../css/online-order.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Đặt Hàng Online</h1>
+            <nav>
+                <ul>
+                    <li><a href="./home.html">Trang chủ</a></li>
+                    <li><a href="./product.html">Sản phẩm</a></li>
+                    <li><a href="./online-order.html" class="active">Đặt hàng</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <main>
+            <div class="product-selection">
+                <h2>Chọn sản phẩm</h2>
+                <div class="search-container">
+                    <input type="text" id="productSearch" placeholder="Tìm kiếm sản phẩm...">
+                    <ul id="productResults" class="product-results"></ul>
+                </div>
+                
+                <div class="selected-product-container">
+                    <div class="product-card" id="selectedProductCard">
+                        <div class="product-image">
+                            <img id="productImage" src="https://via.placeholder.com/150" alt="Chưa chọn sản phẩm">
+                        </div>
+                        <div class="product-info">
+                            <h3 id="productName">Chọn sản phẩm</h3>
+                            <p id="productPrice">0 VND</p>
+                            <div class="quantity-selector">
+                                <label for="quantity">Số lượng:</label>
+                                <div class="quantity-control">
+                                    <button id="decreaseQuantity" disabled>-</button>
+                                    <input type="number" id="quantity" min="1" value="1" disabled>
+                                    <button id="increaseQuantity" disabled>+</button>
+                                </div>
+                            </div>
+                            <input type="hidden" id="productId" value="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="order-summary">
+                <h2>Thông tin đơn hàng</h2>
+                
+                <div class="summary-item">
+                    <span>Giá sản phẩm:</span>
+                    <span id="productSubtotal">0 VND</span>
+                </div>
+                
+                <div class="summary-item">
+                    <span>Phí vận chuyển (10%):</span>
+                    <span id="shippingFee">0 VND</span>
+                </div>
+                
+                <div class="summary-item total">
+                    <span>Tổng cộng:</span>
+                    <span id="totalPrice">0 VND</span>
+                </div>
+                
+                <button id="orderButton" class="order-btn" disabled>Đặt hàng</button>
+            </div>
+        </main>
+        
+        <!-- Modal thông báo đặt hàng thành công -->
+        <div id="orderSuccessModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Đặt hàng thành công!</h2>
+                <div id="orderDetails">
+                    <p><strong>Mã đơn hàng:</strong> <span id="orderId"></span></p>
+                    <p><strong>Người nhận:</strong> <span id="recipientName"></span></p>
+                    <p><strong>Địa chỉ:</strong> <span id="recipientAddress"></span></p>
+                    <p><strong>Số điện thoại:</strong> <span id="recipientPhone"></span></p>
+                    <p><strong>Sản phẩm:</strong> <span id="orderProductName"></span></p>
+                    <p><strong>Số lượng:</strong> <span id="orderQuantity"></span></p>
+                    <p><strong>Giá tiền:</strong> <span id="orderPrice"></span> VND</p>
+                    <p><strong>Phí vận chuyển:</strong> <span id="orderShippingFee"></span> VND</p>
+                    <p><strong>Tổng cộng:</strong> <span id="orderTotal"></span> VND</p>
+                    <p><strong>Trạng thái:</strong> <span class="status-pending">Đang xử lý</span></p>
+                </div>
+                <button id="continueShoppingBtn" class="continue-btn">Tiếp tục mua sắm</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Cửa hàng của bạn. Tất cả quyền được bảo lưu.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../js/online-order.js"></script>
+</body>
+</html>
