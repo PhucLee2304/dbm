@@ -1,47 +1,47 @@
-﻿CREATE DATABASE db_online;
+﻿CREATE DATABASE db_online_v2;
 
-USE db_online;
+USE db_online_v2;
 
 CREATE TABLE user_table (
     id BIGINT IDENTITY(1,1) PRIMARY KEY,
     active BIT NOT NULL,
-    address VARCHAR(255) NOT NULL,
+    address NVARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
-    name VARCHAR(255) NOT NULL,
+    name NVARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     phone VARCHAR(255) NOT NULL UNIQUE,
     role VARCHAR(255) NOT NULL CHECK (role IN ('CUSTOMER', 'STAFF', 'ADMIN'))
 );
 
-CREATE TABLE customer (
-    id BIGINT IDENTITY(1,1) PRIMARY KEY,
-    user_id BIGINT,
-    FOREIGN KEY (user_id) REFERENCES user_table(id)
-);
+--CREATE TABLE customer (
+--    id BIGINT IDENTITY(1,1) PRIMARY KEY,
+--    user_id BIGINT,
+--    FOREIGN KEY (user_id) REFERENCES user_table(id)
+--);
 
-CREATE TABLE staff (
-    id BIGINT IDENTITY(1,1) PRIMARY KEY,
-    code VARCHAR(255) NOT NULL UNIQUE,
-    expiry_date DATE NOT NULL,
-    salary FLOAT NOT NULL CHECK (salary >= 0),
-    user_id BIGINT,
-    FOREIGN KEY (user_id) REFERENCES user_table(id)
-);
+--CREATE TABLE staff (
+--    id BIGINT IDENTITY(1,1) PRIMARY KEY,
+--    code VARCHAR(255) NOT NULL UNIQUE,
+--    expiry_date DATE NOT NULL,
+--    salary FLOAT NOT NULL CHECK (salary >= 0),
+--    user_id BIGINT,
+--    FOREIGN KEY (user_id) REFERENCES user_table(id)
+--);
 
 CREATE TABLE category (
     id BIGINT IDENTITY(1,1) PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
+    name NVARCHAR(255) NOT NULL
 );
 
 CREATE TABLE supplier (
     id BIGINT IDENTITY(1,1) PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    address VARCHAR(255) NOT NULL
+    name NVARCHAR(255) NOT NULL,
+    address NVARCHAR(255) NOT NULL
 );
 
 CREATE TABLE product (
     id BIGINT IDENTITY(1,1) PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name NVARCHAR(255) NOT NULL,
     price FLOAT NOT NULL CHECK (price >= 0),
     category_id BIGINT,
     supplier_id BIGINT,
@@ -56,12 +56,12 @@ CREATE TABLE order_table (
     status VARCHAR(255) NOT NULL CHECK (status IN ('CANCELLED', 'COMPLETED', 'PENDING')),
     subtotal FLOAT NOT NULL CHECK (subtotal >= 0),
     total FLOAT NOT NULL,
-	note VARCHAR(255),
-    recipient_address VARCHAR(255) NOT NULL,
-    recipient_name VARCHAR(255) NOT NULL,
+	note NVARCHAR(255),
+    recipient_address NVARCHAR(255) NOT NULL,
+    recipient_name NVARCHAR(255) NOT NULL,
     recipient_phone VARCHAR(255) NOT NULL,
     customer_id BIGINT,
-    FOREIGN KEY (customer_id) REFERENCES customer(id)
+    FOREIGN KEY (customer_id) REFERENCES user_table(id)
 );
 
 CREATE TABLE order_detail (
@@ -74,18 +74,18 @@ CREATE TABLE order_detail (
     FOREIGN KEY (product_id) REFERENCES product(id)
 );
 
-CREATE TABLE time_sheet (
-    id BIGINT IDENTITY(1,1) PRIMARY KEY,
-    staff_id BIGINT,
-    FOREIGN KEY (staff_id) REFERENCES staff(id)
-);
+--CREATE TABLE time_sheet (
+--    id BIGINT IDENTITY(1,1) PRIMARY KEY,
+--    staff_id BIGINT,
+--    FOREIGN KEY (staff_id) REFERENCES staff(id)
+--);
 
-CREATE TABLE record_day (
-    day DATE NOT NULL,
-    time_sheet_id BIGINT NOT NULL,
-    checkin DATETIME2(6) NOT NULL,
-    checkout DATETIME2(6) NOT NULL,
-    status VARCHAR(255) NOT NULL CHECK (status IN ('ABSENT', 'LATE', 'ONTIME')),
-    PRIMARY KEY (day, time_sheet_id),
-    FOREIGN KEY (time_sheet_id) REFERENCES time_sheet(id)
-);
+--CREATE TABLE record_day (
+--    day DATE NOT NULL,
+--    time_sheet_id BIGINT NOT NULL,
+--    checkin DATETIME2(6) NOT NULL,
+--    checkout DATETIME2(6) NOT NULL,
+--    status VARCHAR(255) NOT NULL CHECK (status IN ('ABSENT', 'LATE', 'ONTIME')),
+--    PRIMARY KEY (day, time_sheet_id),
+--    FOREIGN KEY (time_sheet_id) REFERENCES time_sheet(id)
+--);
