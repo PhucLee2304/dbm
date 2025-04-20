@@ -13,41 +13,41 @@ function showToast(title, message, type, duration) {
 }
 
 // Hàm kiểm tra xác thực và quyền ADMIN
-function checkAuthentication() {
-    const token = localStorage.getItem("token");
-    if (!token) {
-        showToast("Lỗi", "Vui lòng đăng nhập để sử dụng chức năng này", "error");
-        setTimeout(() => {
-            window.location.href = "../html/login.html";
-        }, 2000);
-        return false;
-    }
+// function checkAuthentication() {
+//     const token = localStorage.getItem("token");
+//     if (!token) {
+//         showToast("Lỗi", "Vui lòng đăng nhập để sử dụng chức năng này", "error");
+//         setTimeout(() => {
+//             window.location.href = "../html/login.html";
+//         }, 2000);
+//         return false;
+//     }
 
-    try {
-        // Giải mã token để kiểm tra role
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
-            '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+//     try {
+//         // Giải mã token để kiểm tra role
+//         const base64Url = token.split('.')[1];
+//         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+//         const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
+//             '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
 
-        const payload = JSON.parse(jsonPayload);
-        if (payload.role !== "ADMIN") {
-            showToast("Lỗi", "Bạn không có quyền truy cập", "error");
-            setTimeout(() => {
-                window.location.href = "../html/home.html";
-            }, 2000);
-            return false;
-        }
-        return true;
-    } catch (e) {
-        console.error("Lỗi giải mã token:", e);
-        showToast("Lỗi", "Token không hợp lệ", "error");
-        setTimeout(() => {
-            window.location.href = "../html/login.html";
-        }, 2000);
-        return false;
-    }
-}
+//         const payload = JSON.parse(jsonPayload);
+//         if (payload.role !== "ADMIN") {
+//             showToast("Lỗi", "Bạn không có quyền truy cập", "error");
+//             setTimeout(() => {
+//                 window.location.href = "../html/home.html";
+//             }, 2000);
+//             return false;
+//         }
+//         return true;
+//     } catch (e) {
+//         console.error("Lỗi giải mã token:", e);
+//         showToast("Lỗi", "Token không hợp lệ", "error");
+//         setTimeout(() => {
+//             window.location.href = "../html/login.html";
+//         }, 2000);
+//         return false;
+//     }
+// }
 
 // Khởi tạo khi trang được tải
 document.addEventListener("DOMContentLoaded", () => {
@@ -72,14 +72,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ============== Modal Controls ==============
     addBtn.addEventListener("click", () => {
-        if (!checkAuthentication()) return;
+        // if (!checkAuthentication()) return;
         form.reset();
         idInput.value = "";
         // Xóa tất cả các branch input trừ tiêu đề
         while (branchStocksContainer.children.length > 1) {
             branchStocksContainer.removeChild(branchStocksContainer.lastChild);
         }
-        modalTitle.textContent = "Thêm sản phẩm mới";
+        modalTitle.textContent = "Add new product";
         modal.style.display = "block";
     });
 
@@ -100,10 +100,10 @@ document.addEventListener("DOMContentLoaded", () => {
         newInput.innerHTML = `
             <select class="branch-select">
                 <option value="1">ONLINE</option>
-                <option value="2">HaNoi</option>
-                <option value="3">HCM</option>
+                <option value="2">HANOI</option>
+                <option value="3">HOCHIMINH</option>
             </select>
-            <input type="number" class="stock-input" min="0" placeholder="Số lượng">
+            <input type="number" class="stock-input" min="0" placeholder="Stock">
             <button type="button" class="remove-branch">×</button>
         `;
         branchStocksContainer.appendChild(newInput);
@@ -117,38 +117,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ============== Data Functions ==============
     function fetchProducts() {
-        if (!checkAuthentication()) return;
+        // if (!checkAuthentication()) return;
 
         $.ajax({
             type: "GET",
             url: "http://localhost:8080/product/admin/all",
             headers: {"Authorization": "Bearer " + localStorage.getItem("token")},
             success: function(response) {
-                if (response.status) {
+                if (response.success) {
                     products = response.data;
                     renderTable(products);
                 } else {
-                    showToast("Lỗi", "Không thể tải sản phẩm: " + response.message, "error");
+                    showToast("Server error", response.message, "error");
                 }
             },
-            error: function(xhr) {
-                let errorMsg = "Lỗi không xác định";
-                if (xhr.status === 0) {
-                    errorMsg = "Không thể kết nối server. Kiểm tra kết nối mạng!";
-                } else if (xhr.status === 401) {
-                    errorMsg = "Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại!";
-                } else if (xhr.status === 403) {
-                    errorMsg = "Bạn không có quyền truy cập!";
-                }
-                showToast("Lỗi", errorMsg, "error");
+            error: function(error){
+                console.error("Client error: " + error);
+                showToast("Error", error.responseText, "error");
             }
+            // error: function(xhr) {
+            //     let errorMsg = "Lỗi không xác định";
+            //     if (xhr.status === 0) {
+            //         errorMsg = "Không thể kết nối server. Kiểm tra kết nối mạng!";
+            //     } else if (xhr.status === 401) {
+            //         errorMsg = "Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại!";
+            //     } else if (xhr.status === 403) {
+            //         errorMsg = "Bạn không có quyền truy cập!";
+            //     }
+            //     showToast("Lỗi", errorMsg, "error");
+            // }
         });
     }
 
     function renderTable(data) {
         tableBody.innerHTML = "";
         if (data.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="7" class="no-data">Không có dữ liệu</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="7" class="no-data">No data found</td></tr>';
             return;
         }
 
@@ -171,8 +175,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     </ul>
                 </td>
                 <td>
-                    <button class="edit-btn" onclick="editProduct(${product.id})">Sửa</button>
-                    <button class="delete-btn" onclick="deleteProduct(${product.id})">Xóa</button>
+                    <button class="edit-btn" onclick="editProduct(${product.id})">Update</button>
+                    <button class="delete-btn" onclick="deleteProduct(${product.id})">Delete</button>
                 </td>
             `;
             tableBody.appendChild(row);
@@ -181,7 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ============== Global Functions ==============
     window.editProduct = function(id) {
-        if (!checkAuthentication()) return;
+        // if (!checkAuthentication()) return;
 
         const product = products.find(p => p.id === id);
         if (!product) return;
@@ -212,12 +216,12 @@ document.addEventListener("DOMContentLoaded", () => {
             branchStocksContainer.appendChild(newInput);
         });
 
-        modalTitle.textContent = "Chỉnh sửa sản phẩm";
+        modalTitle.textContent = "Update product";
         modal.style.display = "block";
     };
 
     window.deleteProduct = function(id) {
-        if (!checkAuthentication()) return;
+        // if (!checkAuthentication()) return;
 
         if (confirm("Bạn có chắc muốn xóa sản phẩm này?")) {
             $.ajax({
@@ -225,16 +229,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 url: `http://localhost:8080/product/admin/delete/${id}`,
                 headers: {"Authorization": "Bearer " + localStorage.getItem("token")},
                 success: function(response) {
-                    if (response.status === "SUCCESS") {
+                    if (response.success) {
+                        showToast("Success", response.message, "success");
                         fetchProducts();
-                        showToast("Thành công", "Đã xóa sản phẩm", "success");
                     } else {
-                        showToast("Lỗi", response.message, "error");
+                        showToast("Server error", response.message, "error");
                     }
                 },
-                error: function(xhr) {
-                    showToast("Lỗi", `Xóa thất bại (${xhr.status})`, "error");
+                error: function(error){
+                    console.error("Client error: " + error);
+                    showToast("Error", error.responseText, "error");
                 }
+                // error: function(xhr) {
+                //     showToast("Lỗi", `Xóa thất bại (${xhr.status})`, "error");
+                // }
             });
         }
     };
@@ -242,7 +250,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ============== Form Submit ==============
     form.addEventListener("submit", (e) => {
         e.preventDefault();
-        if (!checkAuthentication()) return;
+        // if (!checkAuthentication()) return;
 
         const branchStocks = [];
         document.querySelectorAll(".branch-input").forEach(input => {
@@ -256,7 +264,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        const productData = {
+        const request = {
             name: nameInput.value.trim(),
             categoryName: categoryInput.value.trim(),
             supplierName: supplierInput.value.trim(),
@@ -265,9 +273,9 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         // Validate dữ liệu
-        if (!productData.name || !productData.categoryName ||
-            !productData.supplierName || isNaN(productData.price)) {
-            return showToast("Lỗi", "Vui lòng điền đầy đủ thông tin", "error");
+        if (!request.name || !request.categoryName ||
+            !request.supplierName || isNaN(request.price)) {
+            return showToast("Error", "Please fill in all information", "error");
         }
 
         const isEditMode = !!idInput.value;
@@ -279,20 +287,24 @@ document.addEventListener("DOMContentLoaded", () => {
             type: isEditMode ? "PUT" : "POST",
             url: url,
             contentType: "application/json",
-            data: JSON.stringify(productData),
+            data: JSON.stringify(request),
             headers: {"Authorization": "Bearer " + localStorage.getItem("token")},
             success: function(response) {
-                if (response.status === "SUCCESS") {
+                if (response.success) {
                     fetchProducts();
                     modal.style.display = "none";
-                    showToast("Thành công", isEditMode ? "Cập nhật thành công" : "Thêm sản phẩm thành công", "success");
+                    showToast("Success", response.message, "success");
                 } else {
-                    showToast("Lỗi", response.message, "error");
+                    showToast("Error", response.message, "error");
                 }
             },
-            error: function(xhr) {
-                showToast("Lỗi", `Thao tác thất bại (${xhr.status})`, "error");
+            error: function(error){
+                console.error("Client error: " + error);
+                showToast("Error", error.responseText, "error");
             }
+            // error: function(xhr) {
+            //     showToast("Lỗi", `Thao tác thất bại (${xhr.status})`, "error");
+            // }
         });
     });
 
