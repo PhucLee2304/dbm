@@ -1,18 +1,129 @@
+const API_BASE = 'http://localhost:8080';
+
 function showTab(tabId) {
     let tabs = document.querySelectorAll('.tab-content');
-    
     tabs.forEach(tab => tab.style.display = 'none');
     document.getElementById(tabId).style.display = 'block';
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    showTab('cars');
-});
-
-function showAddCarForm() {
+function showAddStaffForm() {
     showTab('add-car');
 }
 
-function showAddCarFormFix() {
+function showEditForm(staff) {
+    document.getElementById('branch-update').value = staff.branchName;
+    document.getElementById('name-update').value = staff.name;
+    document.getElementById('email-update').value = staff.email;
+    document.getElementById('phone-update').value = staff.phone;
+    document.getElementById('fix-car').setAttribute('data-id', staff.id);
     showTab('fix-car');
 }
+
+async function loadStaffList() {
+    const res = await fetch(`${API_BASE}/user/admin/staff/all`, {
+        headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem("token")
+        }
+    });
+    const data = await res.json();
+
+    const tbody = document.querySelector('tbody');
+    tbody.innerHTML = '';
+
+    if (data.data) {
+        data.data.forEach(staff => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${staff.id}</td>
+                <td>${staff.branchName}</td>
+                <td>${staff.email}</td>
+                <td>${staff.name}</td>
+                <td>${staff.phone}</td>
+                <td><button onclick='showEditForm(${JSON.stringify(staff)})'>Update</button></td>
+                <td><button style="background-color:red" onclick="deleteStaff(${staff.id})">Delete</button></td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+}
+
+async function addStaff() {
+    const body = {
+        name: document.getElementById('name-add').value,
+        email: document.getElementById('email-add').value,
+        phone: document.getElementById('phone-add').value,
+        address: document.getElementById('address-add').value || "Chưa cập nhật",
+        password: "123456",
+        branchId: parseInt(document.getElementById('branch-id-add').value),
+        salary: parseInt(document.getElementById('salary-add').value) || 10000000
+    };
+
+    if (!body.name || !body.email || !body.phone || !body.branchId) {
+        alert("Vui lòng nhập đầy đủ thông tin!");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE}/auth/admin/add/staff`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem("token")
+            },
+            body: JSON.stringify(body)
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert("Thêm staff thành công!");
+            showTab('cars');
+            loadStaffList();
+        } else {
+            alert("Lỗi: " + (data.message || "Thêm thất bại"));
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Lỗi kết nối server");
+    }
+}
+
+async function updateStaff() {
+    const id = document.getElementById('fix-car').getAttribute('data-id');
+    const body = {
+        id: id,
+        name: document.getElementById('name-update').value,
+        email: document.getElementById('email-update').value,
+        phone: document.getElementById('phone-update').value,
+        branchName: document.getElementById('branch-update').value
+    };
+
+    await fetch(`${API_BASE}/user/admin/staff/update`, {
+        method: 'PUT',
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem("token")
+        },
+        body: JSON.stringify(body)
+    });
+
+    showTab('cars');
+    loadStaffList();
+}
+
+async function deleteStaff(id) {
+    if (confirm("Bạn có chắc muốn xoá nhân viên này?")) {
+        await fetch(`${API_BASE}/user/admin/block/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem("token")
+            }
+        });
+        loadStaffList();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    showTab('cars');
+    loadStaffList();
+});

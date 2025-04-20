@@ -1,11 +1,11 @@
 package com.example.demo.request.hoang;
 
+import java.util.Map;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Map;
 
 @Getter
 @Setter

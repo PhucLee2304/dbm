@@ -2,6 +2,7 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;

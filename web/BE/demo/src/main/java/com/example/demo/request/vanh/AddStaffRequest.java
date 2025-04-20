@@ -15,7 +15,7 @@ public class AddStaffRequest {
     String address;
     String password;
     Long branchId;
-//    int contractTerm;
+    //    int contractTerm;
     String expiryDate;
     double salary;
 }

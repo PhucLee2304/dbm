@@ -1,12 +1,13 @@
 package com.example.demo.entity;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
 
 @Entity
 @Table(name = "staff")
@@ -28,9 +29,9 @@ public class Staff {
     @Column(nullable = false, unique = true)
     String code;
 
-//    @Column(nullable = false)
-//    @Min(1)
-//    int contractTerm;
+    //    @Column(nullable = false)
+    //    @Min(1)
+    //    int contractTerm;
 
     @Column(nullable = false)
     LocalDate expiryDate;

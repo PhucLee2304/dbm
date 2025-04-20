@@ -1,14 +1,15 @@
 package com.example.demo.entity;
 
+import java.time.LocalDate;
+import java.util.Objects;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
-import java.util.Objects;
 
 @Embeddable
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -23,9 +24,9 @@ public class KeyRecordDay {
 
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) return true;
-        if(obj == null || getClass() != obj.getClass()) return false;
-        KeyRecordDay that = (KeyRecordDay)obj;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        KeyRecordDay that = (KeyRecordDay) obj;
         return day == that.day && time_sheet_id == that.time_sheet_id;
     }
 

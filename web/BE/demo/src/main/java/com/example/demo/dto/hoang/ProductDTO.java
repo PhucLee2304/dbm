@@ -1,13 +1,11 @@
 package com.example.demo.dto.hoang;
 
+import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 @Getter
 @Setter
@@ -20,7 +18,13 @@ public class ProductDTO {
     double price;
     List<BranchStockDTO> branchStockDTOs;
 
-    public ProductDTO(Long id, String categoryName, String supplierName, String name, double price, List<BranchStockDTO> branchStockDTOs) {
+    public ProductDTO(
+            Long id,
+            String categoryName,
+            String supplierName,
+            String name,
+            double price,
+            List<BranchStockDTO> branchStockDTOs) {
         this.id = id;
         this.categoryName = categoryName;
         this.supplierName = supplierName;

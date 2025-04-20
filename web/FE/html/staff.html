@@ -1,85 +1,82 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng nhập</title>
-    <link rel="stylesheet" href="../css/staff.css">
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Quản lý Staff</title>
+    <link rel="stylesheet" href="../css/staff.css" />
 </head>
-
 <body>
-    <div class="sidebar">
-        <ul>
-            <li><a href="./dashboard.html">Dashboard</a></li>
-            <li><a href="./staff.html"><strong>Staff</strong></a></li>
-            <li><a href="./product.html">Product</a></li>
-            <li><a href="./order.html">Order</a></li>
-        </ul>
-    </div>
+<div class="sidebar">
+    <ul>
+        <li><a href="./dashboard.html">Dashboard</a></li>
+        <li><a href="./staff.html"><strong>Staff</strong></a></li>
+        <li><a href="./product.html">Product</a></li>
+        <li><a href="./order.html">Order</a></li>
+    </ul>
+</div>
 
-    <div id="cars" class="tab-content">
-        <!-- <h2>Danh sách Staff</h2> -->
-        <button onclick="showAddCarForm()"> + Add </button>
-        <table>
-            <tr>
-                
-                <th>ID</th>
-                <th>Branch</th>
-                <th>Email</th>
-                <th>FullName</th>
-                <th>Phone</th>
-                <th></th>
-                <th></th>
-            </tr>
-            <tr>
-            
-                <td>123456</td>
-                <td>abcxyz></td>
-                <td>abc@gmail.com</td>
-                <td>Nguyễn Văn A</td>
-                <td>099999999</td>
-                <td><button onclick="showAddCarFormFix()"> Update </button></td>
-                <td><button style="background-color: red;"> Delete </button></td>
-                
-            </tr>
-        </table>
+<div id="cars" class="tab-content">
+    <button onclick="showAddStaffForm()"> + Add </button>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Branch</th>
+            <th>Email</th>
+            <th>FullName</th>
+            <th>Phone</th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<div id="add-car" class="tab-content">
+    <button onclick="showTab('cars')">⬅ Back</button>
+    <h2>Add new staff</h2>
+    <div class="form-container">
+        <label for="branch-id-add">Branch ID</label>
+        <input id="branch-id-add" type="number" placeholder="Branch ID" />
+
+        <label for="name-add">FullName</label>
+        <input id="name-add" type="text" placeholder="Name" />
+
+        <label for="email-add">Email</label>
+        <input id="email-add" type="text" placeholder="Email" />
+
+        <label for="phone-add">Phone</label>
+        <input id="phone-add" type="text" placeholder="Phone" />
+
+        <label for="address-add">Address</label>
+        <input id="address-add" type="text" placeholder="Address" value="Chưa cập nhật" />
+
+        <label for="salary-add">Salary</label>
+        <input id="salary-add" type="number" placeholder="Salary" value="10000000" />
+
+        <button onclick="addStaff()">Add</button>
     </div>
-    <div id="add-car" class="tab-content">
-        <button onclick="showTab('cars')">⬅ Back</button>
-        <h2>Add new staff</h2>
-        <div class="form-container">
-            <label for="branch-add">Branch</label>
-            <select id="branch-add">
-                <option>Hà Nội</option>
-            </select>
-            <label for="name-add">FullName</label>
-            <input id="name-add" type="text" placeholder="Name">
-            <label for="email-add">Email</label>
-            <input id="email-add" type="text" placeholder="Email">
-            <label for="phone-add">Phone</label>
-            <input id="phone-add" type="text" placeholder="Phone">
-            <button>Add</button>
-        </div>
+</div>
+
+
+<div id="fix-car" class="tab-content">
+    <button onclick="showTab('cars')">⬅ Back</button>
+    <h2>Update staff information</h2>
+    <div class="form-container">
+        <label for="branch-update">Branch</label>
+        <input id="branch-update" type="text" />
+        <label for="name-update">FullName</label>
+        <input id="name-update" type="text" />
+        <label for="email-update">Email</label>
+        <input id="email-update" type="text" />
+        <label for="phone-update">Phone</label>
+        <input id="phone-update" type="text" />
+        <button onclick="updateStaff()">Update</button>
     </div>
-    <div id="fix-car" class="tab-content">
-        <button onclick="showTab('cars')">⬅ Back</button>
-        <h2>Update staff information</h2>
-        <div class="form-container">
-            <label for="branch-update">Branch</label>
-            <select id="branch-update">
-                <option>Hà Nội</option>
-            </select>
-            <label for="name-update">FullName</label>
-            <input id="name-update" type="text" placeholder="Name">
-            <label for="email-update">Email</label>
-            <input id="email-update" type="text" placeholder="Email">
-            <label for="phone-update">Phone</label>
-            <input id="phone-update" type="text" placeholder="Phone">
-            <button>Update</button>
-        </div>
-    </div>
-    <script src="../js/staff.js"></script>
+</div>
+
+<script src="../js/staff.js"></script>
 </body>
 </html>

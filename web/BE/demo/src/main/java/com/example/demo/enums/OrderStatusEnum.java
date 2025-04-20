@@ -1,5 +1,7 @@
 package com.example.demo.enums;
 
 public enum OrderStatusEnum {
-    PENDING, COMPLETED, CANCELLED;
+    PENDING,
+    COMPLETED,
+    CANCELLED;
 }

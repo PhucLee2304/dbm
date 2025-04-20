@@ -1,5 +1,11 @@
 package com.example.demo.service.vanh;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
 import com.example.demo.dto.vanh.CustomerDTO;
 import com.example.demo.dto.vanh.StaffDTO;
 import com.example.demo.entity.*;
@@ -10,16 +16,8 @@ import com.example.demo.request.vanh.UpdateStaffRequest;
 import com.example.demo.request.vanh.UpdateSupplierRequest;
 import com.example.demo.utils.ResponseData;
 import com.example.demo.utils.UserUtil;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +26,7 @@ public class UserService implements UserInterface {
     private final CustomerRepository customerRepository;
     private final StaffRepository staffRepository;
     private final UserUtil userUtil;
-//    private final PasswordEncoder passwordEncoder;
+    //    private final PasswordEncoder passwordEncoder;
     private final BranchRepository branchRepository;
     private final SupplierRepository supplierRepository;
 
@@ -62,29 +60,29 @@ public class UserService implements UserInterface {
 
     @Override
     public ResponseData getAllSuppliers() {
-        try{
+        try {
             List<Supplier> suppliers = supplierRepository.findAll();
-            if(suppliers.isEmpty()){
+            if (suppliers.isEmpty()) {
                 return ResponseData.error("No suppliers found");
             }
 
             return ResponseData.success("Fetched all suppliers successfully", suppliers);
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseData.error(e.getMessage());
         }
     }
 
     @Override
     public ResponseData updateCustomer(UpdateCustomerRequest request) {
-        try{
+        try {
             ResponseData getUserInfoResponse = userUtil.getUserInfo();
-            if(!getUserInfoResponse.isSuccess()){
+            if (!getUserInfoResponse.isSuccess()) {
                 return getUserInfoResponse;
             }
             User user = (User) getUserInfoResponse.getData();
 
             Optional<Customer> customerOptional = customerRepository.findByUserId(user.getId());
-            if(customerOptional.isEmpty()){
+            if (customerOptional.isEmpty()) {
                 return ResponseData.error("Customer not found");
             }
             Customer customer = customerOptional.get();
@@ -93,7 +91,7 @@ public class UserService implements UserInterface {
             user.setPhone(request.getPhone());
             user.setAddress(request.getAddress());
             user.setPassword(request.getPassword());
-//            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            //            user.setPassword(passwordEncoder.encode(request.getPassword()));
 
             userRepository.save(user);
 
@@ -103,12 +101,12 @@ public class UserService implements UserInterface {
 
             return ResponseData.success("Update customer successfully", customerToCustomerDTO(customer));
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseData.error(e.getMessage());
         }
     }
 
-    private ResponseData customerToCustomerDTO(Customer customer){
+    private ResponseData customerToCustomerDTO(Customer customer) {
         CustomerDTO customerDTO = new CustomerDTO();
         customerDTO.setId(customer.getId());
         customerDTO.setEmail(customer.getUser().getEmail());
@@ -123,14 +121,14 @@ public class UserService implements UserInterface {
 
     @Override
     public ResponseData updateStaff(UpdateStaffRequest request) {
-        try{
+        try {
             Optional<Staff> staffOptional = staffRepository.findById(request.getId());
-            if(staffOptional.isEmpty()){
+            if (staffOptional.isEmpty()) {
                 return ResponseData.error("Staff not found");
             }
 
             Optional<Branch> branchOptional = branchRepository.findById(request.getBranchId());
-            if(branchOptional.isEmpty()){
+            if (branchOptional.isEmpty()) {
                 return ResponseData.error("Branch not found");
             }
 
@@ -152,7 +150,7 @@ public class UserService implements UserInterface {
         }
     }
 
-    private ResponseData staffToStaffDTO(Staff staff){
+    private ResponseData staffToStaffDTO(Staff staff) {
         StaffDTO staffDTO = new StaffDTO();
         staffDTO.setId(staff.getId());
         staffDTO.setEmail(staff.getUser().getEmail());
@@ -171,9 +169,9 @@ public class UserService implements UserInterface {
 
     @Override
     public ResponseData updateSupplier(UpdateSupplierRequest request) {
-        try{
+        try {
             Optional<Supplier> supplierOptional = supplierRepository.findById(request.getId());
-            if(supplierOptional.isEmpty()){
+            if (supplierOptional.isEmpty()) {
                 return ResponseData.error("Supplier not found");
             }
 
@@ -194,9 +192,9 @@ public class UserService implements UserInterface {
 
     @Override
     public ResponseData blockUser(Long id) {
-        try{
+        try {
             Optional<User> userOptional = userRepository.findById(id);
-            if(userOptional.isEmpty()){
+            if (userOptional.isEmpty()) {
                 return ResponseData.error("User not found");
             }
 

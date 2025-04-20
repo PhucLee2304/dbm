@@ -1,13 +1,15 @@
 package com.example.demo.entity;
 
+import java.time.LocalDateTime;
+
+import jakarta.persistence.*;
+
 import com.example.demo.enums.AttendanceStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.*;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "record_day")

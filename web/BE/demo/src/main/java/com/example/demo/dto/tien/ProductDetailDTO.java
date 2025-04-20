@@ -1,6 +1,5 @@
 package com.example.demo.dto.tien;
 
-import com.example.demo.entity.Product;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;

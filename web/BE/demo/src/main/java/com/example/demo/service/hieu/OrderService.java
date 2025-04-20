@@ -7,11 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.example.demo.dto.tien.ProductDetailDTO;
-import com.example.demo.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.dto.tien.ProductDetailDTO;
 import com.example.demo.entity.BranchProduct;
 import com.example.demo.entity.Customer;
 import com.example.demo.entity.Order;
@@ -22,6 +21,7 @@ import com.example.demo.entity.Staff;
 import com.example.demo.entity.User;
 import com.example.demo.enums.OrderStatusEnum;
 import com.example.demo.interfaces.hieu.OrderInterface;
+import com.example.demo.repository.*;
 import com.example.demo.request.hieu.AddOrderOfflineRequest;
 import com.example.demo.request.hieu.PrepareOrderOnlineRequest;
 import com.example.demo.utils.ResponseData;
@@ -45,15 +45,15 @@ public class OrderService implements OrderInterface {
     @Override
     @Transactional
     public ResponseData prepareOrderOnline(PrepareOrderOnlineRequest request) {
-        try{
+        try {
             ResponseData getUserInfoResponse = userUtil.getUserInfo();
-            if(!getUserInfoResponse.isSuccess()){
+            if (!getUserInfoResponse.isSuccess()) {
                 return getUserInfoResponse;
             }
-            User user = (User)getUserInfoResponse.getData();
+            User user = (User) getUserInfoResponse.getData();
 
             Optional<Customer> customerOptional = customerRepository.findByUserId(user.getId());
-            if(customerOptional.isEmpty()){
+            if (customerOptional.isEmpty()) {
                 return ResponseData.error("Customer not found");
             }
             Customer customer = customerOptional.get();
@@ -76,23 +76,28 @@ public class OrderService implements OrderInterface {
 
             orderOnlineRepository.save(orderOnline);
 
-            Optional<BranchProduct> branchProductOptional = branchProductRepository.findByBranchIdAndProductId(1L, request.getProductId());
-            if(branchProductOptional.isEmpty()){
+            Optional<BranchProduct> branchProductOptional =
+                    branchProductRepository.findByBranchIdAndProductId(1L, request.getProductId());
+            if (branchProductOptional.isEmpty()) {
                 return ResponseData.error("Product not found");
             }
 
             BranchProduct branchProduct = branchProductOptional.get();
 
-            if(request.getQuantity() > branchProduct.getStock()){
+            if (request.getQuantity() > branchProduct.getStock()) {
                 return ResponseData.error("Not enough stock");
             }
 
             OrderDetail orderDetail = new OrderDetail();
-            orderDetail.setKeyOrderDetail(order.getId(), branchProduct.getKeyBranchProduct().getBranch_id(), branchProduct.getKeyBranchProduct().getProduct_id());
+            orderDetail.setKeyOrderDetail(
+                    order.getId(),
+                    branchProduct.getKeyBranchProduct().getBranch_id(),
+                    branchProduct.getKeyBranchProduct().getProduct_id());
             orderDetail.setOrder(order);
             orderDetail.setBranchProduct(branchProduct);
             orderDetail.setQuantity(request.getQuantity());
-            orderDetail.setPrice(request.getQuantity() * branchProduct.getProduct().getPrice());
+            orderDetail.setPrice(
+                    request.getQuantity() * branchProduct.getProduct().getPrice());
 
             orderDetailRepository.save(orderDetail);
 
@@ -108,58 +113,59 @@ public class OrderService implements OrderInterface {
 
             return ResponseData.success("Add new temperature order successfully", order);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseData.error(e.getMessage());
         }
     }
 
     @Override
     public ResponseData getProductByKeyword(String keyword) {
-        try{
+        try {
             ResponseData getUserInfoResponse = userUtil.getUserInfo();
-            if(!getUserInfoResponse.isSuccess()){
+            if (!getUserInfoResponse.isSuccess()) {
                 return getUserInfoResponse;
             }
-            User user = (User)getUserInfoResponse.getData();
+            User user = (User) getUserInfoResponse.getData();
 
-            if(!user.getRole().toString().equals("STAFF")){
+            if (!user.getRole().toString().equals("STAFF")) {
                 return ResponseData.error("Only staff can action");
             }
 
             Optional<Staff> staffOptional = staffRepository.findByUserId(user.getId());
-            if(staffOptional.isEmpty()){
+            if (staffOptional.isEmpty()) {
                 return ResponseData.error("Staff not found");
             }
             Staff staff = staffOptional.get();
 
-            List<ProductDetailDTO> products = productRepository.findAllProductByBranchId(staff.getBranch().getId(), keyword);
+            List<ProductDetailDTO> products =
+                    productRepository.findAllProductByBranchId(staff.getBranch().getId(), keyword);
 
-            if(products.isEmpty()){
+            if (products.isEmpty()) {
                 return ResponseData.error("Product not found");
             }
 
             return ResponseData.success("Fetched all products successfully", products);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseData.error(e.getMessage());
         }
     }
 
     @Override
     public ResponseData addOrderOffline(AddOrderOfflineRequest request) {
-        try{
+        try {
             ResponseData getUserInfoResponse = userUtil.getUserInfo();
-            if(!getUserInfoResponse.isSuccess()){
+            if (!getUserInfoResponse.isSuccess()) {
                 return getUserInfoResponse;
             }
-            User user = (User)getUserInfoResponse.getData();
+            User user = (User) getUserInfoResponse.getData();
 
-            if(!user.getRole().toString().equals("STAFF")){
+            if (!user.getRole().toString().equals("STAFF")) {
                 return ResponseData.error("Only staff can add offline order");
             }
 
             Optional<Staff> staffOptional = staffRepository.findByUserId(user.getId());
-            if(staffOptional.isEmpty()){
+            if (staffOptional.isEmpty()) {
                 return ResponseData.error("Staff not found");
             }
             Staff staff = staffOptional.get();
@@ -176,17 +182,18 @@ public class OrderService implements OrderInterface {
             orderOffline.setStaff(staff);
 
             List<Map<BranchProduct, Integer>> branchProductQuantities = new ArrayList<>();
-            for(Map<Long, Integer> item: request.getItems()){
-                for(Map.Entry<Long, Integer> entry: item.entrySet()){
-                    Long productId  = entry.getKey();
+            for (Map<Long, Integer> item : request.getItems()) {
+                for (Map.Entry<Long, Integer> entry : item.entrySet()) {
+                    Long productId = entry.getKey();
                     Integer quantity = entry.getValue();
-                    Optional<BranchProduct> branchProductOptional = branchProductRepository.findByBranchIdAndProductId(staff.getBranch().getId(), productId);
-                    if(branchProductOptional.isEmpty()){
+                    Optional<BranchProduct> branchProductOptional = branchProductRepository.findByBranchIdAndProductId(
+                            staff.getBranch().getId(), productId);
+                    if (branchProductOptional.isEmpty()) {
                         return ResponseData.error("Product not found");
                     }
 
                     BranchProduct branchProduct = branchProductOptional.get();
-                    if(branchProduct.getStock() < quantity){
+                    if (branchProduct.getStock() < quantity) {
                         return ResponseData.error("Not enough stock");
                     }
 
@@ -197,7 +204,7 @@ public class OrderService implements OrderInterface {
             }
 
             orderRepository.save(order);
-            
+
             orderOfflineRepository.save(orderOffline);
 
             List<OrderDetail> orderDetails = new ArrayList<>();
@@ -211,7 +218,10 @@ public class OrderService implements OrderInterface {
                     branchProductRepository.save(branchProduct);
 
                     OrderDetail orderDetail = new OrderDetail();
-                    orderDetail.setKeyOrderDetail(order.getId(), branchProduct.getBranch().getId(), branchProduct.getProduct().getId());
+                    orderDetail.setKeyOrderDetail(
+                            order.getId(),
+                            branchProduct.getBranch().getId(),
+                            branchProduct.getProduct().getId());
                     orderDetail.setOrder(order);
                     orderDetail.setBranchProduct(branchProduct);
                     orderDetail.setQuantity(quantity);

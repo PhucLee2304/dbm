@@ -1,14 +1,15 @@
 package com.example.demo.entity;
 
+import java.io.Serializable;
+import java.util.Objects;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-
-import java.io.Serializable;
-import java.util.Objects;
 
 @Embeddable
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -23,9 +24,9 @@ public class KeyBranchProduct implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) return true;
-        if(obj == null || getClass() != obj.getClass()) return false;
-        KeyBranchProduct that = (KeyBranchProduct)obj;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        KeyBranchProduct that = (KeyBranchProduct) obj;
         return branch_id == that.branch_id && product_id == that.product_id;
     }
 
