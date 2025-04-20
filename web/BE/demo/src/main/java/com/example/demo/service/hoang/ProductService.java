@@ -1,5 +1,10 @@
 package com.example.demo.service.hoang;
 
+import java.util.*;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.example.demo.dto.hoang.BranchStockDTO;
 import com.example.demo.dto.hoang.ProductDTO;
 import com.example.demo.entity.*;
@@ -7,12 +12,9 @@ import com.example.demo.interfaces.hoang.ProductInterface;
 import com.example.demo.repository.*;
 import com.example.demo.request.hoang.AddProductRequest;
 import com.example.demo.utils.ResponseData;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
 
 @Slf4j
 @Service
@@ -27,7 +29,7 @@ public class ProductService implements ProductInterface {
     private List<ProductDTO> toProductDTOs(List<BranchProduct> branchProducts) {
         Map<Long, ProductDTO> map = new HashMap<>();
 
-        for(BranchProduct branchProduct : branchProducts) {
+        for (BranchProduct branchProduct : branchProducts) {
             Long id = branchProduct.getProduct().getId();
             String categoryName = branchProduct.getProduct().getCategory().getName();
             String supplierName = branchProduct.getProduct().getSupplier().getName();
@@ -35,7 +37,7 @@ public class ProductService implements ProductInterface {
             double price = branchProduct.getProduct().getPrice();
 
             ProductDTO productDTO = map.get(id);
-            if(productDTO == null) {
+            if (productDTO == null) {
                 productDTO = new ProductDTO(id, categoryName, supplierName, name, price, new ArrayList<>());
                 map.put(id, productDTO);
             }
@@ -52,32 +54,34 @@ public class ProductService implements ProductInterface {
     @Override
     @Transactional
     public ResponseData addProduct(AddProductRequest request) {
-        try{
-            if(!categoryRepository.existsById(request.getCategoryId())) {
+        try {
+            if (!categoryRepository.existsById(request.getCategoryId())) {
                 return ResponseData.error("Category does not exist");
             }
 
-            if(!supplierRepository.existsById(request.getSupplierId())) {
+            if (!supplierRepository.existsById(request.getSupplierId())) {
                 return ResponseData.error("Supplier does not exist");
             }
 
-            for(Map.Entry<Long, Long> entry: request.getMapBranchStock().entrySet()){
+            for (Map.Entry<Long, Long> entry : request.getMapBranchStock().entrySet()) {
                 Long branchId = entry.getKey();
-                if(!branchRepository.existsById(branchId)) {
+                if (!branchRepository.existsById(branchId)) {
                     return ResponseData.error("Branch does not exist");
                 }
             }
 
             Product product = new Product();
-            product.setCategory(categoryRepository.findById(request.getCategoryId()).get());
-            product.setSupplier(supplierRepository.findById(request.getSupplierId()).get());
+            product.setCategory(
+                    categoryRepository.findById(request.getCategoryId()).get());
+            product.setSupplier(
+                    supplierRepository.findById(request.getSupplierId()).get());
             product.setName(request.getName());
             product.setPrice(request.getPrice());
 
             productRepository.save(product);
 
             List<BranchProduct> branchProducts = new ArrayList<>();
-            for(Map.Entry<Long, Long> entry: request.getMapBranchStock().entrySet()){
+            for (Map.Entry<Long, Long> entry : request.getMapBranchStock().entrySet()) {
                 Long branchId = entry.getKey();
                 Long stock = entry.getValue();
 
@@ -105,41 +109,44 @@ public class ProductService implements ProductInterface {
     @Override
     @Transactional
     public ResponseData updateProduct(Long id, AddProductRequest request) {
-        try{
+        try {
             Optional<Product> productOptional = productRepository.findById(id);
-            if(productOptional.isEmpty()) {
+            if (productOptional.isEmpty()) {
                 return ResponseData.error("Product does not exist");
             }
             Product product = productOptional.get();
 
             Optional<Category> categoryOptional = categoryRepository.findById(request.getCategoryId());
-            if(categoryOptional.isEmpty()) {
+            if (categoryOptional.isEmpty()) {
                 return ResponseData.error("Category does not exist");
             }
 
             Optional<Supplier> supplierOptional = supplierRepository.findById(request.getSupplierId());
-            if(supplierOptional.isEmpty()) {
+            if (supplierOptional.isEmpty()) {
                 return ResponseData.error("Supplier does not exist");
             }
 
             Map<BranchProduct, Long> map = new HashMap<>();
-            for(Map.Entry<Long, Long> entry: request.getMapBranchStock().entrySet()){
+            for (Map.Entry<Long, Long> entry : request.getMapBranchStock().entrySet()) {
                 Long branchId = entry.getKey();
-                Optional<BranchProduct> branchProductOptional = branchProductRepository.findByBranchIdAndProductId(branchId, product.getId());
-                if(branchProductOptional.isEmpty()) {
+                Optional<BranchProduct> branchProductOptional =
+                        branchProductRepository.findByBranchIdAndProductId(branchId, product.getId());
+                if (branchProductOptional.isEmpty()) {
                     return ResponseData.error("Branch Product does not exist");
                 }
 
                 map.put(branchProductOptional.get(), entry.getValue());
             }
 
-            product.setCategory(categoryRepository.findById(request.getCategoryId()).get());
-            product.setSupplier(supplierRepository.findById(request.getSupplierId()).get());
+            product.setCategory(
+                    categoryRepository.findById(request.getCategoryId()).get());
+            product.setSupplier(
+                    supplierRepository.findById(request.getSupplierId()).get());
             product.setName(request.getName());
             product.setPrice(request.getPrice());
 
             List<BranchProduct> branchProducts = new ArrayList<>();
-            for(Map.Entry<BranchProduct, Long> entry: map.entrySet()) {
+            for (Map.Entry<BranchProduct, Long> entry : map.entrySet()) {
                 BranchProduct branchProduct = entry.getKey();
                 Long stock = entry.getValue();
                 branchProduct.setStock(stock);
@@ -157,7 +164,7 @@ public class ProductService implements ProductInterface {
 
     @Override
     public ResponseData getAllProducts() {
-        try{
+        try {
             List<BranchProduct> branchProducts = branchProductRepository.findAll();
 
             List<ProductDTO> productDTOs = toProductDTOs(branchProducts);
@@ -172,8 +179,8 @@ public class ProductService implements ProductInterface {
     @Override
     @Transactional
     public ResponseData deleteProduct(Long id) {
-        try{
-            if(!productRepository.existsById(id)) {
+        try {
+            if (!productRepository.existsById(id)) {
                 return ResponseData.error("Product does not exist");
             }
 

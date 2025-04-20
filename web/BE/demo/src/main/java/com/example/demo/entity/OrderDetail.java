@@ -1,13 +1,16 @@
 package com.example.demo.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "order_detail")
@@ -25,11 +28,11 @@ public class OrderDetail {
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-//    @JoinColumn(insertable = false, updatable = false)
-//    @JoinColumn(name = "branch_product_id", insertable = false, updatable = false)
+    //    @JoinColumn(insertable = false, updatable = false)
+    //    @JoinColumn(name = "branch_product_id", insertable = false, updatable = false)
     @JoinColumns({
-            @JoinColumn(name = "branch_id", referencedColumnName = "branch_id", insertable = false, updatable = false),
-            @JoinColumn(name = "product_id", referencedColumnName = "product_id", insertable = false, updatable = false)
+        @JoinColumn(name = "branch_id", referencedColumnName = "branch_id", insertable = false, updatable = false),
+        @JoinColumn(name = "product_id", referencedColumnName = "product_id", insertable = false, updatable = false)
     })
     BranchProduct branchProduct;
 

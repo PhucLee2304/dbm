@@ -1,7 +1,9 @@
 package com.example.demo.entity;
 
-import com.example.demo.enums.RoleEnum;
 import jakarta.persistence.*;
+
+import com.example.demo.enums.RoleEnum;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;

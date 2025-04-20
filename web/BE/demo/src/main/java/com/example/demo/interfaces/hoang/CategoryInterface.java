@@ -6,6 +6,8 @@ import com.example.demo.utils.ResponseData;
 
 public interface CategoryInterface {
     ResponseData addCategory(AddCategoryRequest request);
+
     ResponseData updateCategory(Long id, UpdateCategoryRequest request);
+
     ResponseData getAllCategories();
 }

@@ -1,6 +1,13 @@
 package com.example.demo.service.vanh;
 
-import com.example.demo.dto.vanh.CustomerDTO;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
 import com.example.demo.dto.vanh.StaffDTO;
 import com.example.demo.entity.*;
 import com.example.demo.enums.RoleEnum;
@@ -12,26 +19,16 @@ import com.example.demo.request.vanh.AddSupplierRequest;
 import com.example.demo.request.vanh.LoginRequest;
 import com.example.demo.utils.JwtUtil;
 import com.example.demo.utils.ResponseData;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService implements AuthenticationInterface {
     private final UserRepository userRepository;
-//    private final PasswordEncoder passwordEncoder;
+    //    private final PasswordEncoder passwordEncoder;
     private final CustomerRepository customerRepository;
     private final BranchRepository branchRepository;
     private final StaffRepository staffRepository;
@@ -43,12 +40,12 @@ public class AuthenticationService implements AuthenticationInterface {
 
     @Override
     public ResponseData addCustomer(AddCustomerRequest request) {
-        try{
-            if(userRepository.existsByEmail(request.getEmail().toLowerCase())){
+        try {
+            if (userRepository.existsByEmail(request.getEmail().toLowerCase())) {
                 return ResponseData.error("Email already exists");
             }
 
-            if(userRepository.existsByPhone(request.getPhone().toLowerCase())){
+            if (userRepository.existsByPhone(request.getPhone().toLowerCase())) {
                 return ResponseData.error("Phone already exists");
             }
 
@@ -58,7 +55,7 @@ public class AuthenticationService implements AuthenticationInterface {
             user.setPhone(request.getPhone());
             user.setAddress(request.getAddress());
             user.setPassword(request.getPassword());
-//            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            //            user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setActive(true);
             user.setRole(RoleEnum.CUSTOMER);
 
@@ -70,7 +67,7 @@ public class AuthenticationService implements AuthenticationInterface {
             customerRepository.save(customer);
 
             ResponseData generateTokenResponse = jwtUtil.generateToken(user);
-            if(!generateTokenResponse.isSuccess()){
+            if (!generateTokenResponse.isSuccess()) {
                 return generateTokenResponse;
             }
             String token = generateTokenResponse.getData().toString();
@@ -78,11 +75,11 @@ public class AuthenticationService implements AuthenticationInterface {
             Map<String, Object> data = new HashMap<>();
             data.put("token", token);
             data.put("role", RoleEnum.CUSTOMER.toString());
-//            data.put("customer", customerToCustomerDTO(customer));
+            //            data.put("customer", customerToCustomerDTO(customer));
 
             return ResponseData.success("Registered new customer successfully", token);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseData.error(e.getMessage());
         }
     }
@@ -100,7 +97,7 @@ public class AuthenticationService implements AuthenticationInterface {
             user.setPhone(request.getPhone());
             user.setAddress(request.getAddress());
             user.setPassword(request.getPassword());
-//            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            //            user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setActive(true);
             user.setRole(RoleEnum.STAFF);
 
@@ -123,12 +120,12 @@ public class AuthenticationService implements AuthenticationInterface {
 
             return ResponseData.success("Registered new staff successfully", staffToStaffDTO(staff));
 
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseData.error(e.getMessage());
         }
     }
 
-    private ResponseData staffToStaffDTO(Staff staff){
+    private ResponseData staffToStaffDTO(Staff staff) {
         StaffDTO staffDTO = new StaffDTO();
         staffDTO.setId(staff.getId());
         staffDTO.setEmail(staff.getUser().getEmail());
@@ -147,16 +144,16 @@ public class AuthenticationService implements AuthenticationInterface {
 
     @Override
     public ResponseData addSupplier(AddSupplierRequest request) {
-        try{
-            if(supplierRepository.existsByEmail(request.getEmail().toLowerCase())){
+        try {
+            if (supplierRepository.existsByEmail(request.getEmail().toLowerCase())) {
                 return ResponseData.error("Email already exists");
             }
 
-            if(supplierRepository.existsByPhone(request.getPhone())){
+            if (supplierRepository.existsByPhone(request.getPhone())) {
                 return ResponseData.error("Phone already exists");
             }
 
-            if(supplierRepository.existsByAddress(request.getAddress())){
+            if (supplierRepository.existsByAddress(request.getAddress())) {
                 return ResponseData.error("Address already exists");
             }
 
@@ -177,32 +174,33 @@ public class AuthenticationService implements AuthenticationInterface {
 
     @Override
     public ResponseData login(LoginRequest request) {
-        try{
-            Optional<User> userOptional = userRepository.findByEmail(request.getEmail().toLowerCase());
-            if(userOptional.isEmpty()){
+        try {
+            Optional<User> userOptional =
+                    userRepository.findByEmail(request.getEmail().toLowerCase());
+            if (userOptional.isEmpty()) {
                 return ResponseData.error("Email not found");
             }
             User user = userOptional.get();
 
-//            if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
-//                return ResponseData.error("Wrong password");
-//            }
+            //            if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
+            //                return ResponseData.error("Wrong password");
+            //            }
 
-            if(!request.getPassword().equals(user.getPassword())){
+            if (!request.getPassword().equals(user.getPassword())) {
                 return ResponseData.error("Wrong password");
             }
 
-            if(!user.isActive()){
+            if (!user.isActive()) {
                 return ResponseData.error("User is not active");
             }
 
             ResponseData generateTokenResponse = jwtUtil.generateToken(user);
-            if(!generateTokenResponse.isSuccess()){
+            if (!generateTokenResponse.isSuccess()) {
                 return generateTokenResponse;
             }
 
             String token = generateTokenResponse.getData().toString();
-//            return ResponseData.success("Login successfully", token);
+            //            return ResponseData.success("Login successfully", token);
             Map<String, Object> data = new HashMap<>();
             data.put("token", token);
 
@@ -211,13 +209,13 @@ public class AuthenticationService implements AuthenticationInterface {
 
             return ResponseData.success("Login successfully", data);
 
-//            if(role.equals("ADMIN")){
-//                data.put("admin", user);
-//            } else if (role.equals("CUSTOMER")) {
-//                data.put("customer", user);
-//            } else{
-//                data.put("staff", user);
-//            }
+            //            if(role.equals("ADMIN")){
+            //                data.put("admin", user);
+            //            } else if (role.equals("CUSTOMER")) {
+            //                data.put("customer", user);
+            //            } else{
+            //                data.put("staff", user);
+            //            }
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
         }

@@ -1,11 +1,11 @@
 package com.example.demo.dto.vanh;
 
+import java.time.LocalDate;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
 
 @Getter
 @Setter

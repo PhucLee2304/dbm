@@ -1,15 +1,15 @@
 package com.example.demo.controller.vanh;
 
-import com.example.demo.entity.Customer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import com.example.demo.interfaces.vanh.UserInterface;
 import com.example.demo.request.vanh.UpdateCustomerRequest;
 import com.example.demo.request.vanh.UpdateStaffRequest;
 import com.example.demo.request.vanh.UpdateSupplierRequest;
 import com.example.demo.utils.ResponseData;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")

@@ -1,14 +1,15 @@
 package com.example.demo.controller.hoang;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import com.example.demo.interfaces.hoang.CategoryInterface;
 import com.example.demo.request.hoang.AddCategoryRequest;
 import com.example.demo.request.hoang.UpdateCategoryRequest;
 import com.example.demo.utils.ResponseData;
+
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.repository.query.Param;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController

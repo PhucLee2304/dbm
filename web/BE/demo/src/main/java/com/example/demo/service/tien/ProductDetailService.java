@@ -1,21 +1,21 @@
-//package com.example.demo.service.tien;
+// package com.example.demo.service.tien;
 //
-//import com.example.demo.dto.tien.ProductDetailDTO;
-//import com.example.demo.entity.BranchProduct;
-//import com.example.demo.interfaces.tien.ProductDetailInterface;
-//import com.example.demo.repository.BranchProductRepository;
-//import com.example.demo.utils.ResponseData;
-//import lombok.AccessLevel;
-//import lombok.RequiredArgsConstructor;
-//import lombok.experimental.FieldDefaults;
-//import org.springframework.stereotype.Service;
+// import com.example.demo.dto.tien.ProductDetailDTO;
+// import com.example.demo.entity.BranchProduct;
+// import com.example.demo.interfaces.tien.ProductDetailInterface;
+// import com.example.demo.repository.BranchProductRepository;
+// import com.example.demo.utils.ResponseData;
+// import lombok.AccessLevel;
+// import lombok.RequiredArgsConstructor;
+// import lombok.experimental.FieldDefaults;
+// import org.springframework.stereotype.Service;
 //
-//import java.util.Optional;
+// import java.util.Optional;
 //
-//@Service
-//@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-//@RequiredArgsConstructor()
-//public class ProductDetailService implements ProductDetailInterface {
+// @Service
+// @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+// @RequiredArgsConstructor()
+// public class ProductDetailService implements ProductDetailInterface {
 //    BranchProductRepository branchProductRepository;
 //
 //
@@ -44,4 +44,4 @@
 //        productDetailDTO.setSupplierName(branchProduct.getProduct().getSupplier().getName());
 //        return productDetailDTO;
 //    }
-//}
+// }

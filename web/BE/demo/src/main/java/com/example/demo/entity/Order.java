@@ -1,13 +1,15 @@
 package com.example.demo.entity;
 
-import com.example.demo.enums.OrderStatusEnum;
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
+
+import com.example.demo.enums.OrderStatusEnum;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "order_table")
