@@ -1,14 +1,14 @@
-﻿CREATE DATABASE db_hanoi;
-CREATE DATABASE db_hcm;
-USE db_hanoi;
-USE db_hcm;
+﻿CREATE DATABASE db_vp;
+CREATE DATABASE db_pt;
+USE db_vp;
+USE db_pt;
 
 CREATE TABLE user_table (
     id BIGINT IDENTITY(1,1) PRIMARY KEY,
     active BIT NOT NULL,
-    address VARCHAR(255) NOT NULL,
+    address NVARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
-    name VARCHAR(255) NOT NULL,
+    name NVARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     phone VARCHAR(255) NOT NULL UNIQUE,
     role VARCHAR(255) NOT NULL CHECK (role IN ('CUSTOMER', 'STAFF', 'ADMIN'))
@@ -31,18 +31,18 @@ CREATE TABLE staff (
 
 CREATE TABLE category (
     id BIGINT IDENTITY(1,1) PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
+    name NVARCHAR(255) NOT NULL
 );
 
 CREATE TABLE supplier (
     id BIGINT IDENTITY(1,1) PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name NVARCHAR(255) NOT NULL,
     address VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE product (
     id BIGINT IDENTITY(1,1) PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name NVARCHAR(255) NOT NULL,
     price FLOAT NOT NULL CHECK (price >= 0),
     category_id BIGINT,
     supplier_id BIGINT,
