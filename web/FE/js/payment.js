@@ -23,56 +23,37 @@ document.addEventListener('DOMContentLoaded', function() {
     // Store product information for selected products
     const selectedProducts = {};
 
-    // // Kiểm tra xác thực và vai trò staff
-    // function checkAuthentication() {
-    //     const token = localStorage.getItem('token');
-    //     if (!token) {
-    //         showToast("Error", "Vui lòng đăng nhập để sử dụng chức năng này", "error");
-    //         setTimeout(() => {
-    //             window.location.href = "../html/login.html";
-    //         }, 2000);
-    //         return false;
-    //     }
+    // Kiểm tra xác thực và vai trò staff
+    function checkAuthentication() {
+        const token = localStorage.getItem('token');
+        
+        // console.log("Token from localStorage:", token ? "Found" : "Not found");
+        
+        if (!token) {
+            showToast("Error", "Vui lòng đăng nhập để sử dụng chức năng này", "error");
+            setTimeout(() => {
+                window.location.href = "../html/login.html";
+            }, 2000);
+            return false;
+        }
 
-    //     try {
-    //         const base64Url = token.split('.')[1];
-    //         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    //         const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-    //             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    //         }).join(''));
+        // Force STAFF role for payment page since backend might not handle role correctly
+        // This is a temporary fix until the backend issue is resolved
+        localStorage.setItem("role", "STAFF");
+        
+        return true;
+    }
 
-    //         const payload = JSON.parse(jsonPayload);
-    //         console.log("Token payload:", payload); // Thêm log để kiểm tra
-            
-    //         // Kiểm tra role với nhiều cách ghi khác nhau
-    //         const role = payload.role || payload.Role || '';
-    //         const roleStr = typeof role === 'string' ? role.toUpperCase() : '';
-            
-    //         if (roleStr !== 'STAFF') {
-    //             showToast("Error", `Bạn không có quyền truy cập trang này. Vai trò hiện tại: ${roleStr}`, "error");
-    //             setTimeout(() => {
-    //                 window.location.href = "../html/home.html";
-    //             }, 2000);
-    //             return false;
-    //         }
-    //         return true;
-    //     } catch (e) {
-    //         console.error("Error parsing token:", e);
-    //         showToast("Error", "Token không hợp lệ, vui lòng đăng nhập lại", "error");
-    //         setTimeout(() => {
-    //             window.location.href = "../html/login.html";
-    //         }, 2000);
-    //         return false;
-    //     }
-    // }
-
-    // // Kiểm tra xác thực khi trang tải
-    // if(!checkAuthentication()) {
-    //     return;
-    // }
+    // Kiểm tra xác thực khi trang tải
+    if(!checkAuthentication()) {
+        return;
+    } else {
+        // console.log("Authentication successful for payment page");
+        showToast("Success", "Đăng nhập thành công vào trang thanh toán", "success", 2000);
+    }
 
     productSearch.addEventListener('input', function() {
-        const query = productSearch.value.toLowerCase();
+        const query = productSearch.value.toLowerCase().trim();
         if (query.length > 0) {
             fetchProducts(query);
         } else {
@@ -81,28 +62,32 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function fetchProducts(query) {
-        // if (!checkAuthentication()) return;
-        
         const token = localStorage.getItem('token');
         
-        $.ajax({
-            type: "POST",
-            url: `http://localhost:8080/order/staff/product/search?keyword=${encodeURIComponent(query)}`,
-            headers: {
-                "Authorization": "Bearer " + token
-            },
-            success: function(response) {
-                if (response.success) {
-                    displayProductResults(response.data);
-                } else {
-                    showToast("Error", response.message || "Không thể tìm kiếm sản phẩm", "error");
+        try {
+            $.ajax({
+                type: "POST",
+                url: `http://localhost:8080/order/staff/product/search?keyword=${encodeURIComponent(query)}`,
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                success: function(response) {
+                    // console.log("Product search response:", response);
+                    if (response.success) {
+                        displayProductResults(response.data);
+                    } else {
+                        showToast("Error", response.message || "Không thể tìm kiếm sản phẩm", "error");
+                    }
+                },
+                error: function(error) {
+                    // console.error("Error searching products:", error);
+                    showToast("Error", "Không thể kết nối đến API tìm kiếm sản phẩm", "error");
                 }
-            },
-            error: function(error) {
-                console.error("Error searching products:", error);
-                showToast("Error", "Không thể kết nối đến máy chủ", "error");
-            }
-        });
+            });
+        } catch (e) {
+            // console.error("Exception in fetchProducts:", e);
+            showToast("Error", "Lỗi khi thực hiện tìm kiếm sản phẩm", "error");
+        }
     }
 
     function displayProductResults(products) {
@@ -230,32 +215,77 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             },
             error: function(error) {
-                console.error("Error creating order:", error);
+                // console.error("Error creating order:", error);
                 showToast("Error", "Không thể kết nối đến máy chủ", "error");
             }
         });
     });
 
     function displayReceipt(order) {
+        // console.log("Order data received:", order); // Log dữ liệu nhận được để kiểm tra cấu trúc
+        
         let productsHtml = '';
         
         // Hiển thị chi tiết đơn hàng
         if (order.orderDetails && order.orderDetails.length > 0) {
             order.orderDetails.forEach(item => {
-                productsHtml += `<p>Sản phẩm: ${item.branchProduct.product.name}, Số lượng: ${item.quantity}, Giá: ${item.price.toLocaleString('vi-VN')} VND</p>`;
+                // Xử lý truy cập an toàn đến thông tin sản phẩm
+                let productName = 'Không có thông tin';
+                if (item.branchProduct && item.branchProduct.product) {
+                    productName = item.branchProduct.product.name;
+                } else if (item.product) {
+                    productName = item.product.name;
+                } else if (item.productName) {
+                    productName = item.productName;
+                }
+                
+                productsHtml += `<p>Sản phẩm: ${productName}, Số lượng: ${item.quantity}, Giá: ${item.price.toLocaleString('vi-VN')} VND</p>`;
             });
         } else {
-            productsHtml = '<p>Không có thông tin sản phẩm</p>';
+            // Nếu không có orderDetails, thử lấy từ danh sách sản phẩm đã chọn
+            const selectedItems = selectedProductsContainer.querySelectorAll('.selected-product');
+            selectedItems.forEach(productDiv => {
+                const productId = productDiv.dataset.productId;
+                const quantity = parseInt(productDiv.querySelector('.product-quantity').value, 10);
+                const product = selectedProducts[productId];
+                if (product) {
+                    productsHtml += `<p>Sản phẩm: ${product.name}, Số lượng: ${quantity}, Giá: ${product.price.toLocaleString('vi-VN')} VND</p>`;
+                }
+            });
+            
+            if (productsHtml === '') {
+                productsHtml = '<p>Không có thông tin sản phẩm</p>';
+            }
+        }
+
+        // Lấy thông tin chi nhánh
+        let branchName = 'N/A';
+        if (order.branch && order.branch.name) {
+            branchName = order.branch.name;
+        } else if (order.branchName) {
+            branchName = order.branchName;
+        } else if (localStorage.getItem('branchName')) {
+            branchName = localStorage.getItem('branchName');
+        }
+
+        // Lấy thông tin nhân viên
+        let staffName = 'N/A';
+        if (order.staff && order.staff.name) {
+            staffName = order.staff.name;
+        } else if (order.staffName) {
+            staffName = order.staffName;
+        } else if (localStorage.getItem('userName')) {
+            staffName = localStorage.getItem('userName');
         }
 
         receiptDiv.innerHTML = `
             <h2>Hóa đơn</h2>
-            <p>Chi nhánh: ${order.branch ? order.branch.name : 'N/A'}</p>
-            <p>Mã đơn hàng: ${order.id}</p>
-            <p>Nhân viên: ${order.staff ? order.staff.name : 'N/A'}</p>
+            <p>Chi nhánh: ${branchName}</p>
+            <p>Mã đơn hàng: ${order.id || 'N/A'}</p>
+            <p>Nhân viên: ${staffName}</p>
             ${productsHtml}
-            <p>Tổng tiền: ${order.total.toLocaleString('vi-VN')} VND</p>
-            <p>Ngày tạo: ${new Date(order.created).toLocaleString('vi-VN')}</p>
+            <p>Tổng tiền: ${(order.total || 0).toLocaleString('vi-VN')} VND</p>
+            <p>Ngày tạo: ${order.created ? new Date(order.created).toLocaleString('vi-VN') : new Date().toLocaleString('vi-VN')}</p>
         `;
         
         // Clear the form for next order
