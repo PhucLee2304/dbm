@@ -31,7 +31,7 @@ public class RecordDay {
     @Column(nullable = false, updatable = false)
     LocalDateTime checkin;
 
-    @Column(nullable = false, updatable = false)
+    @Column()
     LocalDateTime checkout;
 
     @Enumerated(EnumType.STRING)

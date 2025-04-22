@@ -24,9 +24,9 @@ public class AttendanceController {
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 
-//    @PostMapping("/checkout")
-//    public ResponseEntity<?> checkOut(@RequestParam Long staffId) {
-//        ResponseData responseData = attendanceInterface.checkOut(staffId);
-//        return new ResponseEntity<>(responseData, HttpStatus.OK);
-//    }
+    @PostMapping("/checkout")
+    public ResponseEntity<?> checkOut(@RequestParam Long staffId) {
+        ResponseData responseData = attendanceInterface.checkOut(staffId);
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
 }
