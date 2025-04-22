@@ -9,11 +9,15 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 @Entity
 @Table(name = "record_day")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RecordDay {
     @EmbeddedId
