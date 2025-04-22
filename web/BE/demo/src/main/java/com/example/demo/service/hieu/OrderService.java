@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.example.demo.dto.hieu.OrderOfflineDTO;
+import com.example.demo.dto.hieu.OrderOfflineDetailDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -112,6 +114,25 @@ public class OrderService implements OrderInterface {
             orderRepository.save(order);
 
             return ResponseData.success("Add new temperature order successfully", order);
+
+        } catch (Exception e) {
+            return ResponseData.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseData updateOrderOnline(Long id){
+        try{
+            Optional<Order> orderOptional = orderRepository.findById(id);
+            if(orderOptional.isEmpty()) {
+                return ResponseData.error("Order not found");
+            }
+
+            Order order = orderOptional.get();
+            order.setStatus(OrderStatusEnum.COMPLETED);
+            orderRepository.save(order);
+
+            return ResponseData.success("Update temperature order successfully", order);
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
@@ -241,10 +262,34 @@ public class OrderService implements OrderInterface {
 
             orderRepository.save(order);
 
-            return ResponseData.success("Add new order offline successfully", order);
+//            return ResponseData.success("Add new order offline successfully", order);
+            return ResponseData.success("Add new order offline successfully", toOrderOfflineDTO(orderOffline, orderDetails));
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
         }
+    }
+
+    private OrderOfflineDTO toOrderOfflineDTO(OrderOffline orderOffline, List<OrderDetail> orderDetails) {
+        OrderOfflineDTO dto = new OrderOfflineDTO();
+        dto.setOrderId(orderOffline.getOrder().getId());
+        dto.setSubTotal(orderOffline.getOrder().getSubtotal());
+        dto.setShippingFee(orderOffline.getOrder().getShippingFee());
+        dto.setTotal(orderOffline.getOrder().getTotal());
+        dto.setCreated(orderOffline.getOrder().getCreated());
+        dto.setStaffCode(orderOffline.getStaff().getCode());
+        dto.setBranchName(orderOffline.getStaff().getBranch().getAddress());
+
+        List<OrderOfflineDetailDTO> details = new ArrayList<>();
+        for(OrderDetail orderDetail : orderDetails) {
+            OrderOfflineDetailDTO detailDTO = new OrderOfflineDetailDTO();
+            detailDTO.setProductName(orderDetail.getBranchProduct().getProduct().getName());
+            detailDTO.setQuantity(orderDetail.getQuantity());
+
+            details.add(detailDTO);
+        }
+
+        dto.setDetails(details);
+        return dto;
     }
 }
