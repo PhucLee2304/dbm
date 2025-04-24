@@ -66,19 +66,59 @@ document.addEventListener("DOMContentLoaded", () => {
     const supplierInput = document.getElementById("product-supplier");
     const priceInput = document.getElementById("product-price");
     const branchStocksContainer = document.getElementById("branch-stocks");
-    const addBranchBtn = document.getElementById("add-branch");
 
     let products = [];
 
+    // ============== Load Categories và Suppliers động từ API ==============
+    // Load categories
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:8080/category/all",
+        headers: { "Authorization": "Bearer " + localStorage.getItem("token") },
+        success: function(response) {
+            if (response.success) {
+                response.data.forEach(cat => {
+                    categoryInput.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
+                });
+            } else {
+                showToast("Error", "Không load được danh sách danh mục", "error");
+            }
+        },
+        error: function(error) {
+            console.error("Error loading categories:", error);
+            showToast("Error", "Lỗi khi kết nối server danh mục", "error");
+        }
+    });
+
+    // Load suppliers
+//    $.ajax({
+//        type: "GET",
+//        url: "http://localhost:8080/supplier/all",
+//        headers: { "Authorization": "Bearer " + localStorage.getItem("token") },
+//        success: function(response) {
+//            if (response.success) {
+//                response.data.forEach(sup => {
+//                    supplierInput.innerHTML += `<option value="${sup.id}">${sup.name}</option>`;
+//                });
+//            } else {
+//                showToast("Error", "Không load được danh sách nhà cung cấp", "error");
+//            }
+//       },
+//       error: function(error) {
+//            console.error("Error loading suppliers:", error);
+//            showToast("Error", "Lỗi khi kết nối server nhà cung cấp", "error");
+//        }
+//    });
+
     // ============== Modal Controls ==============
     addBtn.addEventListener("click", () => {
-        // if (!checkAuthentication()) return;
         form.reset();
         idInput.value = "";
-        // Xóa tất cả các branch input trừ tiêu đề
-        while (branchStocksContainer.children.length > 1) {
-            branchStocksContainer.removeChild(branchStocksContainer.lastChild);
-        }
+
+        document.querySelectorAll(".branch-input .stock-input").forEach(input => {
+            input.value = "";
+        });
+
         modalTitle.textContent = "Add new product";
         modal.style.display = "block";
     });
@@ -93,32 +133,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    // ============== Branch Stock Handling ==============
-    addBranchBtn.addEventListener("click", () => {
-        const newInput = document.createElement("div");
-        newInput.className = "branch-input";
-        newInput.innerHTML = `
-            <select class="branch-select">
-                <option value="1">ONLINE</option>
-                <option value="2">HANOI</option>
-                <option value="3">HOCHIMINH</option>
-            </select>
-            <input type="number" class="stock-input" min="0" placeholder="Stock">
-            <button type="button" class="remove-branch">×</button>
-        `;
-        branchStocksContainer.appendChild(newInput);
-    });
-
-    branchStocksContainer.addEventListener("click", (e) => {
-        if (e.target.classList.contains("remove-branch")) {
-            e.target.parentElement.remove();
-        }
-    });
-
-    // ============== Data Functions ==============
+     // ============== Data Functions ==============
     function fetchProducts() {
         // if (!checkAuthentication()) return;
-
         $.ajax({
             type: "GET",
             url: "http://localhost:8080/product/admin/all",
@@ -190,30 +207,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const product = products.find(p => p.id === id);
         if (!product) return;
 
-        while (branchStocksContainer.children.length > 1) {
-            branchStocksContainer.removeChild(branchStocksContainer.lastChild);
-        }
-
         idInput.value = product.id;
         nameInput.value = product.name;
-        categoryInput.value = product.categoryName;
-        supplierInput.value = product.supplierName;
+        categoryInput.value = product.categoryId;
+        supplierInput.value = product.supplierId;
         priceInput.value = product.price;
 
-        // Thêm branch inputs
-        product.branchStockDTOs.forEach(branch => {
-            const newInput = document.createElement("div");
-            newInput.className = "branch-input";
-            newInput.innerHTML = `
-                <select class="branch-select">
-                    <option value="1" ${branch.branch.id === 1 ? "selected" : ""}>ONLINE</option>
-                    <option value="2" ${branch.branch.id === 2 ? "selected" : ""}>HaNoi</option>
-                    <option value="3" ${branch.branch.id === 3 ? "selected" : ""}>HCM</option>
-                </select>
-                <input type="number" class="stock-input" value="${branch.stock}" min="0">
-                <button type="button" class="remove-branch">×</button>
-            `;
-            branchStocksContainer.appendChild(newInput);
+        document.querySelectorAll(".branch-input").forEach(div => {
+            const branchId = parseInt(div.querySelector(".branch-id").value);
+            const stockInput = div.querySelector(".stock-input");
+            const dto = product.branchStockDTOs.find(b => b.branch.id === branchId);
+            stockInput.value = dto ? dto.stock : "";
         });
 
         modalTitle.textContent = "Update product";
@@ -253,21 +257,21 @@ document.addEventListener("DOMContentLoaded", () => {
         // if (!checkAuthentication()) return;
 
         const branchStocks = [];
-        document.querySelectorAll(".branch-input").forEach(input => {
-            const branchId = input.querySelector(".branch-select").value;
-            const stock = input.querySelector(".stock-input").value;
-            if (stock && stock >= 0) {
+        document.querySelectorAll(".branch-input").forEach(div => {
+            const branchId = parseInt(div.querySelector("\.branch-id").value);
+            const stockVal = div.querySelector("\.stock-input").value;
+            if (stockVal !== "" && parseInt(stockVal) >= 0) {
                 branchStocks.push({
-                    branch: { id: parseInt(branchId) },
-                    stock: parseInt(stock)
+                    branch: { id: branchId },
+                    stock: parseInt(stockVal)
                 });
             }
         });
 
         const request = {
             name: nameInput.value.trim(),
-            categoryName: categoryInput.value.trim(),
-            supplierName: supplierInput.value.trim(),
+            categoryId: parseInt(categoryInput.value),
+            supplierId: parseInt(supplierInput.value),
             price: parseFloat(priceInput.value),
             branchStockDTOs: branchStocks
         };

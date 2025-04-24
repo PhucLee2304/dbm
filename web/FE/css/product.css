@@ -201,7 +201,7 @@ tbody tr:hover {
     margin: 8% auto;
     padding: 25px;
     border-radius: 8px;
-    width: 450px;
+    width: 480px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     position: relative;
 }
@@ -220,7 +220,8 @@ tbody tr:hover {
     color: #495057;
 }
 
-.modal-content input {
+.modal-content input,
+.modal-content select {
     width: 100%;
     padding: 10px 12px;
     margin-top: 6px;
@@ -228,9 +229,11 @@ tbody tr:hover {
     border-radius: 4px;
     box-sizing: border-box;
     font-size: 15px;
+    background-color: #fefefe;
 }
 
-.modal-content input:focus {
+.modal-content input:focus,
+.modal-content select:focus {
     border-color: #80bdff;
     outline: none;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
@@ -249,13 +252,13 @@ tbody tr:hover {
     color: #333;
 }
 
-/* ===== BRANCH STOCKS SECTION (PHẦN ĐÃ CHỈNH SỬA) ===== */
+/* ===== BRANCH STOCKS SECTION ===== */
 #branch-stocks {
-    margin: 20px 0;
+    margin: 20px 0 10px;
     padding: 15px;
-    background: #f8f9fa;
+    background: #f1f3f5;
     border-radius: 6px;
-    border: 1px solid #e9ecef;
+    border: 1px solid #dee2e6;
 }
 
 #branch-stocks h3 {
@@ -264,93 +267,32 @@ tbody tr:hover {
     font-size: 18px;
     border-bottom: 1px solid #dee2e6;
     padding-bottom: 8px;
+    margin-bottom: 12px;
 }
 
 .branch-input {
     display: flex;
-    gap: 8px;
-    margin-bottom: 10px;
+    justify-content: space-between;
     align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
 }
 
-.branch-select {
-    flex: 2;
-    padding: 8px 10px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    background-color: white;
-    font-size: 14px;
-    height: 36px;
-    min-width: 120px;
+.branch-input label {
+    flex: 1.5;
+    font-size: 15px;
+    color: #495057;
 }
 
-.stock-input {
+.branch-input .stock-input,
+.branch-input .branch-id {
     flex: 1;
     padding: 8px 10px;
     border: 1px solid #ced4da;
     border-radius: 4px;
     font-size: 14px;
     height: 36px;
-    min-width: 80px;
     text-align: center;
-}
-
-.remove-branch {
-    background: #dc3545;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 0;
-    width: 30px;
-    height: 36px;
-    cursor: pointer;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.3s;
-}
-
-.remove-branch:hover {
-    background: #c82333;
-}
-
-#add-branch {
-    background: #17a2b8;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin: 10px 0 5px;
-    font-size: 15px;
-    transition: background-color 0.3s;
-    width: 100%;
-}
-
-#add-branch:hover {
-    background: #138496;
-}
-
-/* ===== BRANCH STOCK LIST IN TABLE ===== */
-.branch-stock-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    max-height: 120px;
-    overflow-y: auto;
-}
-
-.branch-stock-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 6px 10px;
-    border-bottom: 1px solid #eee;
-    font-size: 14px;
-}
-
-.branch-stock-item:last-child {
-    border-bottom: none;
 }
 
 /* ===== SUBMIT BUTTON ===== */
@@ -387,13 +329,11 @@ tbody tr:hover {
         flex-wrap: wrap;
     }
 
-    .branch-select, .stock-input {
+    .branch-input label,
+    .stock-input,
+    .branch-id {
         flex: 100%;
         margin-bottom: 8px;
     }
-
-    .remove-branch {
-        width: 100%;
-        margin-top: 5px;
-    }
 }
+
