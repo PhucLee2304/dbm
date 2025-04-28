@@ -26,6 +26,12 @@ public class OrderController {
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateOrderOnline(@PathVariable Long id) {
+        ResponseData responseData = orderInterface.updateOrderOnline(id);
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
     @PostMapping("/staff/product/search")
     public ResponseEntity<?> getProductByKeyword(@RequestParam("keyword") String keyword) {
         ResponseData responseData = orderInterface.getProductByKeyword(keyword);

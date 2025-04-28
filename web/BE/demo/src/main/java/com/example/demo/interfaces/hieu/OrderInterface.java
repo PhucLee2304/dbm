@@ -6,8 +6,7 @@ import com.example.demo.utils.ResponseData;
 
 public interface OrderInterface {
     ResponseData prepareOrderOnline(PrepareOrderOnlineRequest request);
-
+    ResponseData updateOrderOnline(Long id);
     ResponseData getProductByKeyword(String keyword);
-
     ResponseData addOrderOffline(AddOrderOfflineRequest request);
 }
