@@ -19,35 +19,50 @@ function showEditForm(staff) {
     showTab('fix-car');
 }
 
-async function loadStaffList() {
-    const res = await fetch(`${API_BASE}/user/admin/staff/all`, {
-        headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem("token")
-        }
-    });
-    const data = await res.json();
-
-    const tbody = document.querySelector('tbody');
-    tbody.innerHTML = '';
-
-    if (data.data) {
-        data.data.forEach(staff => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${staff.id}</td>
-                <td>${staff.branchName}</td>
-                <td>${staff.email}</td>
-                <td>${staff.name}</td>
-                <td>${staff.phone}</td>
-                <td><button onclick='showEditForm(${JSON.stringify(staff)})'>Update</button></td>
-                <td><button style="background-color:red" onclick="deleteStaff(${staff.id})">Delete</button></td>
-            `;
-            tbody.appendChild(row);
-        });
+function ajaxRequest(method, url, data, callback) {
+    const xhr = new XMLHttpRequest();
+    xhr.open(method, url, true);
+    xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('token'));
+    if (method !== 'GET') {
+        xhr.setRequestHeader('Content-Type', 'application/json');
     }
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            callback(xhr.status, xhr.responseText);
+        }
+    };
+    xhr.send(data ? JSON.stringify(data) : null);
 }
 
-async function addStaff() {
+function loadStaffList() {
+    ajaxRequest('GET', `${API_BASE}/user/admin/staff/all`, null, function (status, responseText) {
+        if (status === 200) {
+            const data = JSON.parse(responseText);
+            const tbody = document.querySelector('tbody');
+            tbody.innerHTML = '';
+
+            if (data.data) {
+                data.data.forEach(staff => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${staff.id}</td>
+                        <td>${staff.branchName}</td>
+                        <td>${staff.email}</td>
+                        <td>${staff.name}</td>
+                        <td>${staff.phone}</td>
+                        <td><button onclick='showEditForm(${JSON.stringify(staff)})'>Update</button></td>
+                        <td><button style="background-color:red" onclick="deleteStaff(${staff.id})">Delete</button></td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+        } else {
+            console.error('Failed to load staff list');
+        }
+    });
+}
+
+function addStaff() {
     const body = {
         name: document.getElementById('name-add').value,
         email: document.getElementById('email-add').value,
@@ -63,32 +78,24 @@ async function addStaff() {
         return;
     }
 
-    try {
-        const response = await fetch(`${API_BASE}/auth/admin/add/staff`, {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem("token")
-            },
-            body: JSON.stringify(body)
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            alert("Thêm staff thành công!");
-            showTab('cars');
-            loadStaffList();
+    ajaxRequest('POST', `${API_BASE}/auth/admin/add/staff`, body, function (status, responseText) {
+        if (status === 200) {
+            const data = JSON.parse(responseText);
+            if (data.success) {
+                alert("Thêm staff thành công!");
+                showTab('cars');
+                loadStaffList();
+            } else {
+                alert("Lỗi: " + (data.message || "Thêm thất bại"));
+            }
         } else {
-            alert("Lỗi: " + (data.message || "Thêm thất bại"));
+            console.error(responseText);
+            alert("Lỗi kết nối server");
         }
-    } catch (err) {
-        console.error(err);
-        alert("Lỗi kết nối server");
-    }
+    });
 }
 
-async function updateStaff() {
+function updateStaff() {
     const id = document.getElementById('fix-car').getAttribute('data-id');
     const body = {
         id: id,
@@ -98,28 +105,25 @@ async function updateStaff() {
         branchName: document.getElementById('branch-update').value
     };
 
-    await fetch(`${API_BASE}/user/admin/staff/update`, {
-        method: 'PUT',
-        headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem("token")
-        },
-        body: JSON.stringify(body)
+    ajaxRequest('PUT', `${API_BASE}/user/admin/staff/update`, body, function (status, responseText) {
+        if (status === 200) {
+            showTab('cars');
+            loadStaffList();
+        } else {
+            console.error('Failed to update staff:', responseText);
+        }
     });
-
-    showTab('cars');
-    loadStaffList();
 }
 
-async function deleteStaff(id) {
+function deleteStaff(id) {
     if (confirm("Bạn có chắc muốn xoá nhân viên này?")) {
-        await fetch(`${API_BASE}/user/admin/block/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem("token")
+        ajaxRequest('DELETE', `${API_BASE}/user/admin/block/${id}`, null, function (status, responseText) {
+            if (status === 200) {
+                loadStaffList();
+            } else {
+                console.error('Failed to delete staff:', responseText);
             }
         });
-        loadStaffList();
     }
 }
 

@@ -6,56 +6,57 @@ function showToast(title, message, type, duration) {
         gravity: "top",
         position: "right",
         style: {
-            backgroundColor: type == "success" ? "green" : type == "error" ? "red" : "yellow",
+            backgroundColor: type === "success" ? "green" : type === "error" ? "red" : "yellow",
         }
     }).showToast();
 }
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', function() {
     localStorage.clear();
 
-    $("#form").on("submit", function(event) {
+    const form = document.getElementById('form');
+    form.addEventListener('submit', function(event) {
         event.preventDefault();
-        
-        let email = $("#email").val();
-        let password = $("#password").val();
+
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
 
         const request = {
             email: email,
             password: password
         };
 
-        $.ajax({
-            type: "POST",
-            url: "http://localhost:8080/auth/public/login",
-            contentType: "application/json",
-            data: JSON.stringify(request),
-            credentials: "include",
-            success: function(response) {
-                if(response.success){
-                    localStorage.setItem("token", response.data.token);
-                    showToast("Success", response.message, "success", 1000);
-                    if(response.data.role === "ADMIN"){
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:8080/auth/public/login', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) { // done
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.success) {
+                        localStorage.setItem('token', response.data.token);
+                        showToast("Success", response.message, "success", 1000);
+
                         setTimeout(function() {
-                            window.location.href = "../html/product.html";
+                            if (response.data.role === "ADMIN") {
+                                window.location.href = "../html/product.html";
+                            } else if (response.data.role === "STAFF") {
+                                window.location.href = "../html/payment.html";
+                            } else {
+                                window.location.href = "../html/home.html";
+                            }
                         }, 1000);
-                    }else if(response.data.role === "STAFF"){
-                        setTimeout(function() {
-                            window.location.href = "../html/payment.html";
-                        }, 1000);
-                    }else{
-                        setTimeout(function() {
-                            window.location.href = "../html/home.html";
-                        }, 1000); 
+
+                    } else {
+                        showToast("Server error", response.message, "error");
                     }
-                    
                 } else {
-                    showToast("Server error", response.message, "error");
+                    console.error('Client error:', xhr.statusText);
                 }
-            },
-            error: function(error){
-                console.error("Client error: " + error);
-            },
-        });
+            }
+        };
+
+        xhr.send(JSON.stringify(request));
     });
 });
