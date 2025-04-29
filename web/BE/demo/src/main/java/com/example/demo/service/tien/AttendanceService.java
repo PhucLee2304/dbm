@@ -29,9 +29,9 @@ public class AttendanceService implements AttendanceInterface {
 
     @Override
     @Transactional
-    public ResponseData checkIn(Long staffId) {
+    public ResponseData checkIn(String staffEmail) {
         try {
-            TimeSheet timeSheet = getOrCreateTimeSheet(staffId);
+            TimeSheet timeSheet = getOrCreateTimeSheet(staffEmail);
             LocalDate today = LocalDate.now();
             
             Optional<RecordDay> existingRecordOpt = recordDayRepository.findByTimeSheetIdAndDay(
@@ -48,7 +48,6 @@ public class AttendanceService implements AttendanceInterface {
             recordDay.setKeyRecordDay(keyRecordDay);
             recordDay.setTimeSheet(timeSheet);
             recordDay.setCheckin(now);
-            recordDay.setCheckout(now); // temp because its not-nullable
             if (now.getHour() < 7 || (now.getHour() == 7 && now.getMinute() == 0 && now.getSecond() == 0)) {
                 recordDay.setStatus(AttendanceStatus.ONTIME);
             } else {
@@ -63,53 +62,49 @@ public class AttendanceService implements AttendanceInterface {
         }
     }
 
-     @Override
-     @Transactional
-     public ResponseData checkOut(Long staffId) {
-//         try {
-//             TimeSheet timeSheet = getOrCreateTimeSheet(staffId);
-//             LocalDate today = LocalDate.now();
-//
-//             Optional<RecordDay> existingRecordOpt = recordDayRepository.findByTimeSheetIdAndDay(
-//                     timeSheet.getId(), today);
-//
-//             if (existingRecordOpt.isEmpty()) {
-//                 return ResponseData.error("No check-in record found for today");
-//             }
-//
-//             RecordDay recordDay = existingRecordOpt.get();
-//
-//             // Check if user has already checked out (checkout time is different from checkin time)
-//             if (!recordDay.getCheckout().equals(recordDay.getCheckin())) {
-//                 return ResponseData.error("You have already checked out today");
-//             }
-//
-//             LocalDateTime now = LocalDateTime.now();
-//             recordDay.setCheckout(now);
-//             if (now.getHour() > 17 || (now.getHour() == 17 && now.getMinute() > 0)) {
-//                 recordDay.setStatus(AttendanceStatus.ONTIME);
-//             } else {
-//                 if(recordDay.getStatus() == AttendanceStatus.LATE)
-//                     recordDay.setStatus(AttendanceStatus.LATE_AND_EARLY_LEAVE);
-//                 else
-//                     recordDay.setStatus(AttendanceStatus.EARLY_LEAVE);
-//             }
-//
-//             recordDayRepository.save(recordDay);
-//
-//             return ResponseData.success("Check-out successful", recordDay);
-//         } catch (Exception e) {
-//             return ResponseData.error("Check-out failed: " + e.getMessage());
-//         }
-         return null;
-     }
+    @Override
+    @Transactional
+    public ResponseData checkOut(String staffEmail) {
+        try {
+            TimeSheet timeSheet = getOrCreateTimeSheet(staffEmail);
+            LocalDate today = LocalDate.now();
+
+            Optional<RecordDay> existingRecordOpt = recordDayRepository.findByTimeSheetIdAndDay(
+                    timeSheet.getId(), today);
+
+            if (existingRecordOpt.isEmpty()) {
+                return ResponseData.error("No check-in record found for today");
+            }
+
+            RecordDay recordDay = existingRecordOpt.get();
+
+            if (recordDay.getCheckout() != null) {
+                return ResponseData.error("You have already checked out today");
+            }
+
+            LocalDateTime now = LocalDateTime.now();
+            recordDay.setCheckout(now);
+            recordDayRepository.saveAndFlush(recordDay);
+            if (now.getHour() > 17 || (now.getHour() == 17 && now.getMinute() > 0)) {
+                recordDay.setStatus(AttendanceStatus.ONTIME);
+            } else {
+                if(recordDay.getStatus() == AttendanceStatus.LATE)
+                    recordDay.setStatus(AttendanceStatus.LATE_AND_EARLY_LEAVE);
+                else
+                    recordDay.setStatus(AttendanceStatus.EARLY_LEAVE);
+            }
+            return ResponseData.success("Check-out successful", recordDay);
+        } catch (Exception e) {
+            return ResponseData.error("Check-out failed: " + e.getMessage());
+        }
+    }
     
-    private TimeSheet getOrCreateTimeSheet(Long staffId) {
-        Optional<TimeSheet> timeSheetOpt = timeSheetRepository.findByStaffId(staffId);
+    private TimeSheet getOrCreateTimeSheet(String staffEmail) {
+        Staff staff = staffRepository.findByUserEmail(staffEmail)
+                .orElseThrow(() -> new RuntimeException("Staff not found with id: " + staffEmail));
+        Optional<TimeSheet> timeSheetOpt = timeSheetRepository.findByStaffId(staff.getId());
         if (timeSheetOpt.isEmpty()) {
             TimeSheet newTimeSheet = new TimeSheet();
-            Staff staff = staffRepository.findById(staffId)
-                .orElseThrow(() -> new RuntimeException("Staff not found with id: " + staffId));
             newTimeSheet.setStaff(staff);
             return timeSheetRepository.save(newTimeSheet);
         }

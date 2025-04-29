@@ -19,14 +19,14 @@ public class AttendanceController {
     }
 
     @PostMapping("/checkin")
-    public ResponseEntity<?> checkIn(@RequestParam Long staffId) {
-        ResponseData responseData = attendanceInterface.checkIn(staffId);
+    public ResponseEntity<?> checkIn(@RequestParam String staffEmail) {
+        ResponseData responseData = attendanceInterface.checkIn(staffEmail);
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 
-//    @PostMapping("/checkout")
-//    public ResponseEntity<?> checkOut(@RequestParam Long staffId) {
-//        ResponseData responseData = attendanceInterface.checkOut(staffId);
-//        return new ResponseEntity<>(responseData, HttpStatus.OK);
-//    }
+    @PostMapping("/checkout")
+    public ResponseEntity<?> checkOut(@RequestParam String staffEmail) {
+        ResponseData responseData = attendanceInterface.checkOut(staffEmail);
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
 }
