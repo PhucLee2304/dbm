@@ -71,6 +71,10 @@ async function fetchProductDetail() {
     try {
         const response = await fetch(`http://localhost:8080/home/public/product/${productId}`);
         const data = await response.json();
+        
+        // Lưu thông tin sản phẩm vào localStorage để sử dụng ở trang đặt hàng
+        localStorage.setItem('selectedProduct', JSON.stringify(data.data));
+        
         productDetail.innerHTML = `
             <img src="${data.data.name}" alt="${data.data.name}">
             <div class="product-info">
@@ -79,12 +83,23 @@ async function fetchProductDetail() {
                 <p><strong>Price:</strong> ${data.data.price} VND</p>
                 <p><strong>Supplier:</strong> ${data.data.supplierName}</p>
                 <p><strong>Stock:</strong> ${data.data.stock} VND</p>
-                <button class="buy-button" onclick="">Buy</button>
+                <button class="buy-button" onclick="goToOrderPage()">Buy</button>
             </div>
         `;
     } catch (error) {
         productDetail.innerHTML = "<h2>Error loading product details</h2>";
         console.error("Error fetching product details:", error);
+    }
+}
+
+// Hàm chuyển hướng đến trang đặt hàng online
+function goToOrderPage() {
+    const selectedProduct = JSON.parse(localStorage.getItem('selectedProduct'));
+    if (selectedProduct) {
+        // Chuyển hướng đến trang đặt hàng với thông tin sản phẩm
+        window.location.href = `online-order.html?productId=${selectedProduct.id}&productName=${encodeURIComponent(selectedProduct.name)}&productPrice=${selectedProduct.price}&productImage=${encodeURIComponent(selectedProduct.name)}`;
+    } else {
+        alert("Không thể tìm thấy thông tin sản phẩm. Vui lòng thử lại.");
     }
 }
 

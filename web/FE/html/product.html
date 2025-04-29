@@ -54,19 +54,36 @@
             <input type="text" id="product-name" required>
 
             <label>Category:</label>
-            <input type="text" id="product-category" required>
+            <select id="product-category" required>
+                <option value="">-- Select Category --</option>
+            </select>
 
             <label>Supplier:</label>
-            <input type="text" id="product-supplier" required>
+            <select id="product-supplier" required>
+                <option value="">-- Select Supplier --</option>
+            </select>
 
             <label>Price:</label>
             <input type="number" id="product-price" step="0.01" required>
 
             <div id="branch-stocks">
                 <h3>Branch Stocks</h3>
-                <!-- Branch inputs will be added here dynamically -->
+                <div class="branch-input">
+                    <input type="hidden" class="branch-id" value="1">
+                    <label>ONLINE</label>
+                    <input type="number" class="stock-input" min="0" placeholder="0">
+                </div>
+                <div class="branch-input">
+                    <input type="hidden" class="branch-id" value="2">
+                    <label>VINHPHUC</label>
+                    <input type="number" class="stock-input" min="0" placeholder="0">
+                </div>
+                <div class="branch-input">
+                    <input type="hidden" class="branch-id" value="3">
+                    <label>PHUTHO</label>
+                    <input type="number" class="stock-input" min="0" placeholder="0">
+                </div>
             </div>
-            <button type="button" id="add-branch">Add Branch Stock</button>
 
             <button type="submit" id="save-btn">Save</button>
         </form>
