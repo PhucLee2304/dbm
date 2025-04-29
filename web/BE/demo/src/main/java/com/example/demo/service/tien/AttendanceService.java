@@ -29,9 +29,9 @@ public class AttendanceService implements AttendanceInterface {
 
     @Override
     @Transactional
-    public ResponseData checkIn(Long staffId) {
+    public ResponseData checkIn(String staffEmail) {
         try {
-            TimeSheet timeSheet = getOrCreateTimeSheet(staffId);
+            TimeSheet timeSheet = getOrCreateTimeSheet(staffEmail);
             LocalDate today = LocalDate.now();
             
             Optional<RecordDay> existingRecordOpt = recordDayRepository.findByTimeSheetIdAndDay(
@@ -64,9 +64,9 @@ public class AttendanceService implements AttendanceInterface {
 
     @Override
     @Transactional
-    public ResponseData checkOut(Long staffId) {
+    public ResponseData checkOut(String staffEmail) {
         try {
-            TimeSheet timeSheet = getOrCreateTimeSheet(staffId);
+            TimeSheet timeSheet = getOrCreateTimeSheet(staffEmail);
             LocalDate today = LocalDate.now();
 
             Optional<RecordDay> existingRecordOpt = recordDayRepository.findByTimeSheetIdAndDay(
@@ -99,12 +99,12 @@ public class AttendanceService implements AttendanceInterface {
         }
     }
     
-    private TimeSheet getOrCreateTimeSheet(Long staffId) {
-        Optional<TimeSheet> timeSheetOpt = timeSheetRepository.findByStaffId(staffId);
+    private TimeSheet getOrCreateTimeSheet(String staffEmail) {
+        Staff staff = staffRepository.findByUserEmail(staffEmail)
+                .orElseThrow(() -> new RuntimeException("Staff not found with id: " + staffEmail));
+        Optional<TimeSheet> timeSheetOpt = timeSheetRepository.findByStaffId(staff.getId());
         if (timeSheetOpt.isEmpty()) {
             TimeSheet newTimeSheet = new TimeSheet();
-            Staff staff = staffRepository.findById(staffId)
-                .orElseThrow(() -> new RuntimeException("Staff not found with id: " + staffId));
             newTimeSheet.setStaff(staff);
             return timeSheetRepository.save(newTimeSheet);
         }
