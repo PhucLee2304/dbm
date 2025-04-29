@@ -3,103 +3,247 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đặt Hàng Online - Tạm Thời</title>
+    <title>Đặt Hàng Online</title>
     <link rel="stylesheet" href="../css/online-order.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        .order-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .product-info {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+
+        .product-image {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .product-details {
+            flex: 1;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .quantity-btn {
+            padding: 5px 15px;
+            border: 1px solid #ddd;
+            background: #f5f5f5;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .quantity-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .quantity-input {
+            width: 60px;
+            text-align: center;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .recipient-info {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+
+        .recipient-info h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .info-item {
+            margin-bottom: 15px;
+        }
+
+        .info-item .label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .info-item .value {
+            padding: 8px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            border: 1px solid #eee;
+        }
+
+        .order-summary {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .order-summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+        }
+
+        .order-button {
+            width: 100%;
+            padding: 12px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .order-button:hover {
+            background: #45a049;
+        }
+
+        .order-button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .continue-btn {
+            width: 100%;
+            padding: 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .continue-btn:hover {
+            background: #45a049;
+        }
+
+        .status-pending {
+            color: white;
+            font-weight: bold;
+            background-color: #f44336;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Đặt Hàng Online</h1>
-            <nav>
-                <ul>
-                    <li><a href="./home.html">Trang chủ</a></li>
-                    <li><a href="./product.html">Sản phẩm</a></li>
-                    <li><a href="./online-order.html" class="active">Đặt hàng</a></li>
-                </ul>
-            </nav>
-        </header>
+    <div class="order-container">
+        <h1>Đặt hàng online</h1>
         
-        <main>
-            <div class="product-selection">
-                <h2>Chọn sản phẩm</h2>
-                <div class="search-container">
-                    <input type="text" id="productSearch" placeholder="Tìm kiếm sản phẩm...">
-                    <ul id="productResults" class="product-results"></ul>
+        <div class="product-info">
+            <img id="productImage" class="product-image" src="" alt="Product Image">
+            <div class="product-details">
+                <h2 id="productName"></h2>
+                <p id="productPrice"></p>
+                <div class="quantity-controls">
+                    <button class="quantity-btn" id="decreaseQuantity">-</button>
+                    <input type="number" id="quantity" class="quantity-input" value="1" min="1">
+                    <button class="quantity-btn" id="increaseQuantity">+</button>
                 </div>
-                
-                <div class="selected-product-container">
-                    <div class="product-card" id="selectedProductCard">
-                        <div class="product-image">
-                            <img id="productImage" src="https://via.placeholder.com/150" alt="Chưa chọn sản phẩm">
-                        </div>
-                        <div class="product-info">
-                            <h3 id="productName">Chọn sản phẩm</h3>
-                            <p id="productPrice">0 VND</p>
-                            <div class="quantity-selector">
-                                <label for="quantity">Số lượng:</label>
-                                <div class="quantity-control">
-                                    <button id="decreaseQuantity" disabled>-</button>
-                                    <input type="number" id="quantity" min="1" value="1" disabled>
-                                    <button id="increaseQuantity" disabled>+</button>
-                                </div>
-                            </div>
-                            <input type="hidden" id="productId" value="">
-                        </div>
-                    </div>
-                </div>
+                <input type="hidden" id="productId" value="">
             </div>
-            
-            <div class="order-summary">
-                <h2>Thông tin đơn hàng</h2>
-                
-                <div class="summary-item">
-                    <span>Giá sản phẩm:</span>
-                    <span id="productSubtotal">0 VND</span>
-                </div>
-                
-                <div class="summary-item">
-                    <span>Phí vận chuyển (10%):</span>
-                    <span id="shippingFee">0 VND</span>
-                </div>
-                
-                <div class="summary-item total">
-                    <span>Tổng cộng:</span>
-                    <span id="totalPrice">0 VND</span>
-                </div>
-                
-                <button id="orderButton" class="order-btn" disabled>Đặt hàng</button>
+        </div>
+
+        <div class="order-summary">
+            <h3>Tổng đơn hàng</h3>
+            <div class="order-summary-item">
+                <span>Tổng tiền hàng:</span>
+                <span id="productSubtotal">0 VND</span>
             </div>
-        </main>
-        
-        <!-- Modal thông báo đặt hàng thành công -->
-        <div id="orderSuccessModal" class="modal">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <h2>Đặt hàng thành công!</h2>
-                <div id="orderDetails">
-                    <p><strong>Mã đơn hàng:</strong> <span id="orderId"></span></p>
-                    <p><strong>Người nhận:</strong> <span id="recipientName"></span></p>
-                    <p><strong>Địa chỉ:</strong> <span id="recipientAddress"></span></p>
-                    <p><strong>Số điện thoại:</strong> <span id="recipientPhone"></span></p>
-                    <p><strong>Sản phẩm:</strong> <span id="orderProductName"></span></p>
-                    <p><strong>Số lượng:</strong> <span id="orderQuantity"></span></p>
-                    <p><strong>Giá tiền:</strong> <span id="orderPrice"></span> VND</p>
-                    <p><strong>Phí vận chuyển:</strong> <span id="orderShippingFee"></span> VND</p>
-                    <p><strong>Tổng cộng:</strong> <span id="orderTotal"></span> VND</p>
-                    <p><strong>Trạng thái:</strong> <span class="status-pending">Đang xử lý</span></p>
-                </div>
-                <button id="continueShoppingBtn" class="continue-btn">Tiếp tục mua sắm</button>
+            <div class="order-summary-item">
+                <span>Phí vận chuyển:</span>
+                <span id="shippingFee">0 VND</span>
             </div>
+            <div class="order-summary-item">
+                <strong>Tổng cộng:</strong>
+                <strong id="totalPrice">0 VND</strong>
+            </div>
+        </div>
+
+        <button id="orderButton" class="order-button">Đặt hàng</button>
+    </div>
+
+    <!-- Modal thông báo đặt hàng thành công -->
+    <div id="orderSuccessModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Đặt hàng thành công!</h2>
+            <div id="orderDetails">
+                <p><strong>Mã đơn hàng:</strong> <span id="orderId"></span></p>
+                <p><strong>Sản phẩm:</strong> <span id="orderProductName"></span></p>
+                <p><strong>Số lượng:</strong> <span id="orderQuantity"></span></p>
+                <p><strong>Giá tiền:</strong> <span id="orderPrice"></span> VND</p>
+                <p><strong>Phí vận chuyển:</strong> <span id="orderShippingFee"></span> VND</p>
+                <p><strong>Tổng cộng:</strong> <span id="orderTotal"></span> VND</p>
+                <p><strong>Trạng thái:</strong> <span class="status-pending">Đang xử lý</span></p>
+            </div>
+            <button id="continueShoppingBtn" class="continue-btn">Tiếp tục mua sắm</button>
         </div>
     </div>
 
-    <footer>
-        <p>&copy; 2025 Cửa hàng của bạn. Tất cả quyền được bảo lưu.</p>
-    </footer>
-
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="../js/online-order.js"></script>
 </body>
-</html>
+</html> 

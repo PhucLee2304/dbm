@@ -222,12 +222,26 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function displayReceipt(order) {
-        // console.log("Order data received:", order); // Log dữ liệu nhận được để kiểm tra cấu trúc
+        console.log("Order data received:", order); // Bật log để kiểm tra cấu trúc dữ liệu
         
         let productsHtml = '';
         
         // Hiển thị chi tiết đơn hàng
-        if (order.orderDetails && order.orderDetails.length > 0) {
+        if (order.details && order.details.length > 0) {
+            // Tính giá từ thông tin sản phẩm và số lượng
+            const productPrices = {};
+            
+            // Lưu giá sản phẩm từ các sản phẩm đã chọn trước đó
+            Object.keys(selectedProducts).forEach(id => {
+                productPrices[selectedProducts[id].name] = selectedProducts[id].price;
+            });
+            
+            order.details.forEach(item => {
+                // Tính giá cho mỗi sản phẩm dựa trên productPrices hoặc từ thông tin trả về
+                const price = item.price || (productPrices[item.productName] * item.quantity) || 0;
+                productsHtml += `<p>Sản phẩm: ${item.productName}, Số lượng: ${item.quantity}, Giá: ${price.toLocaleString('vi-VN')} VND</p>`;
+            });
+        } else if (order.orderDetails && order.orderDetails.length > 0) {
             order.orderDetails.forEach(item => {
                 // Xử lý truy cập an toàn đến thông tin sản phẩm
                 let productName = 'Không có thông tin';
@@ -260,29 +274,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Lấy thông tin chi nhánh
         let branchName = 'N/A';
-        if (order.branch && order.branch.name) {
-            branchName = order.branch.name;
-        } else if (order.branchName) {
+        if (order.branchName) {
             branchName = order.branchName;
+        } else if (order.branch && order.branch.name) {
+            branchName = order.branch.name;
         } else if (localStorage.getItem('branchName')) {
             branchName = localStorage.getItem('branchName');
         }
 
-        // Lấy thông tin nhân viên
-        let staffName = 'N/A';
-        if (order.staff && order.staff.name) {
-            staffName = order.staff.name;
-        } else if (order.staffName) {
-            staffName = order.staffName;
-        } else if (localStorage.getItem('userName')) {
-            staffName = localStorage.getItem('userName');
+        // Lấy mã đơn hàng
+        let orderId = 'N/A';
+        if (order.orderId) {
+            orderId = order.orderId;
+        } else if (order.id) {
+            orderId = order.id;
+        }
+
+        // Lấy mã nhân viên (nhưng không hiển thị trong hóa đơn)
+        let staffCode = '';
+        if (order.staffCode) {
+            staffCode = order.staffCode;
         }
 
         receiptDiv.innerHTML = `
             <h2>Hóa đơn</h2>
             <p>Chi nhánh: ${branchName}</p>
-            <p>Mã đơn hàng: ${order.id || 'N/A'}</p>
-            <p>Nhân viên: ${staffName}</p>
+            <p>Mã đơn hàng: ${orderId}</p>
             ${productsHtml}
             <p>Tổng tiền: ${(order.total || 0).toLocaleString('vi-VN')} VND</p>
             <p>Ngày tạo: ${order.created ? new Date(order.created).toLocaleString('vi-VN') : new Date().toLocaleString('vi-VN')}</p>
