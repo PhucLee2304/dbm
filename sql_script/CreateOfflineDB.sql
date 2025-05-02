@@ -1,6 +1,6 @@
-﻿--CREATE DATABASE OnlineDB;
+--CREATE DATABASE OfflineDB;
 
-USE OnlineDB;
+USE OfflineDB;
 
 --CREATE TABLE user_table (
     --id BIGINT IDENTITY(1,1) PRIMARY KEY,
@@ -19,14 +19,14 @@ USE OnlineDB;
 --    FOREIGN KEY (user_id) REFERENCES user_table(id)
 --);
 
---CREATE TABLE staff (
---    id BIGINT IDENTITY(1,1) PRIMARY KEY,
---    code VARCHAR(255) NOT NULL UNIQUE,
---    expiry_date DATE NOT NULL,
---    salary FLOAT NOT NULL CHECK (salary >= 0),
---    user_id BIGINT,
---    FOREIGN KEY (user_id) REFERENCES user_table(id)
---);
+CREATE TABLE Staff (
+    id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    code VARCHAR(255) NOT NULL UNIQUE,
+    expiry_date DATE NOT NULL,
+    salary FLOAT NOT NULL CHECK (salary >= 0),
+    --user_id BIGINT,
+    --FOREIGN KEY (user_id) REFERENCES user_table(id)
+);
 
 CREATE TABLE Category (
     id BIGINT IDENTITY(1,1) PRIMARY KEY,
@@ -45,6 +45,7 @@ CREATE TABLE Product (
     price FLOAT NOT NULL CHECK (price >= 0),
     category_id BIGINT,
     supplier_id BIGINT,
+	stock BIGINT,
     FOREIGN KEY (category_id) REFERENCES Category(id),
     --FOREIGN KEY (supplier_id) REFERENCES supplier(id)
 );
@@ -56,11 +57,13 @@ CREATE TABLE OrderTable (
     status VARCHAR(255) NOT NULL CHECK (status IN ('CANCELLED', 'COMPLETED', 'PENDING')),
     subtotal FLOAT NOT NULL CHECK (subtotal >= 0),
     total FLOAT NOT NULL,
-	note NVARCHAR(255),
-    recipient_address NVARCHAR(255) NOT NULL,
-    recipient_name NVARCHAR(255) NOT NULL,
-    recipient_phone VARCHAR(255) NOT NULL,
+	--note NVARCHAR(255),
+    --recipient_address NVARCHAR(255) NOT NULL,
+    --recipient_name NVARCHAR(255) NOT NULL,
+    --recipient_phone VARCHAR(255) NOT NULL,
     customer_id BIGINT,
+	staff_id BIGINT,
+	FOREIGN KEY (staff_id) REFERENCES Staff(id)
     --FOREIGN KEY (customer_id) REFERENCES user_table(id)
 );
 
@@ -74,18 +77,19 @@ CREATE TABLE OrderDetail (
     FOREIGN KEY (product_id) REFERENCES Product(id)
 );
 
---CREATE TABLE time_sheet (
---    id BIGINT IDENTITY(1,1) PRIMARY KEY,
---    staff_id BIGINT,
---    FOREIGN KEY (staff_id) REFERENCES staff(id)
---);
+CREATE TABLE TimeSheet (
+	id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    staff_id BIGINT,
+    --FOREIGN KEY (staff_id) REFERENCES staff(id)
+);
 
---CREATE TABLE record_day (
---    day DATE NOT NULL,
---    time_sheet_id BIGINT NOT NULL,
---    checkin DATETIME2(6) NOT NULL,
---    checkout DATETIME2(6) NOT NULL,
---    status VARCHAR(255) NOT NULL CHECK (status IN ('ABSENT', 'LATE', 'ONTIME')),
---    PRIMARY KEY (day, time_sheet_id),
---    FOREIGN KEY (time_sheet_id) REFERENCES time_sheet(id)
---);
+CREATE TABLE RecordDay (
+    day DATE NOT NULL,
+    time_sheet_id BIGINT NOT NULL,
+    checkin DATETIME2(6) NOT NULL,
+    checkout DATETIME2(6) NOT NULL,
+    in_status VARCHAR(255) CHECK (in_status IN ('LATE', 'ONTIME')),
+	out_status VARCHAR(255) CHECK (out_status IN ('EARLY', 'ONTIME')),
+    PRIMARY KEY (day, time_sheet_id),
+    FOREIGN KEY (time_sheet_id) REFERENCES TimeSheet(id)
+);

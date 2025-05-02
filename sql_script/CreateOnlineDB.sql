@@ -45,7 +45,8 @@ CREATE TABLE Product (
     price FLOAT NOT NULL CHECK (price >= 0),
     category_id BIGINT,
     supplier_id BIGINT,
-    FOREIGN KEY (category_id) REFERENCES Category(id),
+	stock BIGINT,
+    FOREIGN KEY (category_id) REFERENCES category(id),
     --FOREIGN KEY (supplier_id) REFERENCES supplier(id)
 );
 
@@ -70,8 +71,8 @@ CREATE TABLE OrderDetail (
     quantity INT NOT NULL CHECK (quantity > 0),
     price FLOAT NOT NULL CHECK (price >= 0),
     PRIMARY KEY (order_id, product_id),
-    --FOREIGN KEY (order_id) REFERENCES order_table(id),
-    FOREIGN KEY (product_id) REFERENCES Product(id)
+    FOREIGN KEY (order_id) REFERENCES OrderTable(id),
+    FOREIGN KEY (product_id) REFERENCES product(id)
 );
 
 --CREATE TABLE time_sheet (

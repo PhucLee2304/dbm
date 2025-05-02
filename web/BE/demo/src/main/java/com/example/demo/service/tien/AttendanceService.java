@@ -89,9 +89,9 @@ public class AttendanceService implements AttendanceInterface {
                 recordDay.setStatus(AttendanceStatus.ONTIME);
             } else {
                 if(recordDay.getStatus() == AttendanceStatus.LATE)
-                    recordDay.setStatus(AttendanceStatus.LATE_AND_EARLY_LEAVE);
+                    recordDay.setStatus(AttendanceStatus.ONTIME);
                 else
-                    recordDay.setStatus(AttendanceStatus.EARLY_LEAVE);
+                    recordDay.setStatus(AttendanceStatus.ONTIME);
             }
             return ResponseData.success("Check-out successful", recordDay);
         } catch (Exception e) {

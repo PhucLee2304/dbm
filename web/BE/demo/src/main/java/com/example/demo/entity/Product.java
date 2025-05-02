@@ -24,7 +24,7 @@ public class Product {
     @JoinColumn(name = "supplier_id", nullable = true)
     Supplier supplier;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     String name;
 
     @Column(nullable = false)

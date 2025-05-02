@@ -28,10 +28,10 @@ public class RecordDay {
     @JsonBackReference
     TimeSheet timeSheet;
 
-    @Column(nullable = false, updatable = false)
+    @Column(updatable = false)
     LocalDateTime checkin;
 
-    @Column()
+    @Column(updatable = false)
     LocalDateTime checkout;
 
     @Enumerated(EnumType.STRING)
