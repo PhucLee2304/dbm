@@ -43,4 +43,16 @@ public class OrderController {
         ResponseData responseData = orderInterface.addOrderOffline(request);
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllOrders() {
+        ResponseData responseData = orderInterface.getAllOrders();
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getOrderById(@PathVariable Long id) {
+        ResponseData responseData = orderInterface.getOrderById(id);
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
 }

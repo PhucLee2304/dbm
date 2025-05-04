@@ -2,10 +2,12 @@ package com.example.demo.service.hieu;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.example.demo.dto.hieu.OrderOfflineDTO;
 import com.example.demo.dto.hieu.OrderOfflineDetailDTO;
@@ -265,6 +267,123 @@ public class OrderService implements OrderInterface {
 //            return ResponseData.success("Add new order offline successfully", order);
             return ResponseData.success("Add new order offline successfully", toOrderOfflineDTO(orderOffline, orderDetails));
 
+        } catch (Exception e) {
+            return ResponseData.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseData getAllOrders() {
+        try {
+            ResponseData getUserInfoResponse = userUtil.getUserInfo();
+            if (!getUserInfoResponse.isSuccess()) {
+                return getUserInfoResponse;
+            }
+            User user = (User) getUserInfoResponse.getData();
+            
+            List<Order> orders = orderRepository.findAll();
+            if (orders.isEmpty()) {
+                return ResponseData.success("No orders found", Collections.emptyList());
+            }
+            
+            // Convert orders to DTOs with additional information
+            List<Map<String, Object>> orderDTOs = new ArrayList<>();
+            for (Order order : orders) {
+                Map<String, Object> orderDTO = new HashMap<>();
+                orderDTO.put("id", order.getId());
+                orderDTO.put("subtotal", order.getSubtotal());
+                orderDTO.put("shippingFee", order.getShippingFee());
+                orderDTO.put("total", order.getTotal());
+                orderDTO.put("created", order.getCreated());
+                orderDTO.put("status", order.getStatus());
+                
+                // Check if it's an offline order
+                Optional<OrderOffline> orderOfflineOpt = orderOfflineRepository.findById(order.getId());
+                if (orderOfflineOpt.isPresent()) {
+                    OrderOffline orderOffline = orderOfflineOpt.get();
+                    Staff staff = orderOffline.getStaff();
+                    orderDTO.put("type", "OFFLINE");
+                    orderDTO.put("staff", staff);
+                    orderDTO.put("branch", staff.getBranch());
+                } else {
+                    // Check if it's an online order
+                    Optional<OrderOnline> orderOnlineOpt = orderOnlineRepository.findById(order.getId());
+                    if (orderOnlineOpt.isPresent()) {
+                        OrderOnline orderOnline = orderOnlineOpt.get();
+                        Customer customer = orderOnline.getCustomer();
+                        orderDTO.put("type", "ONLINE");
+                        orderDTO.put("customer", customer);
+                        orderDTO.put("recipientName", orderOnline.getRecipientName());
+                        orderDTO.put("recipientPhone", orderOnline.getRecipientPhone());
+                        orderDTO.put("recipientAddress", orderOnline.getRecipientAddress());
+                    }
+                }
+                
+                // Get order details
+                List<OrderDetail> orderDetails = orderDetailRepository.findAll().stream()
+                    .filter(detail -> detail.getOrder().getId().equals(order.getId()))
+                    .collect(Collectors.toList());
+                orderDTO.put("orderDetails", orderDetails);
+                
+                orderDTOs.add(orderDTO);
+            }
+            
+            return ResponseData.success("Fetched all orders successfully", orderDTOs);
+        } catch (Exception e) {
+            return ResponseData.error(e.getMessage());
+        }
+    }
+    
+    @Override
+    public ResponseData getOrderById(Long id) {
+        try {
+            ResponseData getUserInfoResponse = userUtil.getUserInfo();
+            if (!getUserInfoResponse.isSuccess()) {
+                return getUserInfoResponse;
+            }
+            User user = (User) getUserInfoResponse.getData();
+            
+            Optional<Order> orderOpt = orderRepository.findById(id);
+            if (orderOpt.isEmpty()) {
+                return ResponseData.error("Order not found");
+            }
+            
+            Order order = orderOpt.get();
+            Map<String, Object> orderDTO = new HashMap<>();
+            orderDTO.put("id", order.getId());
+            orderDTO.put("subtotal", order.getSubtotal());
+            orderDTO.put("shippingFee", order.getShippingFee());
+            orderDTO.put("total", order.getTotal());
+            orderDTO.put("created", order.getCreated());
+            orderDTO.put("status", order.getStatus());
+            
+            // Check if it's an offline order
+            Optional<OrderOffline> orderOfflineOpt = orderOfflineRepository.findById(order.getId());
+            if (orderOfflineOpt.isPresent()) {
+                OrderOffline orderOffline = orderOfflineOpt.get();
+                Staff staff = orderOffline.getStaff();
+                orderDTO.put("type", "OFFLINE");
+                orderDTO.put("staff", staff);
+                orderDTO.put("branch", staff.getBranch());
+            } else {
+                // Check if it's an online order
+                Optional<OrderOnline> orderOnlineOpt = orderOnlineRepository.findById(order.getId());
+                if (orderOnlineOpt.isPresent()) {
+                    OrderOnline orderOnline = orderOnlineOpt.get();
+                    Customer customer = orderOnline.getCustomer();
+                    orderDTO.put("type", "ONLINE");
+                    orderDTO.put("customer", customer);
+                    orderDTO.put("recipientName", orderOnline.getRecipientName());
+                    orderDTO.put("recipientPhone", orderOnline.getRecipientPhone());
+                    orderDTO.put("recipientAddress", orderOnline.getRecipientAddress());
+                }
+            }
+            
+            // Get order details
+            List<OrderDetail> orderDetails = orderDetailRepository.findAllByOrderId(order.getId());
+            orderDTO.put("orderDetails", orderDetails);
+            
+            return ResponseData.success("Fetched order successfully", orderDTO);
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
         }

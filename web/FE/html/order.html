@@ -20,12 +20,47 @@
     <div class="main-content">
         <div class="content">
             <h1>Quản lý đơn hàng</h1>
-            <input type="text" id="searchInput" placeholder="Tìm kiếm đơn hàng...">
+            
+            <div class="search-container">
+                <div class="search-row">
+                    <input type="text" id="searchInput" placeholder="Tìm kiếm đơn hàng...">
+                    
+                    <div class="filter-group">
+                        <select id="typeFilter">
+                            <option value="">Tất cả loại</option>
+                            <option value="ONLINE">Online</option>
+                            <option value="OFFLINE">Offline</option>
+                        </select>
+                        
+                        <select id="statusFilter">
+                            <option value="">Tất cả trạng thái</option>
+                            <option value="PENDING">Đang xử lý</option>
+                            <option value="COMPLETED">Hoàn thành</option>
+                            <option value="CANCELLED">Đã hủy</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="search-row">
+                    <div class="date-range">
+                        <label for="startDate">Từ ngày:</label>
+                        <input type="date" id="startDate">
+                        
+                        <label for="endDate">Đến ngày:</label>
+                        <input type="date" id="endDate">
+                    </div>
+                    
+                    <button id="searchButton">Tìm kiếm</button>
+                    <button id="resetButton">Đặt lại</button>
+                </div>
+            </div>
+            
             <table id="ordersTable">
                 <thead>
                     <tr>
                         <th>Chi nhánh</th>
                         <th>Mã đơn hàng</th>
+                        <th>Loại</th>
                         <th>Khách hàng</th>
                         <th>Số điện thoại</th>
                         <th>Nhân viên</th>
@@ -50,6 +85,7 @@
             <div id="orderDetails">
                 <div class="order-info">
                     <p><strong>Mã đơn hàng:</strong> <span id="viewOrderID"></span></p>
+                    <p><strong>Loại đơn hàng:</strong> <span id="viewOrderType"></span></p>
                     <p><strong>Chi nhánh:</strong> <span id="viewBranchName"></span></p>
                     <p><strong>Khách hàng:</strong> <span id="viewCustomerName"></span></p>
                     <p><strong>Số điện thoại:</strong> <span id="viewPhone"></span></p>
