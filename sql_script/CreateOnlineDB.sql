@@ -72,7 +72,7 @@ CREATE TABLE OrderDetail (
     price FLOAT NOT NULL CHECK (price >= 0),
     PRIMARY KEY (order_id, product_id),
     FOREIGN KEY (order_id) REFERENCES OrderTable(id),
-    FOREIGN KEY (product_id) REFERENCES product(id)
+    FOREIGN KEY (product_id) REFERENCES Product(id)
 );
 
 --CREATE TABLE time_sheet (
