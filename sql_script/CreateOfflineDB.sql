@@ -61,7 +61,7 @@ CREATE TABLE OrderTable (
     --recipient_address NVARCHAR(255) NOT NULL,
     --recipient_name NVARCHAR(255) NOT NULL,
     --recipient_phone VARCHAR(255) NOT NULL,
-    customer_id BIGINT,
+    --customer_id BIGINT,
 	staff_id BIGINT,
 	FOREIGN KEY (staff_id) REFERENCES Staff(id)
     --FOREIGN KEY (customer_id) REFERENCES user_table(id)
