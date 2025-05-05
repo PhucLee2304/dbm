@@ -1,0 +1,12 @@
+--exec InsertCustomer
+--exec InsertSupplier
+--exec InsertCategory
+--exec InsertProduct
+--exec InsertOnlineOrder
+--exec InsertStaff
+--exec InsertOfflineOrder
+--drop procedure InsertStaff
+--DELETE FROM [Staff]
+--WHERE id = 1;
+--exec InsertRecordDay
+exec ETL_ImportSupplier
