@@ -28,13 +28,14 @@ public class RecordDay {
     @JsonBackReference
     TimeSheet timeSheet;
 
-    @Column(updatable = false)
     LocalDateTime checkin;
 
-    @Column(updatable = false)
     LocalDateTime checkout;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    AttendanceStatus status;
+    AttendanceStatus checkInStatus;
+
+    @Enumerated(EnumType.STRING)
+    AttendanceStatus checkOutStatus;
+
 }

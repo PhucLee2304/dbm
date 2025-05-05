@@ -50,9 +50,9 @@ public class AttendanceService implements AttendanceInterface {
             recordDay.setTimeSheet(timeSheet);
             recordDay.setCheckin(now);
             if (now.getHour() < 7 || (now.getHour() == 7 && now.getMinute() == 0 && now.getSecond() == 0)) {
-                recordDay.setStatus(AttendanceStatus.ONTIME);
+                recordDay.setCheckInStatus(AttendanceStatus.ONTIME);
             } else {
-                recordDay.setStatus(AttendanceStatus.LATE);
+                recordDay.setCheckInStatus(AttendanceStatus.LATE);
             }
 
             recordDayRepository.save(recordDay);
@@ -85,13 +85,15 @@ public class AttendanceService implements AttendanceInterface {
 
             LocalDateTime now = LocalDateTime.now();
             recordDay.setCheckout(now);
-            recordDayRepository.saveAndFlush(recordDay);
+
             if (now.getHour() > 17 || (now.getHour() == 17 && now.getMinute() > 0)) {
-                recordDay.setStatus(AttendanceStatus.ONTIME);
+                recordDay.setCheckOutStatus(AttendanceStatus.ONTIME);
             } else {
-                if (recordDay.getStatus() == AttendanceStatus.LATE) recordDay.setStatus(AttendanceStatus.ONTIME);
-                else recordDay.setStatus(AttendanceStatus.ONTIME);
+//                 if (recordDay.getStatus() == AttendanceStatus.LATE) recordDay.setStatus(AttendanceStatus.ONTIME);
+//                 else recordDay.setStatus(AttendanceStatus.ONTIME);
+                recordDay.setCheckOutStatus(AttendanceStatus.EARLY);
             }
+            recordDayRepository.save(recordDay);
             return ResponseData.success("Check-out successful", recordDay);
         } catch (Exception e) {
             return ResponseData.error("Check-out failed: " + e.getMessage());

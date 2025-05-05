@@ -28,12 +28,12 @@ BEGIN
     SET @stock_db2 = ROUND(RAND() * 6000000, 5000000); -- stock cho Database2 từ 0 đến 100
 
     -- Chèn vào Database1
-    INSERT INTO [OnlineDB].[dbo].[Product] ([name], [price], [category_id], [supplier_id], [stock])
-    VALUES (@product_name, @product_price, @category_id, @supplier_id, @stock_db1);
+    INSERT INTO [OnlineDB].[dbo].[Product] ([name], [price], [category_id], [supplier_id], [stock], [created])
+    VALUES (@product_name, @product_price, @category_id, @supplier_id, @stock_db1, GETDATE());
 
     -- Chèn vào Database2
-    INSERT INTO [OfflineDB].[dbo].[Product] ([name], [price], [category_id], [supplier_id], [stock])
-    VALUES (@product_name, @product_price, @category_id, @supplier_id, @stock_db2);
+    INSERT INTO [OfflineDB].[dbo].[Product] ([name], [price], [category_id], [supplier_id], [stock], [created])
+    VALUES (@product_name, @product_price, @category_id, @supplier_id, @stock_db2, GETDATE());
 
 END;
 GO

@@ -14,11 +14,11 @@ BEGIN
     SET @category_name = 'Category ' + CAST(@category_index AS NVARCHAR(10));
 
     -- Chèn vào Database1
-    INSERT INTO [OnlineDB].[dbo].[Category] ([name])
-    VALUES (@category_name);
+    INSERT INTO [OnlineDB].[dbo].[Category] ([name], [created])
+    VALUES (@category_name, GETDATE());
 
     -- Chèn vào Database2
-    INSERT INTO [OfflineDB].[dbo].[Category] ([name])
-    VALUES (@category_name);
+    INSERT INTO [OfflineDB].[dbo].[Category] ([name], [created])
+    VALUES (@category_name, GETDATE());
 END;
 GO

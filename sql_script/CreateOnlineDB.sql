@@ -30,7 +30,8 @@ USE OnlineDB;
 
 CREATE TABLE Category (
     id BIGINT IDENTITY(1,1) PRIMARY KEY,
-    name NVARCHAR(255) NOT NULL UNIQUE
+    name NVARCHAR(255) NOT NULL UNIQUE,
+	created DATE NOT NULL
 );
 
 --CREATE TABLE supplier (
@@ -46,7 +47,8 @@ CREATE TABLE Product (
     category_id BIGINT,
     supplier_id BIGINT,
 	stock BIGINT,
-    FOREIGN KEY (category_id) REFERENCES category(id),
+	created DATE NOT NULL,
+    FOREIGN KEY (category_id) REFERENCES Category(id),
     --FOREIGN KEY (supplier_id) REFERENCES supplier(id)
 );
 
@@ -72,7 +74,7 @@ CREATE TABLE OrderDetail (
     price FLOAT NOT NULL CHECK (price >= 0),
     PRIMARY KEY (order_id, product_id),
     FOREIGN KEY (order_id) REFERENCES OrderTable(id),
-    FOREIGN KEY (product_id) REFERENCES product(id)
+    FOREIGN KEY (product_id) REFERENCES Product(id)
 );
 
 --CREATE TABLE time_sheet (
