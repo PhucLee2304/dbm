@@ -201,49 +201,49 @@
                     <button class="quantity-btn" id="decreaseQuantity">-</button>
                     <input type="number" id="quantity" class="quantity-input" value="1" min="1">
                     <button class="quantity-btn" id="increaseQuantity">+</button>
+                            </div>
+                            <input type="hidden" id="productId" value="">
                 </div>
-                <input type="hidden" id="productId" value="">
             </div>
-        </div>
-
-        <div class="order-summary">
+            
+            <div class="order-summary">
             <h3>Tổng đơn hàng</h3>
             <div class="order-summary-item">
                 <span>Tổng tiền hàng:</span>
-                <span id="productSubtotal">0 VND</span>
-            </div>
+                    <span id="productSubtotal">0 VND</span>
+                </div>
             <div class="order-summary-item">
                 <span>Phí vận chuyển:</span>
-                <span id="shippingFee">0 VND</span>
-            </div>
+                    <span id="shippingFee">0 VND</span>
+                </div>
             <div class="order-summary-item">
                 <strong>Tổng cộng:</strong>
                 <strong id="totalPrice">0 VND</strong>
             </div>
-        </div>
-
+                </div>
+                
         <button id="orderButton" class="order-button">Đặt hàng</button>
-    </div>
-
-    <!-- Modal thông báo đặt hàng thành công -->
-    <div id="orderSuccessModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Đặt hàng thành công!</h2>
-            <div id="orderDetails">
-                <p><strong>Mã đơn hàng:</strong> <span id="orderId"></span></p>
-                <p><strong>Sản phẩm:</strong> <span id="orderProductName"></span></p>
-                <p><strong>Số lượng:</strong> <span id="orderQuantity"></span></p>
-                <p><strong>Giá tiền:</strong> <span id="orderPrice"></span> VND</p>
-                <p><strong>Phí vận chuyển:</strong> <span id="orderShippingFee"></span> VND</p>
-                <p><strong>Tổng cộng:</strong> <span id="orderTotal"></span> VND</p>
-                <p><strong>Trạng thái:</strong> <span class="status-pending">Đang xử lý</span></p>
             </div>
-            <button id="continueShoppingBtn" class="continue-btn">Tiếp tục mua sắm</button>
+        
+        <!-- Modal thông báo đặt hàng thành công -->
+        <div id="orderSuccessModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Đặt hàng thành công!</h2>
+                <div id="orderDetails">
+                    <p><strong>Mã đơn hàng:</strong> <span id="orderId"></span></p>
+                    <p><strong>Sản phẩm:</strong> <span id="orderProductName"></span></p>
+                    <p><strong>Số lượng:</strong> <span id="orderQuantity"></span></p>
+                    <p><strong>Giá tiền:</strong> <span id="orderPrice"></span> VND</p>
+                    <p><strong>Phí vận chuyển:</strong> <span id="orderShippingFee"></span> VND</p>
+                    <p><strong>Tổng cộng:</strong> <span id="orderTotal"></span> VND</p>
+                    <p><strong>Trạng thái:</strong> <span class="status-pending">Đang xử lý</span></p>
+                </div>
+                <button id="continueShoppingBtn" class="continue-btn">Tiếp tục mua sắm</button>
+            </div>
         </div>
-    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="../js/online-order.js"></script>
 </body>
-</html> 
+</html>

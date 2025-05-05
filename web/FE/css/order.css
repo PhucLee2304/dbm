@@ -34,12 +34,7 @@
 body {
     margin-left: 250px;
     transition: margin-left 0.3s;
-}
-
-body {
     font-family: Arial, sans-serif;
-    /* margin: 0; */
-    /* padding: 0; */
     display: flex;
 }
 
@@ -76,13 +71,85 @@ body {
     margin-bottom: 20px;
 }
 
-#searchInput {
-    padding: 10px;
+/* Search Container Styles */
+.search-container {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
     margin-bottom: 20px;
-    width: 100%;
-    box-sizing: border-box;
 }
 
+.search-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-row:last-child {
+    margin-bottom: 0;
+}
+
+#searchInput {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    min-width: 200px;
+    margin-bottom: 0;
+}
+
+.filter-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filter-group select {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+}
+
+.date-range {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.date-range label {
+    margin-right: 5px;
+}
+
+.date-range input[type="date"] {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#searchButton, #resetButton {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#searchButton {
+    background-color: #28a745;
+    color: white;
+}
+
+#resetButton {
+    background-color: #6c757d;
+    color: white;
+}
+
+/* Table Styles */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -106,8 +173,42 @@ th {
     gap: 10px;
 }
 
-.action-icons img {
+/* Status badge styles */
+.status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.status-pending {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.status-completed {
+    background-color: #28a745;
+    color: white;
+}
+
+.status-cancelled {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* View button styles */
+.view-btn {
+    background-color: #17a2b8;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 15px;
     cursor: pointer;
+}
+
+.view-btn:hover {
+    background-color: #138496;
 }
 
 /* Modal styles */
@@ -131,6 +232,8 @@ th {
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
+    max-width: 800px;
+    border-radius: 8px;
 }
 
 .close {
@@ -147,25 +250,72 @@ th {
     cursor: pointer;
 }
 
-form {
-    display: flex;
-    flex-direction: column;
+/* Order details styling */
+.order-info {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
 }
 
-form label {
-    margin-top: 10px;
+.order-info p {
+    margin: 8px 0;
 }
 
-form input {
-    padding: 10px;
-    margin-top: 5px;
+#orderItemsTable {
+    margin-bottom: 20px;
 }
 
-form button {
+.order-summary {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
     margin-top: 20px;
-    padding: 10px;
-    background-color: #007bff;
+}
+
+.order-summary p:last-child {
+    font-weight: bold;
+    font-size: 18px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+}
+
+.action-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+#updateStatusBtn {
+    background-color: #28a745;
     color: white;
     border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
     cursor: pointer;
+}
+
+#updateStatusBtn:hover {
+    background-color: #218838;
+}
+
+#cancelOrderBtn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#cancelOrderBtn:hover {
+    background-color: #c82333;
+}
+
+.no-data {
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
 }
