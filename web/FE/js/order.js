@@ -430,7 +430,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Khởi tạo
     if (checkAuthentication()) {
-        fetchOrders();
+    fetchOrders();
         
         // Thiết lập giá trị mặc định cho các bộ lọc ngày
         const today = new Date();

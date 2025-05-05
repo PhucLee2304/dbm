@@ -7,13 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import com.example.demo.dto.hieu.OrderOfflineDTO;
-import com.example.demo.dto.hieu.OrderOfflineDetailDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.dto.hieu.OrderOfflineDTO;
+import com.example.demo.dto.hieu.OrderOfflineDetailDTO;
 import com.example.demo.dto.tien.ProductDetailDTO;
 import com.example.demo.entity.BranchProduct;
 import com.example.demo.entity.Customer;
@@ -123,10 +122,10 @@ public class OrderService implements OrderInterface {
     }
 
     @Override
-    public ResponseData updateOrderOnline(Long id){
-        try{
+    public ResponseData updateOrderOnline(Long id) {
+        try {
             Optional<Order> orderOptional = orderRepository.findById(id);
-            if(orderOptional.isEmpty()) {
+            if (orderOptional.isEmpty()) {
                 return ResponseData.error("Order not found");
             }
 
@@ -264,8 +263,9 @@ public class OrderService implements OrderInterface {
 
             orderRepository.save(order);
 
-//            return ResponseData.success("Add new order offline successfully", order);
-            return ResponseData.success("Add new order offline successfully", toOrderOfflineDTO(orderOffline, orderDetails));
+            //            return ResponseData.success("Add new order offline successfully", order);
+            return ResponseData.success(
+                    "Add new order offline successfully", toOrderOfflineDTO(orderOffline, orderDetails));
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
@@ -280,12 +280,12 @@ public class OrderService implements OrderInterface {
                 return getUserInfoResponse;
             }
             User user = (User) getUserInfoResponse.getData();
-            
+
             List<Order> orders = orderRepository.findAll();
             if (orders.isEmpty()) {
                 return ResponseData.success("No orders found", Collections.emptyList());
             }
-            
+
             // Convert orders to DTOs with additional information
             List<Map<String, Object>> orderDTOs = new ArrayList<>();
             for (Order order : orders) {
@@ -296,20 +296,20 @@ public class OrderService implements OrderInterface {
                 orderDTO.put("total", order.getTotal());
                 orderDTO.put("created", order.getCreated());
                 orderDTO.put("status", order.getStatus());
-                
+
                 // Check if it's an offline order
-                Optional<OrderOffline> orderOfflineOpt = orderOfflineRepository.findById(order.getId());
-                if (orderOfflineOpt.isPresent()) {
-                    OrderOffline orderOffline = orderOfflineOpt.get();
+                List<OrderOffline> orderOfflines = orderOfflineRepository.findAllByOrderId(order.getId());
+                if (!orderOfflines.isEmpty()) {
+                    OrderOffline orderOffline = orderOfflines.get(0);
                     Staff staff = orderOffline.getStaff();
                     orderDTO.put("type", "OFFLINE");
                     orderDTO.put("staff", staff);
                     orderDTO.put("branch", staff.getBranch());
                 } else {
                     // Check if it's an online order
-                    Optional<OrderOnline> orderOnlineOpt = orderOnlineRepository.findById(order.getId());
-                    if (orderOnlineOpt.isPresent()) {
-                        OrderOnline orderOnline = orderOnlineOpt.get();
+                    List<OrderOnline> orderOnlines = orderOnlineRepository.findAllByOrderId(order.getId());
+                    if (!orderOnlines.isEmpty()) {
+                        OrderOnline orderOnline = orderOnlines.get(0);
                         Customer customer = orderOnline.getCustomer();
                         orderDTO.put("type", "ONLINE");
                         orderDTO.put("customer", customer);
@@ -318,22 +318,20 @@ public class OrderService implements OrderInterface {
                         orderDTO.put("recipientAddress", orderOnline.getRecipientAddress());
                     }
                 }
-                
+
                 // Get order details
-                List<OrderDetail> orderDetails = orderDetailRepository.findAll().stream()
-                    .filter(detail -> detail.getOrder().getId().equals(order.getId()))
-                    .collect(Collectors.toList());
+                List<OrderDetail> orderDetails = orderDetailRepository.findAllByOrderId(order.getId());
                 orderDTO.put("orderDetails", orderDetails);
-                
+
                 orderDTOs.add(orderDTO);
             }
-            
+
             return ResponseData.success("Fetched all orders successfully", orderDTOs);
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
         }
     }
-    
+
     @Override
     public ResponseData getOrderById(Long id) {
         try {
@@ -342,12 +340,12 @@ public class OrderService implements OrderInterface {
                 return getUserInfoResponse;
             }
             User user = (User) getUserInfoResponse.getData();
-            
+
             Optional<Order> orderOpt = orderRepository.findById(id);
             if (orderOpt.isEmpty()) {
                 return ResponseData.error("Order not found");
             }
-            
+
             Order order = orderOpt.get();
             Map<String, Object> orderDTO = new HashMap<>();
             orderDTO.put("id", order.getId());
@@ -356,20 +354,20 @@ public class OrderService implements OrderInterface {
             orderDTO.put("total", order.getTotal());
             orderDTO.put("created", order.getCreated());
             orderDTO.put("status", order.getStatus());
-            
+
             // Check if it's an offline order
-            Optional<OrderOffline> orderOfflineOpt = orderOfflineRepository.findById(order.getId());
-            if (orderOfflineOpt.isPresent()) {
-                OrderOffline orderOffline = orderOfflineOpt.get();
+            List<OrderOffline> orderOfflines = orderOfflineRepository.findAllByOrderId(order.getId());
+            if (!orderOfflines.isEmpty()) {
+                OrderOffline orderOffline = orderOfflines.get(0);
                 Staff staff = orderOffline.getStaff();
                 orderDTO.put("type", "OFFLINE");
                 orderDTO.put("staff", staff);
                 orderDTO.put("branch", staff.getBranch());
             } else {
                 // Check if it's an online order
-                Optional<OrderOnline> orderOnlineOpt = orderOnlineRepository.findById(order.getId());
-                if (orderOnlineOpt.isPresent()) {
-                    OrderOnline orderOnline = orderOnlineOpt.get();
+                List<OrderOnline> orderOnlines = orderOnlineRepository.findAllByOrderId(order.getId());
+                if (!orderOnlines.isEmpty()) {
+                    OrderOnline orderOnline = orderOnlines.get(0);
                     Customer customer = orderOnline.getCustomer();
                     orderDTO.put("type", "ONLINE");
                     orderDTO.put("customer", customer);
@@ -378,11 +376,11 @@ public class OrderService implements OrderInterface {
                     orderDTO.put("recipientAddress", orderOnline.getRecipientAddress());
                 }
             }
-            
+
             // Get order details
             List<OrderDetail> orderDetails = orderDetailRepository.findAllByOrderId(order.getId());
             orderDTO.put("orderDetails", orderDetails);
-            
+
             return ResponseData.success("Fetched order successfully", orderDTO);
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
@@ -400,7 +398,7 @@ public class OrderService implements OrderInterface {
         dto.setBranchName(orderOffline.getStaff().getBranch().getAddress());
 
         List<OrderOfflineDetailDTO> details = new ArrayList<>();
-        for(OrderDetail orderDetail : orderDetails) {
+        for (OrderDetail orderDetail : orderDetails) {
             OrderOfflineDetailDTO detailDTO = new OrderOfflineDetailDTO();
             detailDTO.setProductName(orderDetail.getBranchProduct().getProduct().getName());
             detailDTO.setQuantity(orderDetail.getQuantity());

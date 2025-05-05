@@ -147,25 +147,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Add new product
-        const productDiv = document.createElement('div');
-        productDiv.classList.add('selected-product');
+            const productDiv = document.createElement('div');
+            productDiv.classList.add('selected-product');
         productDiv.dataset.productId = productId;
         
-        productDiv.innerHTML = `
+            productDiv.innerHTML = `
             <span class="product-name">${product.name}</span>
-            <input type="number" class="product-quantity" min="1" value="1" required>
+                <input type="number" class="product-quantity" min="1" value="1" required>
             <button type="button" class="remove-product-button">Xóa</button>
-        `;
+            `;
         
-        selectedProductsContainer.appendChild(productDiv);
+            selectedProductsContainer.appendChild(productDiv);
 
-        productDiv.querySelector('.product-quantity').addEventListener('input', updateTotalPrice);
-        productDiv.querySelector('.remove-product-button').addEventListener('click', function() {
-            productDiv.remove();
+            productDiv.querySelector('.product-quantity').addEventListener('input', updateTotalPrice);
+            productDiv.querySelector('.remove-product-button').addEventListener('click', function() {
+                productDiv.remove();
+                updateTotalPrice();
+            });
+
             updateTotalPrice();
-        });
-
-        updateTotalPrice();
         productSearch.value = '';
     });
 
