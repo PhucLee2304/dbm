@@ -19,7 +19,7 @@ BEGIN
     SET @user_phone = RIGHT('000000000' + CAST(@user_index AS VARCHAR(10)), 10);
 
     -- Chèn thông tin vào bảng Customer
-    INSERT INTO [OutUserDB].[dbo].[Customer] ([active], [address], [email], [name], [password], [phone])
+    INSERT INTO [OutUserDB].[dbo].[Customer] ([active], [address], [email], [name], [password], [phone], [created])
     VALUES
     (
         1, -- active
@@ -27,7 +27,8 @@ BEGIN
         @user_email, -- email (email1@gmail.com, email2@gmail.com, ...)
         'Customer ' + CAST(@user_index AS NVARCHAR(255)), -- name (Customer 1, Customer 2, ...)
         '1234', -- password (mặc định là 1234)
-        @user_phone -- phone (0000000001, 0000000002, ...)
+        @user_phone, -- phone (0000000001, 0000000002, ...),
+		GETDATE()
     );
 
     -- Lấy ID của người dùng vừa chèn vào bảng Customer

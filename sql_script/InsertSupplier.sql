@@ -27,13 +27,14 @@ BEGIN
     SET @supplier_address = 'Address ' + CAST(@supplier_index AS NVARCHAR(255));
 
     -- Chèn dữ liệu vào bảng Supplier
-    INSERT INTO [OutUserDB].[dbo].[Supplier] ([name], [email], [phone], [address])
+    INSERT INTO [OutUserDB].[dbo].[Supplier] ([name], [email], [phone], [address], [created])
     VALUES
     (
         @supplier_name, -- Tên nhà cung cấp (Supplier 1, Supplier 2,...)
         @supplier_email, -- Email nhà cung cấp (supplier1@example.com,...)
         @supplier_phone, -- Số điện thoại nhà cung cấp (000000001, 000000002,...)
-        @supplier_address -- Địa chỉ nhà cung cấp (Address 1, Address 2,...)
+        @supplier_address, -- Địa chỉ nhà cung cấp (Address 1, Address 2,...)
+		GETDATE()
     );
 END;
 GO

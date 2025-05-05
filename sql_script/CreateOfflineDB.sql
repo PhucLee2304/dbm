@@ -1,6 +1,7 @@
 --CREATE DATABASE OfflineDB;
 
 USE OfflineDB;
+go
 
 --CREATE TABLE user_table (
     --id BIGINT IDENTITY(1,1) PRIMARY KEY,
@@ -83,15 +84,14 @@ CREATE TABLE OrderDetail (
 CREATE TABLE TimeSheet (
 	id BIGINT IDENTITY(1,1) PRIMARY KEY,
     staff_id BIGINT,
-	created DATE NOT NULL,
     FOREIGN KEY (staff_id) REFERENCES Staff(id)
 );
 
 CREATE TABLE RecordDay (
     day DATE NOT NULL,
     time_sheet_id BIGINT NOT NULL,
-    checkin DATETIME2(6) NOT NULL,
-    checkout DATETIME2(6) NOT NULL,
+    checkin DATETIME NOT NULL,
+    checkout DATETIME NOT NULL,
     in_status VARCHAR(255) CHECK (in_status IN ('LATE', 'ONTIME')),
 	out_status VARCHAR(255) CHECK (out_status IN ('EARLY', 'ONTIME')),
     PRIMARY KEY (day, time_sheet_id),

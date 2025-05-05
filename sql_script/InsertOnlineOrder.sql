@@ -78,20 +78,32 @@ BEGIN
     SET @order_id = SCOPE_IDENTITY();
 
     -- Lặp qua số lượng sản phẩm ngẫu nhiên (từ 1 đến 3)
-    WHILE @i <= @num_products
-    BEGIN
-        -- Lấy sản phẩm ngẫu nhiên từ OnlineDB.Product
-        SELECT TOP 1
-            @product_id = id
+    ;WITH RandomProducts AS (
+        SELECT TOP (@num_products) id, price
         FROM [OnlineDB].[dbo].[Product]
-        ORDER BY NEWID();
+        ORDER BY NEWID()
+    )
+    -- Thực thi SELECT từ CTE để lấy dữ liệu
+    SELECT id, price
+    INTO #TempRandomProducts
+    FROM RandomProducts;
 
+    -- Lặp qua các sản phẩm đã chọn ngẫu nhiên
+    DECLARE product_cursor CURSOR FOR
+    SELECT id, price
+    FROM #TempRandomProducts;
+
+    OPEN product_cursor;
+    FETCH NEXT FROM product_cursor INTO @product_id, @product_price;
+
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
         -- Lấy quantity ngẫu nhiên từ 1 đến 5
-        SET @quantity = ROUND(RAND() * 5 + 1, 0);  -- Số lượng ngẫu nhiên từ 1 đến 5
+        SET @quantity = ROUND(RAND() * 5 + 1, 0);
 
         -- Kiểm tra số lượng tồn kho của sản phẩm
         SELECT @stock = stock
-        FROM [OnlineDB].[dbo].[Product]
+        FROM [dbo].[Product]
         WHERE id = @product_id;
 
         -- Kiểm tra xem số lượng tồn kho có đủ không
@@ -99,13 +111,11 @@ BEGIN
         BEGIN
             -- Nếu không đủ, báo lỗi và dừng thủ tục
             RAISERROR('Not enough stock for product_id = %I64d. Available stock = %d, Requested quantity = %d.', 16, 1, @product_id, @stock, @quantity);
-            RETURN;
+            CLOSE product_cursor;
+            DEALLOCATE product_cursor;
+            DROP TABLE #TempRandomProducts;  -- Xóa bảng tạm
+            RETURN; -- Dừng thủ tục
         END
-
-        -- Lấy giá của sản phẩm từ OnlineDB.Product
-        SELECT @product_price = price
-        FROM [OnlineDB].[dbo].[Product]
-        WHERE id = @product_id;
 
         -- Tính toán subtotal cho sản phẩm (price * quantity)
         SET @price = @product_price * @quantity;
@@ -124,13 +134,20 @@ BEGIN
         );
 
         -- Giảm số lượng tồn kho trong bảng Product
-        UPDATE [OnlineDB].[dbo].[Product]
+        UPDATE [dbo].[Product]
         SET stock = stock - @quantity
         WHERE id = @product_id;
 
-        -- Tăng biến đếm để lặp qua sản phẩm tiếp theo
-        SET @i = @i + 1;
+        -- Lấy sản phẩm tiếp theo
+        FETCH NEXT FROM product_cursor INTO @product_id, @product_price;
     END;
+
+    -- Đóng và giải phóng con trỏ
+    CLOSE product_cursor;
+    DEALLOCATE product_cursor;
+
+    -- Xóa bảng tạm
+    DROP TABLE #TempRandomProducts;
 
     -- Tính toán tổng tiền (total = subtotal + shipping fee)
     SET @total = @subtotal + @shipping_fee;
@@ -142,3 +159,4 @@ BEGIN
 
 END;
 GO
+
