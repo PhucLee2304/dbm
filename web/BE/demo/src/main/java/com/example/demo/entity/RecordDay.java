@@ -8,9 +8,9 @@ import com.example.demo.enums.AttendanceStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 @Entity

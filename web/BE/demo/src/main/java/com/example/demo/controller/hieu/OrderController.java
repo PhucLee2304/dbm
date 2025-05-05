@@ -32,6 +32,12 @@ public class OrderController {
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 
+    @PutMapping("/cancel/{id}")
+    public ResponseEntity<?> cancelOrder(@PathVariable Long id) {
+        ResponseData responseData = orderInterface.cancelOrder(id);
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
     @PostMapping("/staff/product/search")
     public ResponseEntity<?> getProductByKeyword(@RequestParam("keyword") String keyword) {
         ResponseData responseData = orderInterface.getProductByKeyword(keyword);
@@ -41,6 +47,18 @@ public class OrderController {
     @PostMapping("/staff/add")
     public ResponseEntity<?> addOrderOffline(@RequestBody AddOrderOfflineRequest request) {
         ResponseData responseData = orderInterface.addOrderOffline(request);
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllOrders() {
+        ResponseData responseData = orderInterface.getAllOrders();
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getOrderById(@PathVariable Long id) {
+        ResponseData responseData = orderInterface.getOrderById(id);
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 }
