@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Load categories
     $.ajax({
         type: "GET",
-        url: "http://localhost:8080/category/all",
+        url: "http://localhost:8080/category/admin/all",
         headers: { "Authorization": "Bearer " + localStorage.getItem("token") },
         success: function(response) {
             if (response.success) {
@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     categoryInput.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
                 });
             } else {
-                showToast("Error", "Không load được danh sách danh mục", "error");
+                showToast("Error", response.message, "error");
             }
         },
         error: function(error) {

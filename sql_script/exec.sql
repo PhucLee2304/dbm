@@ -9,4 +9,9 @@
 --DELETE FROM [Staff]
 --WHERE id = 1;
 --exec InsertRecordDay
-exec ETL_ImportSupplier
+--exec EtlSupplier
+--drop procedure EtlSupplier
+--exec EtlOrder
+--drop procedure ETL_ImportOrder
+--exec EtlUser 
+drop procedure EtlUser

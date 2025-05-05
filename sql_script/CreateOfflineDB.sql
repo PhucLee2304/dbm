@@ -3,25 +3,14 @@
 USE OfflineDB;
 go
 
---CREATE TABLE user_table (
-    --id BIGINT IDENTITY(1,1) PRIMARY KEY,
-    --active BIT NOT NULL,
-    --address NVARCHAR(255) NOT NULL,
-    --email VARCHAR(255) NOT NULL UNIQUE,
-    --name NVARCHAR(255) NOT NULL,
-    --password VARCHAR(255) NOT NULL,
-    --phone VARCHAR(255) NOT NULL UNIQUE,
-    --role VARCHAR(255) NOT NULL CHECK (role IN ('CUSTOMER', 'STAFF', 'ADMIN'))
---);
-
---CREATE TABLE customer (
---    id BIGINT IDENTITY(1,1) PRIMARY KEY,
---    user_id BIGINT,
---    FOREIGN KEY (user_id) REFERENCES user_table(id)
---);
-
 CREATE TABLE Staff (
     id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    active BIT NOT NULL,
+    address NVARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    name NVARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    phone VARCHAR(255) NOT NULL UNIQUE,
     code VARCHAR(255) NOT NULL UNIQUE,
     expiry_date DATE NOT NULL,
     salary FLOAT NOT NULL CHECK (salary >= 0),

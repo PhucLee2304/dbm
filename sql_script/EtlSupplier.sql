@@ -4,22 +4,22 @@ GO
 CREATE PROCEDURE EtlSupplier
 AS
 BEGIN
-    DECLARE @last_import_date DATETIME;
-    DECLARE @current_time DATETIME;
+    --DECLARE @last_import_date DATETIME;
+    --DECLARE @current_time DATETIME;
 
     -- Lấy thời gian hiện tại (ngày giờ hiện tại)
-    SET @current_time = GETDATE();
+    --SET @current_time = GETDATE();
 
     -- Lấy thời gian thực hiện ETL lần trước (nếu có) từ bảng ETL_Log
-    SELECT TOP 1 @last_import_date = last_import_date
-    FROM [Logs].[dbo].[SupplierLog]
-	ORDER BY id DESC
+ --   SELECT TOP 1 @last_import_date = last_import_date
+ --   FROM [Logs].[dbo].[SupplierLog]
+	--ORDER BY id DESC
 
     -- Nếu chưa có bản ghi nào, thì khởi tạo @last_import_date với giá trị một ngày trước
-    IF @last_import_date IS NULL
-    BEGIN
-        SET @last_import_date = '2025-05-01';  -- Giá trị khởi tạo, lấy dữ liệu từ một ngày trước
-    END
+    --IF @last_import_date IS NULL
+    --BEGIN
+    --    SET @last_import_date = '2025-05-01';  -- Giá trị khởi tạo, lấy dữ liệu từ một ngày trước
+    --END
 
 	MERGE INTO [dbo].[supplier] AS target
 	USING [OutUserDB].[dbo].[Supplier] AS source
@@ -40,8 +40,8 @@ BEGIN
         DELETE;
 
     -- Cập nhật bảng ETL_Log với thời gian hiện tại (ngày giờ thực hiện)
-    INSERT INTO [Logs].[dbo].[SupplierLog] (last_import_date)
-    VALUES (@current_time);
+    --INSERT INTO [Logs].[dbo].[SupplierLog] (last_import_date)
+    --VALUES (@current_time);
 
     PRINT 'ETL process completed successfully for Supplier.';
 END;
