@@ -141,6 +141,31 @@ public class OrderService implements OrderInterface {
     }
 
     @Override
+    public ResponseData cancelOrder(Long id) {
+        try {
+            Optional<Order> orderOptional = orderRepository.findById(id);
+            if (orderOptional.isEmpty()) {
+                return ResponseData.error("Order not found");
+            }
+
+            Order order = orderOptional.get();
+            
+            // Kiểm tra trạng thái đơn hàng, chỉ cho phép hủy đơn hàng đang ở trạng thái PENDING
+            if (order.getStatus() != OrderStatusEnum.PENDING) {
+                return ResponseData.error("Chỉ có thể hủy đơn hàng đang ở trạng thái chờ xử lý");
+            }
+            
+            order.setStatus(OrderStatusEnum.CANCELLED);
+            orderRepository.save(order);
+
+            return ResponseData.success("Hủy đơn hàng thành công", order);
+
+        } catch (Exception e) {
+            return ResponseData.error(e.getMessage());
+        }
+    }
+
+    @Override
     public ResponseData getProductByKeyword(String keyword) {
         try {
             ResponseData getUserInfoResponse = userUtil.getUserInfo();

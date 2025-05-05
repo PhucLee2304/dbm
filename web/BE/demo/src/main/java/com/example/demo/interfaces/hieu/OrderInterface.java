@@ -9,6 +9,8 @@ public interface OrderInterface {
 
     ResponseData updateOrderOnline(Long id);
 
+    ResponseData cancelOrder(Long id);
+
     ResponseData getProductByKeyword(String keyword);
 
     ResponseData addOrderOffline(AddOrderOfflineRequest request);

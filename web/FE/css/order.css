@@ -285,6 +285,7 @@ th {
     margin-top: 20px;
     display: flex;
     justify-content: flex-end;
+    gap: 10px;
 }
 
 #updateStatusBtn {
@@ -298,6 +299,19 @@ th {
 
 #updateStatusBtn:hover {
     background-color: #218838;
+}
+
+#cancelOrderBtn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#cancelOrderBtn:hover {
+    background-color: #c82333;
 }
 
 .no-data {

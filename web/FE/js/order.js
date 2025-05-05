@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const viewModal = document.getElementById('viewModal');
     const closeModal = document.querySelector('.close');
     const updateStatusBtn = document.getElementById('updateStatusBtn');
+    const cancelOrderBtn = document.getElementById('cancelOrderBtn');
     let currentOrderId = null;
     let orders = [];
 
@@ -353,8 +354,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // Thêm class cho phần tử trạng thái để tạo kiểu
         document.getElementById('viewStatus').className = `status-${(order.status ? order.status.toLowerCase() : 'pending')}`;
         
-        // Hiển thị/ẩn nút cập nhật dựa trên trạng thái đơn hàng
-        updateStatusBtn.style.display = (order.status === 'PENDING') ? 'block' : 'none';
+        // Hiển thị/ẩn nút cập nhật và hủy dựa trên trạng thái đơn hàng
+        const orderStatus = order.status || 'PENDING';
+        
+        // Chỉ hiển thị nút cập nhật khi đơn hàng đang ở trạng thái PENDING
+        updateStatusBtn.style.display = (orderStatus === 'PENDING') ? 'block' : 'none';
+        
+        // Chỉ hiển thị nút hủy khi đơn hàng đang ở trạng thái PENDING
+        cancelOrderBtn.style.display = (orderStatus === 'PENDING') ? 'block' : 'none';
         
         // Hiển thị các mục đơn hàng
         const orderItemsTableBody = document.querySelector('#orderItemsTable tbody');
@@ -424,6 +431,39 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } catch (error) {
             console.error("Error updating order status:", error);
+            showToast("Error", "Không thể kết nối đến máy chủ", "error");
+        }
+    });
+
+    // Chức năng hủy đơn hàng
+    cancelOrderBtn.addEventListener('click', async function() {
+        if (!currentOrderId) return;
+        
+        // Hiển thị hộp thoại xác nhận
+        if (!confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) {
+            return;
+        }
+        
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`http://localhost:8080/order/cancel/${currentOrderId}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            const data = await response.json();
+            if (data.success) {
+                showToast("Success", "Hủy đơn hàng thành công", "success");
+                viewModal.style.display = 'none';
+                // Refresh order list
+                fetchOrders();
+            } else {
+                showToast("Error", data.message || "Không thể hủy đơn hàng", "error");
+            }
+        } catch (error) {
+            console.error("Error cancelling order:", error);
             showToast("Error", "Không thể kết nối đến máy chủ", "error");
         }
     });

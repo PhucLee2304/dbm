@@ -32,6 +32,12 @@ public class OrderController {
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 
+    @PutMapping("/cancel/{id}")
+    public ResponseEntity<?> cancelOrder(@PathVariable Long id) {
+        ResponseData responseData = orderInterface.cancelOrder(id);
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
     @PostMapping("/staff/product/search")
     public ResponseEntity<?> getProductByKeyword(@RequestParam("keyword") String keyword) {
         ResponseData responseData = orderInterface.getProductByKeyword(keyword);
