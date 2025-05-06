@@ -91,7 +91,7 @@ public class OrderService implements OrderInterface {
                 return ResponseData.error("Not enough stock");
             }
 
-            // Trừ số lượng sản phẩm trong kho stock
+            // Trừ số lượng sản phẩm trong kho
             branchProduct.setStock(branchProduct.getStock() - request.getQuantity());
             branchProductRepository.save(branchProduct);
 
