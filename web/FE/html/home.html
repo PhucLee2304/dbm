@@ -5,14 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clothing Store</title>
     <link rel="stylesheet" href="../css/home-detail.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script src="../js/home-detail.js" defer></script>
 </head>
 <body>
     <header class="header">
-        <h1>Clothing Store</h1>
+        <h1>👗 Clothing Store</h1>
         <nav>
-            <a href="home.html">Home</a> |
-            <a href="login.html">Login</a>
+            <a href="home.html">Trang chủ</a> |
+            <a href="my-orders.html">Đơn hàng của tôi</a> |
+            <a href="login.html" id="login-link">Đăng nhập</a>
+            <a href="#" id="logout-link" style="display:none;">Đăng xuất</a>
         </nav>
     </header>
 
