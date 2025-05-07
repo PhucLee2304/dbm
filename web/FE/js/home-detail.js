@@ -1,3 +1,27 @@
+// Kiểm tra trạng thái đăng nhập
+document.addEventListener("DOMContentLoaded", function () {
+    const token = localStorage.getItem("token");
+    const loginLink = document.getElementById("login-link");
+    const logoutLink = document.getElementById("logout-link");
+
+    if (token) {
+        // Nếu đã đăng nhập
+        loginLink.style.display = "none";
+        logoutLink.style.display = "inline";
+
+        // Xử lý sự kiện đăng xuất
+        logoutLink.addEventListener("click", function (e) {
+            e.preventDefault();
+            localStorage.removeItem("token");
+            window.location.href = "login.html";
+        });
+    } else {
+        // Nếu chưa đăng nhập
+        loginLink.style.display = "inline";
+        logoutLink.style.display = "none";
+    }
+});
+
 let url = `http://localhost:8080/home/public/product/random`;
 
 async function fetchProducts(url) {

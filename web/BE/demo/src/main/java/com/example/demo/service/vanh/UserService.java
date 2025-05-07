@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.vanh.CustomerDTO;
@@ -103,6 +105,23 @@ public class UserService implements UserInterface {
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseData getCustomer() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName();
+
+        Optional<Customer> customerOpt = customerRepository.findByEmail(email);
+
+        if (customerOpt.isPresent()) {
+            Customer customer = customerOpt.get();
+            return ResponseData.success( "Lấy thông tin thành công", customerToCustomerDTO(customer));
+        } else {
+            return ResponseData.error("Không tìm thấy người dùng");
         }
     }
 
