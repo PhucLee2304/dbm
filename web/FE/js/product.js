@@ -207,18 +207,20 @@ document.addEventListener("DOMContentLoaded", () => {
         const product = products.find(p => p.id === id);
         if (!product) return;
 
-        idInput.value = product.id;
-        nameInput.value = product.name;
-        categoryInput.value = product.categoryId;
-        supplierInput.value = product.supplierId;
-        priceInput.value = product.price;
+        // console.log(product);
 
-        document.querySelectorAll(".branch-input").forEach(div => {
-            const branchId = parseInt(div.querySelector(".branch-id").value);
-            const stockInput = div.querySelector(".stock-input");
-            const dto = product.branchStockDTOs.find(b => b.branch.id === branchId);
-            stockInput.value = dto ? dto.stock : "";
-        });
+        idInput.value = product.id;
+        // nameInput.value = product.name;
+        // categoryInput.value = product.categoryName;
+        // supplierInput.value = product.supplierName;
+        // priceInput.value = product.price;
+
+        // document.querySelectorAll(".branch-input").forEach(div => {
+        //     const branchId = parseInt(div.querySelector(".branch-id").value);
+        //     const stockInput = div.querySelector(".stock-input");
+        //     const dto = product.branchStockDTOs.find(b => b.branch.id === branchId);
+        //     stockInput.value = dto ? dto.stock : "";
+        // });
 
         modalTitle.textContent = "Update product";
         modal.style.display = "block";
@@ -256,15 +258,12 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         // if (!checkAuthentication()) return;
 
-        const branchStocks = [];
+        const mapBranchStock = {};
         document.querySelectorAll(".branch-input").forEach(div => {
-            const branchId = parseInt(div.querySelector("\.branch-id").value);
-            const stockVal = div.querySelector("\.stock-input").value;
+            const branchId = parseInt(div.querySelector(".branch-id").value);
+            const stockVal = div.querySelector(".stock-input").value;
             if (stockVal !== "" && parseInt(stockVal) >= 0) {
-                branchStocks.push({
-                    branch: { id: branchId },
-                    stock: parseInt(stockVal)
-                });
+                mapBranchStock[branchId] = parseInt(stockVal);
             }
         });
 
@@ -273,12 +272,12 @@ document.addEventListener("DOMContentLoaded", () => {
             categoryId: parseInt(categoryInput.value),
             supplierId: parseInt(supplierInput.value),
             price: parseFloat(priceInput.value),
-            branchStockDTOs: branchStocks
+            mapBranchStock: mapBranchStock
         };
 
         // Validate dữ liệu
-        if (!request.name || !request.categoryName ||
-            !request.supplierName || isNaN(request.price)) {
+        if (!request.name || !request.categoryId ||
+            !request.supplierId || isNaN(request.price)) {
             return showToast("Error", "Please fill in all information", "error");
         }
 

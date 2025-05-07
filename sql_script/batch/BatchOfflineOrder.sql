@@ -5,7 +5,7 @@ CREATE OR ALTER PROCEDURE InsertBatchOfflineOrders
 AS
 BEGIN
     DECLARE @batch_size INT = 500;  -- Chèn 1000 đơn hàng mỗi batch
-    DECLARE @total_orders INT = 1000000; -- Tổng số đơn hàng cần chèn
+    DECLARE @total_orders INT = 25000; -- Tổng số đơn hàng cần chèn
     DECLARE @current_batch INT = 1;  -- Biến đếm cho vòng lặp chính
     DECLARE @order_id BIGINT;
     DECLARE @created DATETIME;
