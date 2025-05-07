@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Quản lý khách hàng</title>
+    <link rel="stylesheet" href="../css/all-customer.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+</head>
+<body>
+    <div class="sidebar">
+        <ul>
+            <li><a href="./dashboard.html">Dashboard</a></li>
+            <li><a href="./staff.html">Nhân viên</a></li>
+            <li><a href="./product.html">Sản phẩm</a></li>
+            <li><a href="./all-customer.html"><strong>Khách hàng</strong></a></li>
+            <li><a href="./order.html">Đơn hàng</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="content">
+            <h1>Quản lý khách hàng</h1>
+            
+            <div class="search-container">
+                <div class="search-row">
+                    <input type="text" id="searchInput" placeholder="Tìm kiếm khách hàng...">
+                    
+                    <div class="filter-group">
+                        <select id="activeFilter">
+                            <option value="">Tất cả trạng thái</option>
+                            <option value="true">Đang hoạt động</option>
+                            <option value="false">Ngừng hoạt động</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="search-row">
+                    <button id="searchButton">Tìm kiếm</button>
+                    <button id="resetButton">Đặt lại</button>
+                </div>
+            </div>
+            
+            <table id="customerTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên</th>
+                        <th>Email</th>
+                        <th>Số điện thoại</th>
+                        <th>Địa chỉ</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Customer data will be dynamically inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal for viewing customer details -->
+    <div id="viewModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Chi tiết khách hàng</h2>
+            <div id="customerDetails">
+                <div class="customer-info">
+                    <p><strong>ID khách hàng:</strong> <span id="viewCustomerID"></span></p>
+                    <p><strong>Tên:</strong> <span id="viewName"></span></p>
+                    <p><strong>Email:</strong> <span id="viewEmail"></span></p>
+                    <p><strong>Số điện thoại:</strong> <span id="viewPhone"></span></p>
+                    <p><strong>Địa chỉ:</strong> <span id="viewAddress"></span></p>
+                    <p><strong>Trạng thái:</strong> <span id="viewActive"></span></p>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button id="blockCustomerBtn">Khóa</button>
+                <button id="cancelViewBtn">Hủy</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../js/all-customer.js"></script>
+</body>
+</html>

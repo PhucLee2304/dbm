@@ -1,82 +1,200 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Quản lý Staff</title>
-    <link rel="stylesheet" href="../css/staff.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Quản lý nhân viên</title>
+    <link rel="stylesheet" href="../css/staff.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
 </head>
 <body>
-<div class="sidebar">
-    <ul>
-        <li><a href="./dashboard.html">Dashboard</a></li>
-        <li><a href="./staff.html"><strong>Staff</strong></a></li>
-        <li><a href="./product.html">Product</a></li>
-        <li><a href="./order.html">Order</a></li>
-    </ul>
-</div>
-
-<div id="cars" class="tab-content">
-    <button onclick="showAddStaffForm()"> + Add </button>
-    <table>
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Branch</th>
-            <th>Email</th>
-            <th>FullName</th>
-            <th>Phone</th>
-            <th></th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-</div>
-
-<div id="add-car" class="tab-content">
-    <button onclick="showTab('cars')">⬅ Back</button>
-    <h2>Add new staff</h2>
-    <div class="form-container">
-        <label for="branch-id-add">Branch ID</label>
-        <input id="branch-id-add" type="number" placeholder="Branch ID" />
-
-        <label for="name-add">FullName</label>
-        <input id="name-add" type="text" placeholder="Name" />
-
-        <label for="email-add">Email</label>
-        <input id="email-add" type="text" placeholder="Email" />
-
-        <label for="phone-add">Phone</label>
-        <input id="phone-add" type="text" placeholder="Phone" />
-
-        <label for="address-add">Address</label>
-        <input id="address-add" type="text" placeholder="Address" value="Chưa cập nhật" />
-
-        <label for="salary-add">Salary</label>
-        <input id="salary-add" type="number" placeholder="Salary" value="10000000" />
-
-        <button onclick="addStaff()">Add</button>
+    <div class="sidebar">
+        <ul>
+            <li><a href="./dashboard.html">Dashboard</a></li>
+            <li><a href="./staff.html">Nhân viên</a></li>
+            <li><a href="./product.html">Sản phẩm</a></li>
+            <li><a href="./all-customer.html"><strong>Khách hàng</strong></a></li>
+            <li><a href="./order.html">Đơn hàng</a></li>
+        </ul>
     </div>
-</div>
 
-
-<div id="fix-car" class="tab-content">
-    <button onclick="showTab('cars')">⬅ Back</button>
-    <h2>Update staff information</h2>
-    <div class="form-container">
-        <label for="branch-update">Branch</label>
-        <input id="branch-update" type="text" />
-        <label for="name-update">FullName</label>
-        <input id="name-update" type="text" />
-        <label for="email-update">Email</label>
-        <input id="email-update" type="text" />
-        <label for="phone-update">Phone</label>
-        <input id="phone-update" type="text" />
-        <button onclick="updateStaff()">Update</button>
+    <div class="main-content">
+        <div class="content">
+            <h1>Quản lý nhân viên</h1>
+            
+            <div class="search-container">
+                <div class="search-row">
+                    <input type="text" id="searchInput" placeholder="Tìm kiếm nhân viên...">
+                    
+                    <div class="filter-group">
+                        <select id="branchFilter">
+                            <option value="">Tất cả chi nhánh</option>
+                            <option value="ONLINE">ONLINE</option>
+                            <option value="HANOI">HANOI</option>
+                        </select>
+                        
+                        <select id="activeFilter">
+                            <option value="">Tất cả trạng thái</option>
+                            <option value="true">Đang hoạt động</option>
+                            <option value="false">Ngừng hoạt động</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="search-row">
+                    <button id="searchButton">Tìm kiếm</button>
+                    <button id="resetButton">Đặt lại</button>
+                </div>
+            </div>
+            
+            <!-- Add new button for adding staff -->
+            <div class="action-bar">
+                <button id="addStaffBtn" class="add-btn">Thêm nhân viên</button>
+            </div>
+            
+            <table id="staffTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên</th>
+                        <th>Email</th>
+                        <th>Số điện thoại</th>
+                        <th>Trạng thái</th>
+                        <th>Chi nhánh</th>
+                        <th>Mã nhân viên</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Staff data will be dynamically inserted here -->
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
 
-<script src="../js/staff.js"></script>
+    <!-- Modal for viewing staff details -->
+    <div id="viewModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Chi tiết nhân viên</h2>
+            <div id="staffDetails">
+                <div class="staff-info">
+                    <p><strong>ID nhân viên:</strong> <span id="viewStaffID"></span></p>
+                    <p><strong>Tên:</strong> <span id="viewName"></span></p>
+                    <p><strong>Email:</strong> <span id="viewEmail"></span></p>
+                    <p><strong>Số điện thoại:</strong> <span id="viewPhone"></span></p>
+                    <p><strong>Địa chỉ:</strong> <span id="viewAddress"></span></p>
+                    <p><strong>Trạng thái:</strong> <span id="viewActive"></span></p>
+                    <p><strong>Chi nhánh:</strong> <span id="viewBranch"></span></p>
+                    <p><strong>Mã nhân viên:</strong> <span id="viewCode"></span></p>
+                    <p><strong>Ngày hết hạn:</strong> <span id="viewExpiryDate"></span></p>
+                    <p><strong>Lương:</strong> <span id="viewSalary"></span> VNĐ</p>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button id="editStaffBtn">Sửa</button>
+                <button id="cancelViewBtn">Hủy</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for editing staff -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Chỉnh sửa thông tin nhân viên</h2>
+            <div id="editStaffForm">
+                <div class="form-group">
+                    <label for="editName">Tên:</label>
+                    <input type="text" id="editName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editEmail">Email:</label>
+                    <input type="email" id="editEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="editPhone">Số điện thoại:</label>
+                    <input type="text" id="editPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="editAddress">Địa chỉ:</label>
+                    <input type="text" id="editAddress" required>
+                </div>
+                <div class="form-group">
+                    <label for="editBranch">Chi nhánh:</label>
+                    <select id="editBranch">
+                        <option value="1">ONLINE</option>
+                        <option value="2">HANOI</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editExpiryDate">Ngày hết hạn:</label>
+                    <input type="date" id="editExpiryDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="editSalary">Lương:</label>
+                    <input type="number" id="editSalary" min="0" step="1000" required>
+                </div>
+                <input type="hidden" id="editStaffID">
+            </div>
+            <div class="action-buttons">
+                <button id="saveStaffBtn">Lưu</button>
+                <button id="cancelEditBtn">Hủy</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Modal for adding staff -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Thêm nhân viên mới</h2>
+            <div id="addStaffForm">
+                <div class="form-group">
+                    <label for="addName">Tên:</label>
+                    <input type="text" id="addName" required>
+                </div>
+                <div class="form-group">
+                    <label for="addEmail">Email:</label>
+                    <input type="email" id="addEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="addPhone">Số điện thoại:</label>
+                    <input type="text" id="addPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="addAddress">Địa chỉ:</label>
+                    <input type="text" id="addAddress" required>
+                </div>
+                <div class="form-group">
+                    <label for="addPassword">Mật khẩu:</label>
+                    <input type="password" id="addPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="addBranch">Chi nhánh:</label>
+                    <select id="addBranch">
+                        <option value="1">ONLINE</option>
+                        <option value="2">HANOI</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="addExpiryDate">Ngày hết hạn:</label>
+                    <input type="date" id="addExpiryDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="addSalary">Lương:</label>
+                    <input type="number" id="addSalary" min="0" step="1000" required>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button id="createStaffBtn">Tạo</button>
+                <button id="cancelAddBtn">Hủy</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../js/staff.js"></script>
 </body>
 </html>

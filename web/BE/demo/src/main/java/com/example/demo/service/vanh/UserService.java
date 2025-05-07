@@ -92,8 +92,14 @@ public class UserService implements UserInterface {
             user.setEmail(request.getEmail());
             user.setPhone(request.getPhone());
             user.setAddress(request.getAddress());
-            user.setPassword(request.getPassword());
-            //            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            if (request.getOldPassword() != null && !request.getOldPassword().isEmpty()
+                    && request.getPassword() != null && !request.getPassword().isEmpty()) {
+                if(!user.getPassword().equals(request.getOldPassword())) {
+                    return ResponseData.error("Wrong old password");
+                }
+                user.setPassword(request.getPassword());
+                //            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            }
 
             userRepository.save(user);
 

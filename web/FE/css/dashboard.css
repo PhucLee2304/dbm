@@ -1,0 +1,59 @@
+/* Sidebar Styling */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100%;
+    background-color: #343a40;
+    padding-top: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar li {
+    padding: 15px 20px;
+    border-bottom: 1px solid #444;
+}
+
+.sidebar li a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 18px;
+    display: block;
+}
+
+.sidebar li a strong{
+    color: #218838;
+}
+
+body {
+    margin-left: 250px;
+    transition: margin-left 0.3s;
+    font-family: Arial, sans-serif;
+    display: flex;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: flex-end;
+    background-color: #f1f1f1;
+    padding: 10px;
+}
+
+.content {
+    margin-top: 20px;
+}
+
+.content h1 {
+    margin-bottom: 20px;
+}

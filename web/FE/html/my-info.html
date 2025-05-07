@@ -120,6 +120,8 @@
                 <input type="text" id="edit-phone" name="phone">
                 <label for="edit-address">Address:</label>
                 <input type="text" id="edit-address" name="address">
+                <label for="edit-old-password">Old Password:</label>
+                <input type="password" id="edit-old-password" name="oldPassword">
                 <label for="edit-password">Password:</label>
                 <input type="password" id="edit-password" name="password">
                 <div class="popup-actions">
@@ -214,9 +216,10 @@
             const email = document.getElementById("edit-email").value || document.getElementById("user-email").textContent;
             const phone = document.getElementById("edit-phone").value || document.getElementById("user-phone").textContent;
             const address = document.getElementById("edit-address").value || document.getElementById("user-address").textContent;
+            const oldPassword = document.getElementById("edit-old-password").value;
             const password = document.getElementById("edit-password").value;
 
-            const body = { name, email, phone, address, password };
+            const body = { name, email, phone, address, oldPassword, password };
 
             try {
                 const response = await fetch("http://localhost:8080/user/customer/update", {
@@ -233,6 +236,8 @@
                     alert("Information updated successfully.");
                     document.getElementById("edit-popup").style.display = "none";
                     fetchUserInfo(token); // Refresh user info
+                } else if (result.message === "Wrong old password") {
+                    alert("Wrong old password. Please try again.");
                 } else {
                     alert(result.message || "Failed to update information.");
                 }
