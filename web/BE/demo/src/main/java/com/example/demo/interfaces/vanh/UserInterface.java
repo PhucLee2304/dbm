@@ -14,6 +14,8 @@ public interface UserInterface {
 
     ResponseData updateCustomer(UpdateCustomerRequest request);
 
+    ResponseData getCustomer();
+
     ResponseData updateStaff(UpdateStaffRequest request);
 
     ResponseData updateSupplier(UpdateSupplierRequest request);
