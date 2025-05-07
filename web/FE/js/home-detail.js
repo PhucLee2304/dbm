@@ -106,7 +106,7 @@ async function fetchProductDetail() {
                 <p><strong>Category:</strong> ${data.data.categoryName}</p>
                 <p><strong>Price:</strong> ${data.data.price} VND</p>
                 <p><strong>Supplier:</strong> ${data.data.supplierName}</p>
-                <p><strong>Stock:</strong> ${data.data.stock} VND</p>
+                <p><strong>Stock:</strong> ${data.data.stock}</p>
                 <button class="buy-button" onclick="goToOrderPage()">Buy</button>
             </div>
         `;

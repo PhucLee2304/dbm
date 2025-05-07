@@ -6,13 +6,44 @@
     <title>Product Detail</title>
     <link rel="stylesheet" href="../css/home-detail.css">
     <script src="../js/home-detail.js" defer></script>
+    <style>
+        .product-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .product-container img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+        .product-info h2 {
+            margin-top: 0;
+        }
+        .product-info button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .product-info button:hover {
+            background-color: #555;
+        }
+    </style>
 </head>
 <body class="prod-body">
     <header class="header">
-        <h1>Clothing Store</h1>
+        <h1>👗 Clothing Store</h1>
         <nav>
-            <a href="home.html">Home</a> |
-            <a href="login.html">Login</a>
+            <a href="home.html">Trang chủ</a> |
+            <a href="my-orders.html">Đơn hàng của tôi</a> |
+            <a href="my-info.html">Thông tin của tôi</a> |
+            <a href="login.html" id="login-link">Đăng nhập</a>
+            <a href="#" id="logout-link" style="display:none;">Đăng xuất</a>
         </nav>
     </header>
 
@@ -20,8 +51,5 @@
         <h2>Loading...</h2>
     </div>
     
-    <footer class="footer">
-        <p>&copy; 2025 Clothing Store</p>
-    </footer>
 </body>
 </html>
