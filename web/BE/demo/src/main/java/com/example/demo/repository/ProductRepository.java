@@ -57,19 +57,4 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("DELETE FROM Product p WHERE p.id = :productId")
     void deleteProductById(@Param("productId") Long productId);
 
-	@Query(value = """
-    SELECT TOP 5 
-        p.id AS id,
-        p.name AS name,
-        SUM(od.quantity) AS totalQuantitySold,
-        SUM(od.price * od.quantity) AS totalRevenue
-    FROM product p
-    INNER JOIN order_detail od ON p.id = od.product_id
-    INNER JOIN order_table ot ON od.order_id = ot.id
-    WHERE ot.status = 'completed'
-    GROUP BY p.id, p.name
-    ORDER BY SUM(od.quantity) DESC
-    """, nativeQuery = true)
-	List<Object[]> findTopProductRaw();
-
 }

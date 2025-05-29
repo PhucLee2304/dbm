@@ -43,4 +43,64 @@ public class DashboardController {
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 
+    @GetMapping("/top-staff")
+    public ResponseEntity<?> getTopStaff() {
+        ResponseData responseData = dashboardService.getTopStaff();
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
+    @GetMapping("/top-customer")
+    public ResponseEntity<?> getTopCustomer() {
+        ResponseData responseData = dashboardService.getTopCustomer();
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
+    @GetMapping("/daily-revenue-last-month")
+    public ResponseEntity<?> getEachDayRevenueLastMonth() {
+        ResponseData responseData = dashboardService.getEachDayRevenueLastMonth();
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
+    @GetMapping("/total-users")
+    public ResponseEntity<?> getTotalUsers() {
+        ResponseData responseData = dashboardService.getTotalUsers();
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
+    @GetMapping("/total-customers")
+    public ResponseEntity<?> getTotalCustomers() {
+        ResponseData responseData = dashboardService.getTotalCustomers();
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
+    @GetMapping("/total-staffs")
+    public ResponseEntity<?> getTotalStaffs() {
+        ResponseData responseData = dashboardService.getTotalStaffs();
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
+    @GetMapping("/total-orders")
+    public ResponseEntity<?> getTotalOrders() {
+        ResponseData responseData = dashboardService.getTotalOrders();
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
+    @GetMapping("/total-online-orders")
+    public ResponseEntity<?> getTotalOnlineOrders() {
+        ResponseData responseData = dashboardService.getTotalOnlineOrders();
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
+    @GetMapping("/total-offline-orders")
+    public ResponseEntity<?> getTotalOfflineOrders() {
+        ResponseData responseData = dashboardService.getTotalOfflineOrders();
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
+    @GetMapping("/total-products")
+    public ResponseEntity<?> getTotalProducts() {
+        ResponseData responseData = dashboardService.getTotalProducts();
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
 }
