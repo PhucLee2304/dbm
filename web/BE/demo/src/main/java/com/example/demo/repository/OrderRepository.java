@@ -19,7 +19,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
         p.id AS id,
         p.name AS name,
         SUM(od.quantity) AS totalQuantitySold,
-        SUM(od.price * od.quantity) AS totalRevenue
+        SUM(od.price) AS totalRevenue
     FROM product p
     INNER JOIN order_detail od ON p.id = od.product_id
     INNER JOIN order_table ot ON od.order_id = ot.id
@@ -36,7 +36,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     u.name AS staff_name,
     COUNT(DISTINCT oo.order_id) AS total_orders,
     SUM(od.quantity) AS total_quantity_sold,
-    SUM(od.price * od.quantity) AS total_revenue
+    SUM(od.price) AS total_revenue
     FROM staff s
     INNER JOIN user_table u ON s.user_id = u.id
     INNER JOIN order_offline oo ON s.id = oo.staff_id
@@ -49,14 +49,14 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Object[]> findTopStaffRaw();
 
     @Query(value = """
-    SELECT TOP 5\s
+    SELECT TOP 5
         c.id AS customer_id,
         u.name AS customer_name,
         u.email,
         u.phone,
         COUNT(DISTINCT on2.order_id) AS total_orders,
         SUM(od.quantity) AS total_quantity_bought,
-        SUM(od.price * od.quantity) AS total_spent
+        SUM(od.price) AS total_spent
     FROM customer c
     INNER JOIN user_table u ON c.user_id = u.id
     INNER JOIN order_online on2 ON c.id = on2.customer_id
