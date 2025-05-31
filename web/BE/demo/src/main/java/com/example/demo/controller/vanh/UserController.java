@@ -45,6 +45,12 @@ public class UserController {
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 
+    @GetMapping("/customer/info")
+    public ResponseEntity<?> getCustomer() {
+        ResponseData responseData = userInterface.getCustomer();
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
     @PutMapping("/admin/staff/update")
     public ResponseEntity<?> updateStaff(@RequestBody UpdateStaffRequest request) {
         ResponseData responseData = userInterface.updateStaff(request);

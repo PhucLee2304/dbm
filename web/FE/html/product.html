@@ -8,14 +8,15 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 </head>
 <body>
-<div class="sidebar">
-    <ul>
-        <li><a href="./dashboard.html">Dashboard</a></li>
-        <li><a href="./staff.html">Staff</a></li>
-        <li><a href="./product.html"><strong>Product</strong></a></li>
-        <li><a href="./order.html">Order</a></li>
-    </ul>
-</div>
+    <div class="sidebar">
+        <ul>
+            <li><a href="./dashboard.html">Dashboard</a></li>
+            <li><a href="./staff.html">Nhân viên</a></li>
+            <li><a href="./product.html">Sản phẩm</a></li>
+            <li><a href="./all-customer.html">Khách hàng</a></li>
+            <li><a href="./order.html">Đơn hàng</a></li>
+        </ul>
+    </div>
 
 <div class="container">
     <h1>Product Management</h1>
@@ -53,15 +54,19 @@
             <label>Product Name:</label>
             <input type="text" id="product-name" required>
 
-            <label>Category:</label>
+            <!-- <label>Category:</label>
             <select id="product-category" required>
                 <option value="">-- Select Category --</option>
-            </select>
+            </select> -->
+            <label>Category:</label>
+            <input type="text" id="product-category" placeholder="Enter category id" required>
 
-            <label>Supplier:</label>
+            <!-- <label>Supplier:</label>
             <select id="product-supplier" required>
                 <option value="">-- Select Supplier --</option>
-            </select>
+            </select> -->
+            <label>Supplier:</label>
+            <input type="text" id="product-supplier" placeholder="Enter supplier id" required>
 
             <label>Price:</label>
             <input type="number" id="product-price" step="0.01" required>
@@ -75,14 +80,14 @@
                 </div>
                 <div class="branch-input">
                     <input type="hidden" class="branch-id" value="2">
-                    <label>VINHPHUC</label>
+                    <label>HANOI</label>
                     <input type="number" class="stock-input" min="0" placeholder="0">
                 </div>
-                <div class="branch-input">
+                <!-- <div class="branch-input">
                     <input type="hidden" class="branch-id" value="3">
                     <label>PHUTHO</label>
                     <input type="number" class="stock-input" min="0" placeholder="0">
-                </div>
+                </div> -->
             </div>
 
             <button type="submit" id="save-btn">Save</button>

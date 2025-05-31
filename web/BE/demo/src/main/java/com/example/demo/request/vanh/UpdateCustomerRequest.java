@@ -13,5 +13,6 @@ public class UpdateCustomerRequest {
     String email;
     String phone;
     String address;
+    String oldPassword;
     String password;
 }

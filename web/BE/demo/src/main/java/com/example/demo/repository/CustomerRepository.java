@@ -13,4 +13,7 @@ import com.example.demo.entity.Customer;
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
     @Query("SELECT c FROM Customer c WHERE c.user.id = :userId")
     Optional<Customer> findByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT c FROM Customer c WHERE c.user.email = :email")
+    Optional<Customer> findByEmail(@Param("email") String email);
 }
