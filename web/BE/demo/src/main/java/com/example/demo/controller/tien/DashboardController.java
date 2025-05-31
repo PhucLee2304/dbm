@@ -37,66 +37,77 @@ public class DashboardController {
                 .body(pdfBytes);
     }
 
+//    1
     @GetMapping("/top-product")
     public ResponseEntity<?> getTopProducts() {
         ResponseData responseData = dashboardService.getTopProducts();
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 
+//    2
     @GetMapping("/top-staff")
     public ResponseEntity<?> getTopStaff() {
         ResponseData responseData = dashboardService.getTopStaff();
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 
+//    3
     @GetMapping("/top-customer")
     public ResponseEntity<?> getTopCustomer() {
         ResponseData responseData = dashboardService.getTopCustomer();
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 
+//    4
     @GetMapping("/daily-revenue-last-month")
     public ResponseEntity<?> getEachDayRevenueLastMonth() {
         ResponseData responseData = dashboardService.getEachDayRevenueLastMonth();
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 
+//    5
     @GetMapping("/total-users")
     public ResponseEntity<?> getTotalUsers() {
         ResponseData responseData = dashboardService.getTotalUsers();
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 
+//    6
     @GetMapping("/total-customers")
     public ResponseEntity<?> getTotalCustomers() {
         ResponseData responseData = dashboardService.getTotalCustomers();
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 
+//    7
     @GetMapping("/total-staffs")
     public ResponseEntity<?> getTotalStaffs() {
         ResponseData responseData = dashboardService.getTotalStaffs();
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 
+//    8
     @GetMapping("/total-orders")
     public ResponseEntity<?> getTotalOrders() {
         ResponseData responseData = dashboardService.getTotalOrders();
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 
+//    9
     @GetMapping("/total-online-orders")
     public ResponseEntity<?> getTotalOnlineOrders() {
         ResponseData responseData = dashboardService.getTotalOnlineOrders();
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 
+//    10
     @GetMapping("/total-offline-orders")
     public ResponseEntity<?> getTotalOfflineOrders() {
         ResponseData responseData = dashboardService.getTotalOfflineOrders();
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 
+//    11
     @GetMapping("/total-products")
     public ResponseEntity<?> getTotalProducts() {
         ResponseData responseData = dashboardService.getTotalProducts();

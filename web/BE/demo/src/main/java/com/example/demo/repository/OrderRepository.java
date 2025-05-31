@@ -23,7 +23,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     FROM product p
     INNER JOIN order_detail od ON p.id = od.product_id
     INNER JOIN order_table ot ON od.order_id = ot.id
-    WHERE ot.status = 'completed'
+    WHERE ot.status = 'COMPLETED'
     GROUP BY p.id, p.name
     ORDER BY SUM(od.quantity) DESC
     """, nativeQuery = true)
@@ -42,7 +42,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     INNER JOIN order_offline oo ON s.id = oo.staff_id
     INNER JOIN order_detail od ON oo.order_id = od.order_id
     INNER JOIN order_table ot ON od.order_id = ot.id
-    WHERE ot.status = 'completed'
+    WHERE ot.status = 'COMPLETED'
     GROUP BY s.id, s.code, u.name
     ORDER BY SUM(od.quantity) DESC
     """, nativeQuery = true)
@@ -62,7 +62,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     INNER JOIN order_online on2 ON c.id = on2.customer_id
     INNER JOIN order_detail od ON on2.order_id = od.order_id
     INNER JOIN order_table ot ON od.order_id = ot.id
-    WHERE ot.status = 'completed'
+    WHERE ot.status = 'COMPLETED'
     GROUP BY c.id, u.name, u.email, u.phone
     ORDER BY SUM(od.quantity) DESC;
     """, nativeQuery = true)
@@ -77,7 +77,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
         COUNT(DISTINCT ot.id) AS total_orders,
         SUM(ot.total) AS daily_revenue
     FROM order_table ot
-    WHERE ot.status = 'completed'
+    WHERE ot.status = 'COMPLETED'
         AND ot.created >= DATEADD(MONTH, -1, GETDATE())
     GROUP BY YEAR(ot.created), MONTH(ot.created), DAY(ot.created), CONVERT(DATE, ot.created)
     ORDER BY order_date DESC;
