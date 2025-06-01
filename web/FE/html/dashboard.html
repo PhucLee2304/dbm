@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Đashboard</title>
+    <title>Admin - Dashboard</title>
     <link rel="stylesheet" href="../css/dashboard.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
 </head>
@@ -20,37 +20,86 @@
 
     <!-- <iframe title="dbm" width="1500" height="850" src="https://app.powerbi.com/view?r=eyJrIjoiNjgyYWQyYWEtMWYzZS00Yjc2LTgxZjMtMWM5MjgzMTIzNTE3IiwidCI6ImVkMDQzNDNlLTJhNWQtNDExZS05NzMxLWU1NzNlZjMxMDcxMyJ9&pageName=805c10fe552c260746b6" frameborder="0" allowFullScreen="true"></iframe> -->
     <div class="content">
-        <h1>Dashboard</h1>
-        <div class="dashboard-cards">
-            <div class="revenue-card">
-                <h2>Doanh thu</h2>
-                <p id="revenue">0 VNĐ</p>
+        <div class="header">
+            <h1>Dashboard</h1>
+            <div class="header-actions">
+                <button id="export-report-btn" class="export-btn">Export Report</button>
+                <button id="logout-btn" class="logout-btn">Đăng xuất</button>
             </div>
-            <!-- <div class="card">
-                <h2>Số lượng đơn hàng</h2>
-                <p id="order-count">0</p>
-            </div> -->
-            <!-- <div class="card">
-                <h2>Số lượng sản phẩm</h2>
-                <p id="product-count">0</p>
-            </div>
-            <div class="card">
-                <h2>Số lượng khách hàng</h2>
-                <p id="customer-count">0</p>
-            </div> -->
         </div>
 
-        <canvas id="revenueChart"></canvas>
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card revenue-card">
+                <h3>Tổng Doanh Thu</h3>
+                <p id="revenue" class="stat-value">Đang tải...</p>
+                <span class="stat-label">Revenue</span>
+            </div>
+            <div class="stat-card">
+                <h3>Tổng Người Dùng</h3>
+                <p id="total-users" class="stat-value">Đang tải...</p>
+                <span class="stat-label">Users</span>
+            </div>
+            <div class="stat-card">
+                <h3>Tổng Khách Hàng</h3>
+                <p id="total-customers" class="stat-value">Đang tải...</p>
+                <span class="stat-label">Customers</span>
+            </div>
+            <div class="stat-card">
+                <h3>Tổng Nhân Viên</h3>
+                <p id="total-staffs" class="stat-value">Đang tải...</p>
+                <span class="stat-label">Staff</span>
+            </div>
+            <div class="stat-card">
+                <h3>Tổng Đơn Hàng</h3>
+                <p id="total-orders" class="stat-value">Đang tải...</p>
+                <span class="stat-label">Orders</span>
+            </div>
+            <div class="stat-card">
+                <h3>Đơn Hàng Online</h3>
+                <p id="total-online-orders" class="stat-value">Đang tải...</p>
+                <span class="stat-label">Online Orders</span>
+            </div>
+            <div class="stat-card">
+                <h3>Đơn Hàng Offline</h3>
+                <p id="total-offline-orders" class="stat-value">Đang tải...</p>
+                <span class="stat-label">Offline Orders</span>
+            </div>
+            <div class="stat-card">
+                <h3>Tổng Sản Phẩm</h3>
+                <p id="total-products" class="stat-value">Đang tải...</p>
+                <span class="stat-label">Products</span>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <div class="chart-container">
+                <h3>Top 5 Sản Phẩm Bán Chạy</h3>
+                <canvas id="topProductsChart" width="400" height="300"></canvas>
+            </div>
+            
+            <div class="chart-container">
+                <h3>Top 5 Nhân Viên Xuất Sắc</h3>
+                <canvas id="topStaffChart" width="400" height="300"></canvas>
+            </div>
+            
+            <div class="chart-container">
+                <h3>Top 5 Khách Hàng VIP</h3>
+                <canvas id="topCustomersChart" width="400" height="300"></canvas>
+            </div>
+            
+            <div class="chart-container full-width">
+                <h3>Doanh Thu Hàng Ngày</h3>
+                <canvas id="dailyRevenueChart" width="800" height="400"></canvas>
+            </div>
+        </div>
     </div>
-    <div>
-        <button id="export-report-btn">Export report</button>
-    </div>
 
-
-
+    <!-- Scripts - Load in correct order -->
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="../js/all-customer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script src="../js/dashboard.js"></script>
 </body>
 </html>
