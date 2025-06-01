@@ -113,5 +113,4 @@ public class DashboardController {
         ResponseData responseData = dashboardService.getTotalProducts();
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
-
 }

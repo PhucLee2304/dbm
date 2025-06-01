@@ -2,6 +2,8 @@ package com.example.demo.service.hoang;
 
 import java.util.*;
 
+import com.example.demo.service.tien.DashboardService;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,8 @@ public class ProductService implements ProductInterface {
     private final CategoryRepository categoryRepository;
     private final SupplierRepository supplierRepository;
     private final BranchRepository branchRepository;
+    private final DashboardService dashboardService;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     private List<ProductDTO> toProductDTOs(List<BranchProduct> branchProducts) {
         Map<Long, ProductDTO> map = new HashMap<>();
@@ -49,6 +53,11 @@ public class ProductService implements ProductInterface {
         }
 
         return new ArrayList<>(map.values());
+    }
+
+    private void updateProductDashboard(){
+        ResponseData totalProducts = dashboardService.getTotalProducts();
+        simpMessagingTemplate.convertAndSend("/topic/dashboard/total-products", totalProducts);
     }
 
     @Override
@@ -99,7 +108,15 @@ public class ProductService implements ProductInterface {
 
             branchProductRepository.saveAll(branchProducts);
 
-            return ResponseData.success("Add new product successfully", toProductDTOs(branchProducts));
+            ResponseData responseData = ResponseData.success("Add new product successfully", toProductDTOs(branchProducts));
+
+            if (responseData.isSuccess()){
+                updateProductDashboard();
+            }
+
+            return responseData;
+
+//            return ResponseData.success("Add new product successfully", toProductDTOs(branchProducts));
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
@@ -187,7 +204,15 @@ public class ProductService implements ProductInterface {
             branchProductRepository.deleteByProductId(id);
             productRepository.deleteProductById(id);
 
-            return ResponseData.success("Deleted product successfully", null);
+            ResponseData responseData = ResponseData.success("Deleted product successfully", null);
+
+            if (responseData.isSuccess()){
+                updateProductDashboard();
+            }
+
+            return responseData;
+
+//            return ResponseData.success("Deleted product successfully", null);
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());

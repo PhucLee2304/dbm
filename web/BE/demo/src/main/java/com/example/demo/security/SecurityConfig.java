@@ -28,7 +28,7 @@ import com.example.demo.utils.JwtUtil;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-    private static final String[] PUBLIC_ENDPOINTS = {"/auth/public/**", "/home/public/**", "attend/**", "dashboard/**"};
+    private static final String[] PUBLIC_ENDPOINTS = {"/auth/public/**", "/home/public/**", "/attend/**", "/dashboard/**", "/ws/**", "/ws/info/**", "/ws/info*"};
 
     private static final String[] STAFF_ENDPOINTS = {
         "/order/staff/**",

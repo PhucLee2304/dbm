@@ -392,6 +392,122 @@ function fetchDailyRevenue() {
 }
 
 // ==================== RENDERING FUNCTIONS ====================
+function connectWebSocket() {
+    const socket = new SockJS('http://localhost:8080/ws');
+    const stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, function(frame) {
+        stompClient.subscribe('/topic/dashboard/revenue', function(message) {
+            const response = JSON.parse(message.body);
+            if (response && response.success) {
+                renderRevenue(response);
+            } else {
+                console.error('Invalid data received for revenue');
+            }
+        });
+
+        stompClient.subscribe('/topic/dashboard/total-users', function(message) {
+            const response = JSON.parse(message.body);
+            if (response && response.success) {
+                renderTotalUsers(response);
+            } else {
+                console.error('Invalid data received for total users');
+            }
+        });
+
+        stompClient.subscribe('/topic/dashboard/total-customers', function(message) {
+            const response = JSON.parse(message.body);
+            if (response && response.success) {
+                renderTotalCustomers(response);
+            } else {
+                console.error('Invalid data received for total customers');
+            }
+        });
+
+        stompClient.subscribe('/topic/dashboard/total-staffs', function(message) {
+            const response = JSON.parse(message.body);
+            if (response && response.success) {
+                renderTotalStaffs(response);
+            } else {
+                console.error('Invalid data received for total staffs');
+            }
+        });
+
+        stompClient.subscribe('/topic/dashboard/total-orders', function(message) {
+            const response = JSON.parse(message.body);
+            if (response && response.success) {
+                renderTotalOrders(response);
+            } else {
+                console.error('Invalid data received for total orders');
+            }
+        });
+
+        stompClient.subscribe('/topic/dashboard/total-online-orders', function(message) {
+            const response = JSON.parse(message.body);
+            if (response && response.success) {
+                renderTotalOnlineOrders(response);
+            } else {
+                console.error('Invalid data received for total online orders');
+            }
+        });
+
+        stompClient.subscribe('/topic/dashboard/total-offline-orders', function(message) {
+            const response = JSON.parse(message.body);
+            if (response && response.success) {
+                renderTotalOfflineOrders(response);
+            } else {
+                console.error('Invalid data received for total offline orders');
+            }
+        });
+
+        stompClient.subscribe('/topic/dashboard/total-products', function(message) {
+            const response = JSON.parse(message.body);
+            if (response && response.success) {
+                renderTotalProducts(response);
+            } else {
+                console.error('Invalid data received for total products');
+            }
+        });
+
+        stompClient.subscribe('/topic/dashboard/top-product', function(message) {
+            const response = JSON.parse(message.body);
+            if (response && response.success) {
+                renderTopProductsChart(response);
+            } else {
+                console.error('Invalid data received for top products');
+            }
+        });
+
+        stompClient.subscribe('/topic/dashboard/top-staff', function(message) {
+            const response = JSON.parse(message.body);
+            if (response && response.success) {
+                renderTopStaffChart(response);
+            } else {
+                console.error('Invalid data received for top staff');
+            }
+        });
+
+        stompClient.subscribe('/topic/dashboard/top-customer', function(message) {
+            const response = JSON.parse(message.body);
+            if (response && response.success) {
+                renderTopCustomersChart(response);
+            } else {
+                console.error('Invalid data received for top customers');
+            }
+        });
+
+        stompClient.subscribe('/topic/dashboard/daily-revenue-last-month', function(message) {
+            const response = JSON.parse(message.body);
+            if (response && response.success) {
+                renderDailyRevenueChart(response);
+            } else {
+                console.error('Invalid data received for daily revenue');
+            }
+        });
+    });
+}
+
+// ==================== RENDERING FUNCTIONS ====================
 
 // Render doanh thu
 function renderRevenue(data) {
@@ -856,16 +972,16 @@ function logout() {
         localStorage.removeItem("token");
         
         // Xóa các dữ liệu khác nếu có
-        localStorage.removeItem("userRole");
-        localStorage.removeItem("userInfo");
+        // localStorage.removeItem("userRole");
+        // localStorage.removeItem("userInfo");
         
         // Hiển thị thông báo đăng xuất thành công
-        showToast("Success", "Đăng xuất thành công", "success", 2000);
+        // showToast("Success", "Đăng xuất thành công", "success", 2000);
         
         // Chuyển hướng về trang login sau 2 giây
         setTimeout(() => {
             window.location.href = "login.html";
-        }, 2000);
+        }, 500);
         
     } catch (error) {
         console.error("Error during logout:", error);
@@ -954,6 +1070,9 @@ function main() {
             showToast("Success", "Dashboard loaded successfully", "success", 3000);
         }, 1000);
     }, 500);
+
+    // Kết nối WebSocket để nhận dữ liệu thời gian thực
+    connectWebSocket();
 }
 
 // ==================== INITIALIZATION ====================

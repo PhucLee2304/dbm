@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.example.demo.service.tien.DashboardService;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,6 +46,34 @@ public class OrderService implements OrderInterface {
     private final StaffRepository staffRepository;
     private final OrderOfflineRepository orderOfflineRepository;
     private final ProductRepository productRepository;
+    private final DashboardService dashboardService;
+    private final SimpMessagingTemplate simpMessagingTemplate;
+
+    private void updateOrderDashboard(){
+        ResponseData revenue = dashboardService.getTotalRevenue();
+        simpMessagingTemplate.convertAndSend("/topic/dashboard/revenue", revenue);
+
+        ResponseData topProducts = dashboardService.getTopProducts();
+        simpMessagingTemplate.convertAndSend("/topic/dashboard/top-product", topProducts);
+
+        ResponseData topStaff = dashboardService.getTopStaff();
+        simpMessagingTemplate.convertAndSend("/topic/dashboard/top-staff", topStaff);
+
+        ResponseData topCustomer = dashboardService.getTopCustomer();
+        simpMessagingTemplate.convertAndSend("/topic/dashboard/top-customer", topCustomer);
+
+        ResponseData dailyRevenueLastMonth = dashboardService.getEachDayRevenueLastMonth();
+        simpMessagingTemplate.convertAndSend("/topic/dashboard/daily-revenue-last-month", dailyRevenueLastMonth);
+
+        ResponseData totalOrders = dashboardService.getTotalOrders();
+        simpMessagingTemplate.convertAndSend("/topic/dashboard/total-orders", totalOrders);
+
+        ResponseData totalOnlineOrders = dashboardService.getTotalOnlineOrders();
+        simpMessagingTemplate.convertAndSend("/topic/dashboard/total-online-orders", totalOnlineOrders);
+
+        ResponseData totalOfflineOrders = dashboardService.getTotalOfflineOrders();
+        simpMessagingTemplate.convertAndSend("/topic/dashboard/total-offline-orders", totalOfflineOrders);
+    }
 
     @Override
     @Transactional
@@ -137,7 +167,15 @@ public class OrderService implements OrderInterface {
             order.setStatus(OrderStatusEnum.COMPLETED);
             orderRepository.save(order);
 
-            return ResponseData.success("Update temperature order successfully", order);
+            ResponseData responseData = ResponseData.success("Update temperature order successfully", order);
+
+            if (responseData.isSuccess()){
+                updateOrderDashboard();
+            }
+
+            return responseData;
+
+//            return ResponseData.success("Update temperature order successfully", order);
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
@@ -162,7 +200,15 @@ public class OrderService implements OrderInterface {
             order.setStatus(OrderStatusEnum.CANCELLED);
             orderRepository.save(order);
 
-            return ResponseData.success("Hủy đơn hàng thành công", order);
+            ResponseData responseData = ResponseData.success("Cancel order successfully", order);
+
+            if (responseData.isSuccess()){
+                updateOrderDashboard();
+            }
+
+            return responseData;
+
+//            return ResponseData.success("Hủy đơn hàng thành công", order);
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
@@ -292,9 +338,15 @@ public class OrderService implements OrderInterface {
 
             orderRepository.save(order);
 
-            //            return ResponseData.success("Add new order offline successfully", order);
-            return ResponseData.success(
-                    "Add new order offline successfully", toOrderOfflineDTO(orderOffline, orderDetails));
+            ResponseData responseData = ResponseData.success("Add new order offline successfully", toOrderOfflineDTO(orderOffline, orderDetails));
+
+            if (responseData.isSuccess()) {
+                updateOrderDashboard();
+            }
+
+            return responseData;
+
+//            return ResponseData.success("Add new order offline successfully", toOrderOfflineDTO(orderOffline, orderDetails));
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());

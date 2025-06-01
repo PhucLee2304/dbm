@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import com.example.demo.service.tien.DashboardService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.vanh.StaffDTO;
@@ -34,9 +36,19 @@ public class AuthenticationService implements AuthenticationInterface {
     private final StaffRepository staffRepository;
     private final SupplierRepository supplierRepository;
     private final JwtUtil jwtUtil;
+    private final DashboardService dashboardService;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
-    @Value("${jwt.token-duration}")
-    private int duration;
+    private void updateUserDashboard(){
+        ResponseData totalUsers = dashboardService.getTotalUsers();
+        simpMessagingTemplate.convertAndSend("/topic/dashboard/total-users", totalUsers);
+
+        ResponseData totalCustomers = dashboardService.getTotalCustomers();
+        simpMessagingTemplate.convertAndSend("/topic/dashboard/total-customers", totalCustomers);
+
+        ResponseData totalStaffs = dashboardService.getTotalStaffs();
+        simpMessagingTemplate.convertAndSend("/topic/dashboard/total-staffs", totalStaffs);
+    }
 
     @Override
     public ResponseData addCustomer(AddCustomerRequest request) {
@@ -77,7 +89,16 @@ public class AuthenticationService implements AuthenticationInterface {
             data.put("role", RoleEnum.CUSTOMER.toString());
             //            data.put("customer", customerToCustomerDTO(customer));
 
-            return ResponseData.success("Registered new customer successfully", token);
+
+            ResponseData responseData = ResponseData.success("Registered new customer successfully", token);
+
+            if (responseData.isSuccess()) {
+                updateUserDashboard();
+            }
+
+            return responseData;
+
+//            return ResponseData.success("Registered new customer successfully", token);
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
@@ -118,7 +139,15 @@ public class AuthenticationService implements AuthenticationInterface {
 
             staffRepository.save(staff);
 
-            return ResponseData.success("Registered new staff successfully", staffToStaffDTO(staff));
+            ResponseData responseData = ResponseData.success("Registered new staff successfully", staffToStaffDTO(staff));
+
+            if (responseData.isSuccess()) {
+                updateUserDashboard();
+            }
+
+            return responseData;
+
+//            return ResponseData.success("Registered new staff successfully", staffToStaffDTO(staff));
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
