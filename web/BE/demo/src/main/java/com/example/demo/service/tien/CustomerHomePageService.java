@@ -27,10 +27,10 @@ public class CustomerHomePageService implements CustomerHomePageInterface {
         try {
             List<Category> categories = categoryRepository.findAll();
             if (categories.isEmpty()) {
-                return ResponseData.success("No categories created yet", null);
+                return ResponseData.success("Chưa có danh mục nào được tạo", null);
             }
 
-            return ResponseData.success("Fetched all categories successfully", categories);
+            return ResponseData.success("Lấy danh sách danh mục thành công", categories);
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
@@ -42,13 +42,13 @@ public class CustomerHomePageService implements CustomerHomePageInterface {
         try {
             List<ProductDetailDTO> products = productRepository.findAllProductOnBranchOnline();
             if (products.isEmpty()) {
-                return ResponseData.success("No products created yet", null);
+                return ResponseData.success("Chưa có sản phẩm nào được tạo", null);
             }
 
             Collections.shuffle(products);
             List<ProductDetailDTO> randomProducts = products.stream().limit(100).toList();
 
-            return ResponseData.success("Fetched random product successfully", randomProducts);
+            return ResponseData.success("Lấy sản phẩm ngẫu nhiên thành công", randomProducts);
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
@@ -69,10 +69,10 @@ public class CustomerHomePageService implements CustomerHomePageInterface {
 
             Optional<ProductDetailDTO> productOptional = productRepository.findProductByIdOnBranchOnline(id);
             if (productOptional.isEmpty()) {
-                return ResponseData.error("Product not found");
+                return ResponseData.error("Không tìm thấy sản phẩm");
             }
 
-            return ResponseData.success("Fetched product successfully", productOptional.get());
+            return ResponseData.success("Lấy thông tin sản phẩm thành công", productOptional.get());
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
@@ -94,13 +94,13 @@ public class CustomerHomePageService implements CustomerHomePageInterface {
         try {
             List<ProductDetailDTO> products = productRepository.findByNameContainingIgnoreCaseOnBranchOnline(keyword);
             if (products.isEmpty()) {
-                return ResponseData.success("No products found with the given keyword", null);
+                return ResponseData.success("Không tìm thấy sản phẩm nào với từ khóa đã cho", null);
             }
 
             Collections.shuffle(products);
             List<ProductDetailDTO> randomProducts = products.stream().limit(100).toList();
 
-            return ResponseData.success("Fetched product successfully", randomProducts);
+            return ResponseData.success("Lấy sản phẩm thành công", randomProducts);
             //            List<Product> randomProducts = products.stream()
             //                    .limit(100)
             //                    .toList();
