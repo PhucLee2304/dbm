@@ -37,10 +37,10 @@ public class UserService implements UserInterface {
         try {
             List<Customer> customers = customerRepository.findAll();
             if (customers.isEmpty()) {
-                return ResponseData.error("No customers found");
+                return ResponseData.error("Không tìm thấy khách hàng nào");
             }
 
-            return ResponseData.success("Fetched all customers successfully", customers);
+            return ResponseData.success("Lấy tất cả khách hàng thành công", customers);
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
         }
@@ -51,10 +51,10 @@ public class UserService implements UserInterface {
         try {
             List<Staff> staffs = staffRepository.findAll();
             if (staffs.isEmpty()) {
-                return ResponseData.error("No staffs found");
+                return ResponseData.error("Không tìm thấy nhân viên nào");
             }
 
-            return ResponseData.success("Fetched all staffs successfully", staffs);
+            return ResponseData.success("Lấy tất cả nhân viên thành công", staffs);
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
         }
@@ -65,10 +65,10 @@ public class UserService implements UserInterface {
         try {
             List<Supplier> suppliers = supplierRepository.findAll();
             if (suppliers.isEmpty()) {
-                return ResponseData.error("No suppliers found");
+                return ResponseData.error("Không tìm thấy nhà cung cấp nào");
             }
 
-            return ResponseData.success("Fetched all suppliers successfully", suppliers);
+            return ResponseData.success("Lấy tất cả nhà cung cấp thành công", suppliers);
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
         }
@@ -85,17 +85,19 @@ public class UserService implements UserInterface {
 
             Optional<Customer> customerOptional = customerRepository.findByUserId(user.getId());
             if (customerOptional.isEmpty()) {
-                return ResponseData.error("Customer not found");
+                return ResponseData.error("Không tìm thấy khách hàng");
             }
             Customer customer = customerOptional.get();
             user.setName(request.getName());
             user.setEmail(request.getEmail());
             user.setPhone(request.getPhone());
             user.setAddress(request.getAddress());
-            if (request.getOldPassword() != null && !request.getOldPassword().isEmpty()
-                    && request.getPassword() != null && !request.getPassword().isEmpty()) {
-                if(!user.getPassword().equals(request.getOldPassword())) {
-                    return ResponseData.error("Wrong old password");
+            if (request.getOldPassword() != null
+                    && !request.getOldPassword().isEmpty()
+                    && request.getPassword() != null
+                    && !request.getPassword().isEmpty()) {
+                if (!user.getPassword().equals(request.getOldPassword())) {
+                    return ResponseData.error("Mật khẩu cũ không đúng");
                 }
                 user.setPassword(request.getPassword());
                 //            user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -107,7 +109,7 @@ public class UserService implements UserInterface {
 
             customerRepository.save(customer);
 
-            return ResponseData.success("Update customer successfully", customerToCustomerDTO(customer));
+            return ResponseData.success("Cập nhật khách hàng thành công", customerToCustomerDTO(customer));
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
@@ -125,7 +127,7 @@ public class UserService implements UserInterface {
 
         if (customerOpt.isPresent()) {
             Customer customer = customerOpt.get();
-            return ResponseData.success( "Lấy thông tin thành công", customerToCustomerDTO(customer));
+            return ResponseData.success("Lấy thông tin thành công", customerToCustomerDTO(customer));
         } else {
             return ResponseData.error("Không tìm thấy người dùng");
         }
@@ -141,7 +143,7 @@ public class UserService implements UserInterface {
         customerDTO.setRole(customer.getUser().getRole().toString());
         customerDTO.setActive(customer.getUser().isActive());
 
-        return ResponseData.success("Convert customer successfully", customerDTO);
+        return ResponseData.success("Chuyển đổi thông tin khách hàng thành công", customerDTO);
     }
 
     @Override
@@ -149,12 +151,12 @@ public class UserService implements UserInterface {
         try {
             Optional<Staff> staffOptional = staffRepository.findById(request.getId());
             if (staffOptional.isEmpty()) {
-                return ResponseData.error("Staff not found");
+                return ResponseData.error("Không tìm thấy nhân viên");
             }
 
             Optional<Branch> branchOptional = branchRepository.findById(request.getBranchId());
             if (branchOptional.isEmpty()) {
-                return ResponseData.error("Branch not found");
+                return ResponseData.error("Không tìm thấy chi nhánh");
             }
 
             Staff staff = staffOptional.get();
@@ -168,7 +170,7 @@ public class UserService implements UserInterface {
 
             staffRepository.save(staff);
 
-            return ResponseData.success("Update staff successfully", staffToStaffDTO(staff));
+            return ResponseData.success("Cập nhật nhân viên thành công", staffToStaffDTO(staff));
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
@@ -189,7 +191,7 @@ public class UserService implements UserInterface {
         staffDTO.setRole(staff.getUser().getRole().toString());
         staffDTO.setActive(staff.getUser().isActive());
 
-        return ResponseData.success("Convert staff successfully", staffDTO);
+        return ResponseData.success("Chuyển đổi thông tin nhân viên thành công", staffDTO);
     }
 
     @Override
@@ -197,7 +199,7 @@ public class UserService implements UserInterface {
         try {
             Optional<Supplier> supplierOptional = supplierRepository.findById(request.getId());
             if (supplierOptional.isEmpty()) {
-                return ResponseData.error("Supplier not found");
+                return ResponseData.error("Không tìm thấy nhà cung cấp");
             }
 
             Supplier supplier = supplierOptional.get();
@@ -208,7 +210,7 @@ public class UserService implements UserInterface {
 
             supplierRepository.save(supplier);
 
-            return ResponseData.success("Update supplier successfully", supplier);
+            return ResponseData.success("Cập nhật nhà cung cấp thành công", supplier);
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
@@ -220,14 +222,14 @@ public class UserService implements UserInterface {
         try {
             Optional<User> userOptional = userRepository.findById(id);
             if (userOptional.isEmpty()) {
-                return ResponseData.error("User not found");
+                return ResponseData.error("Không tìm thấy người dùng");
             }
 
             User user = userOptional.get();
             user.setActive(false);
             userRepository.save(user);
 
-            return ResponseData.success("Blocked user successfully", user);
+            return ResponseData.success("Chặn người dùng thành công", user);
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());

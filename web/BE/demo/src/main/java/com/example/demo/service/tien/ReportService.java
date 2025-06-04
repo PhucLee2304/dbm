@@ -1,11 +1,18 @@
 package com.example.demo.service.tien;
 
-import com.example.demo.dto.tien.EachDayRevenueLastMonthDTO;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Service;
+
 import com.example.demo.dto.tien.TopCustomerDTO;
 import com.example.demo.dto.tien.TopProductDTO;
 import com.example.demo.dto.tien.TopStaffDTO;
 import com.example.demo.entity.User;
-import com.example.demo.repository.OrderRepository;
 import com.example.demo.utils.ResponseData;
 import com.example.demo.utils.UserUtil;
 import com.itextpdf.text.*;
@@ -13,15 +20,8 @@ import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +46,7 @@ public class ReportService {
             addStoreInfo(document, normalFont);
             addReportTitle(document, titleFont);
             addReportMetadata(document, normalFont);
-            
+
             // Thêm nội dung báo cáo
             addRevenueData(document, subtitleFont, normalFont);
             addOrderStatistics(document, subtitleFont, normalFont);
@@ -54,7 +54,7 @@ public class ReportService {
             addTopProductsTable(document, subtitleFont, normalFont);
             addTopStaffTable(document, subtitleFont, normalFont);
             addTopCustomersTable(document, subtitleFont, normalFont);
-            
+
             // Footer
             addFooter(document, normalFont);
 
@@ -67,7 +67,8 @@ public class ReportService {
 
     private void addStoreInfo(Document document, Font font) throws DocumentException {
         document.add(new Paragraph("CHUỖI CỬA HÀNG QUẦN ÁO ABC", font));
-        document.add(new Paragraph("Địa chỉ: 123/3 đường Lê Lợi, phường Bến Nghé, Quận 1, Thành phố Hồ Chí Minh", font));
+        document.add(
+                new Paragraph("Địa chỉ: 123/3 đường Lê Lợi, phường Bến Nghé, Quận 1, Thành phố Hồ Chí Minh", font));
         document.add(new Paragraph("MST: xxxxxxxxxxxx", font));
         document.add(Chunk.NEWLINE);
     }
@@ -83,16 +84,17 @@ public class ReportService {
         // Lấy thông tin người dùng hiện tại
         ResponseData userResponse = userUtil.getUserInfo();
         String userName = "Admin";
-        
+
         if (userResponse.isSuccess() && userResponse.getData() != null) {
             User user = (User) userResponse.getData();
             userName = user.getName();
         }
-        
+
         Font italicFont = new Font(normalFont.getBaseFont(), normalFont.getSize(), Font.ITALIC);
-        
+
         document.add(new Paragraph("Người xuất báo cáo: " + userName, italicFont));
-        document.add(new Paragraph("Ngày xuất: " + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), italicFont));
+        document.add(new Paragraph(
+                "Ngày xuất: " + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), italicFont));
         document.add(Chunk.NEWLINE);
     }
 
@@ -101,19 +103,19 @@ public class ReportService {
         subtitle.setAlignment(Element.ALIGN_LEFT);
         document.add(subtitle);
         document.add(Chunk.NEWLINE);
-        
+
         // Thêm đơn vị tính
         Paragraph unit = new Paragraph("Đơn vị tính: VNĐ", normalFont);
         unit.setAlignment(Element.ALIGN_RIGHT);
         document.add(unit);
-        
+
         PdfPTable table = new PdfPTable(2);
         table.setWidthPercentage(100);
         table.setSpacingBefore(10f);
 
         addCellWithBorder(table, "Tiêu chí", normalFont, Element.ALIGN_CENTER);
         addCellWithBorder(table, "Giá trị", normalFont, Element.ALIGN_CENTER);
-        
+
         // Thêm hàng STT cột
         addCellWithBorder(table, "1", normalFont, Element.ALIGN_CENTER);
         addCellWithBorder(table, "2", normalFont, Element.ALIGN_CENTER);
@@ -131,26 +133,27 @@ public class ReportService {
         subtitle.setAlignment(Element.ALIGN_LEFT);
         document.add(subtitle);
         document.add(Chunk.NEWLINE);
-        
+
         // Thêm đơn vị tính
         Paragraph unit = new Paragraph("Đơn vị tính: Đơn hàng", normalFont);
         unit.setAlignment(Element.ALIGN_RIGHT);
         document.add(unit);
-        
+
         PdfPTable table = new PdfPTable(2);
         table.setWidthPercentage(100);
         table.setSpacingBefore(10f);
 
         addCellWithBorder(table, "Tiêu chí", normalFont, Element.ALIGN_CENTER);
         addCellWithBorder(table, "Số lượng", normalFont, Element.ALIGN_CENTER);
-        
+
         // Thêm hàng STT cột
         addCellWithBorder(table, "1", normalFont, Element.ALIGN_CENTER);
         addCellWithBorder(table, "2", normalFont, Element.ALIGN_CENTER);
 
         Long totalOrders = (Long) dashboardService.getTotalOrders().getData();
         Long totalOnlineOrders = (Long) dashboardService.getTotalOnlineOrders().getData();
-        Long totalOfflineOrders = (Long) dashboardService.getTotalOfflineOrders().getData();
+        Long totalOfflineOrders =
+                (Long) dashboardService.getTotalOfflineOrders().getData();
 
         addCellWithBorder(table, "Tổng số đơn hàng", normalFont, Element.ALIGN_LEFT);
         addCellWithBorder(table, String.valueOf(totalOrders), normalFont, Element.ALIGN_RIGHT);
@@ -170,19 +173,19 @@ public class ReportService {
         subtitle.setAlignment(Element.ALIGN_LEFT);
         document.add(subtitle);
         document.add(Chunk.NEWLINE);
-        
+
         // Thêm đơn vị tính
         Paragraph unit = new Paragraph("Đơn vị tính: Người/Sản phẩm", normalFont);
         unit.setAlignment(Element.ALIGN_RIGHT);
         document.add(unit);
-        
+
         PdfPTable table = new PdfPTable(2);
         table.setWidthPercentage(100);
         table.setSpacingBefore(10f);
 
         addCellWithBorder(table, "Tiêu chí", normalFont, Element.ALIGN_CENTER);
         addCellWithBorder(table, "Số lượng", normalFont, Element.ALIGN_CENTER);
-        
+
         // Thêm hàng STT cột
         addCellWithBorder(table, "1", normalFont, Element.ALIGN_CENTER);
         addCellWithBorder(table, "2", normalFont, Element.ALIGN_CENTER);
@@ -200,7 +203,7 @@ public class ReportService {
 
         addCellWithBorder(table, "Tổng số nhân viên", normalFont, Element.ALIGN_LEFT);
         addCellWithBorder(table, String.valueOf(totalStaffs), normalFont, Element.ALIGN_RIGHT);
-        
+
         addCellWithBorder(table, "Tổng số sản phẩm", normalFont, Element.ALIGN_LEFT);
         addCellWithBorder(table, String.valueOf(totalProducts), normalFont, Element.ALIGN_RIGHT);
 
@@ -227,7 +230,7 @@ public class ReportService {
             document.add(Chunk.NEWLINE);
             return;
         }
-        
+
         // Thêm đơn vị tính
         Paragraph unit = new Paragraph("Đơn vị tính: Cái/VNĐ", normalFont);
         unit.setAlignment(Element.ALIGN_RIGHT);
@@ -241,7 +244,7 @@ public class ReportService {
         addCellWithBorder(table, "Tên sản phẩm", normalFont, Element.ALIGN_CENTER);
         addCellWithBorder(table, "Số lượng đã bán", normalFont, Element.ALIGN_CENTER);
         addCellWithBorder(table, "Doanh thu", normalFont, Element.ALIGN_CENTER);
-        
+
         // Thêm hàng STT cột
         addCellWithBorder(table, "1", normalFont, Element.ALIGN_CENTER);
         addCellWithBorder(table, "2", normalFont, Element.ALIGN_CENTER);
@@ -279,7 +282,7 @@ public class ReportService {
             document.add(Chunk.NEWLINE);
             return;
         }
-        
+
         // Thêm đơn vị tính
         Paragraph unit = new Paragraph("Đơn vị tính: Cái/VNĐ", normalFont);
         unit.setAlignment(Element.ALIGN_RIGHT);
@@ -294,7 +297,7 @@ public class ReportService {
         addCellWithBorder(table, "Tên nhân viên", normalFont, Element.ALIGN_CENTER);
         addCellWithBorder(table, "Số lượng đã bán", normalFont, Element.ALIGN_CENTER);
         addCellWithBorder(table, "Doanh thu", normalFont, Element.ALIGN_CENTER);
-        
+
         // Thêm hàng STT cột
         addCellWithBorder(table, "1", normalFont, Element.ALIGN_CENTER);
         addCellWithBorder(table, "2", normalFont, Element.ALIGN_CENTER);
@@ -334,7 +337,7 @@ public class ReportService {
             document.add(Chunk.NEWLINE);
             return;
         }
-        
+
         // Thêm đơn vị tính
         Paragraph unit = new Paragraph("Đơn vị tính: Cái/VNĐ", normalFont);
         unit.setAlignment(Element.ALIGN_RIGHT);
@@ -350,7 +353,7 @@ public class ReportService {
         addCellWithBorder(table, "SĐT", normalFont, Element.ALIGN_CENTER);
         addCellWithBorder(table, "Số lượng mua", normalFont, Element.ALIGN_CENTER);
         addCellWithBorder(table, "Tổng chi tiêu", normalFont, Element.ALIGN_CENTER);
-        
+
         // Thêm hàng STT cột
         addCellWithBorder(table, "1", normalFont, Element.ALIGN_CENTER);
         addCellWithBorder(table, "2", normalFont, Element.ALIGN_CENTER);
@@ -365,7 +368,8 @@ public class ReportService {
             addCellWithBorder(table, customer.getName(), normalFont, Element.ALIGN_LEFT);
             addCellWithBorder(table, customer.getEmail(), normalFont, Element.ALIGN_LEFT);
             addCellWithBorder(table, customer.getPhone(), normalFont, Element.ALIGN_LEFT);
-            addCellWithBorder(table, String.valueOf(customer.getTotalQuantityBought()), normalFont, Element.ALIGN_RIGHT);
+            addCellWithBorder(
+                    table, String.valueOf(customer.getTotalQuantityBought()), normalFont, Element.ALIGN_RIGHT);
             addCellWithBorder(table, formatCurrency(customer.getTotalSpent()), normalFont, Element.ALIGN_RIGHT);
         }
 
@@ -377,66 +381,66 @@ public class ReportService {
         // Get current user info for signature
         ResponseData userResponse = userUtil.getUserInfo();
         String userName = "Admin";
-        
+
         if (userResponse.isSuccess() && userResponse.getData() != null) {
             User user = (User) userResponse.getData();
             userName = user.getName();
         }
-        
+
         // Create signature table
         PdfPTable sigTable = new PdfPTable(3);
         sigTable.setWidthPercentage(100);
         sigTable.setSpacingBefore(50f);
-        
+
         // Add signature header cells
         PdfPCell cell1 = new PdfPCell(new Phrase("Người lập biểu", normalFont));
         cell1.setBorder(0);
         cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
         sigTable.addCell(cell1);
-        
+
         PdfPCell cell2 = new PdfPCell(new Phrase("Kế toán trưởng", normalFont));
         cell2.setBorder(0);
         cell2.setHorizontalAlignment(Element.ALIGN_CENTER);
         sigTable.addCell(cell2);
-        
+
         PdfPCell cell3 = new PdfPCell(new Phrase("Người đại diện theo pháp luật", normalFont));
         cell3.setBorder(0);
         cell3.setHorizontalAlignment(Element.ALIGN_CENTER);
         sigTable.addCell(cell3);
-        
+
         // Add signature subtitle cells
         PdfPCell subtitle1 = new PdfPCell(new Phrase("(Ký, họ tên)", normalFont));
         subtitle1.setBorder(0);
         subtitle1.setHorizontalAlignment(Element.ALIGN_CENTER);
         sigTable.addCell(subtitle1);
-        
+
         PdfPCell subtitle2 = new PdfPCell(new Phrase("(Ký, họ tên)", normalFont));
         subtitle2.setBorder(0);
         subtitle2.setHorizontalAlignment(Element.ALIGN_CENTER);
         sigTable.addCell(subtitle2);
-        
+
         PdfPCell subtitle3 = new PdfPCell(new Phrase("(Ký, họ tên)", normalFont));
         subtitle3.setBorder(0);
         subtitle3.setHorizontalAlignment(Element.ALIGN_CENTER);
         sigTable.addCell(subtitle3);
-        
+
         // Add empty space for signatures
         PdfPCell sig1 = new PdfPCell(new Phrase("\n\n\n" + userName, normalFont));
         sig1.setBorder(0);
         sig1.setHorizontalAlignment(Element.ALIGN_CENTER);
         sigTable.addCell(sig1);
-        
+
         PdfPCell sig2 = new PdfPCell(new Phrase("\n\n\n", normalFont));
         sig2.setBorder(0);
         sigTable.addCell(sig2);
-        
+
         PdfPCell sig3 = new PdfPCell(new Phrase("\n\n\n", normalFont));
         sig3.setBorder(0);
         sigTable.addCell(sig3);
-        
+
         document.add(sigTable);
         document.add(Chunk.NEWLINE);
-        
+
         // Add copyright footer
         Paragraph footer = new Paragraph("© CH-ABC 2025 - Hệ thống quản lý doanh thu", normalFont);
         footer.setAlignment(Element.ALIGN_CENTER);
@@ -450,7 +454,8 @@ public class ReportService {
             if (resource.exists()) {
                 try (InputStream fontStream = resource.getInputStream()) {
                     byte[] fontBytes = fontStream.readAllBytes();
-                    return BaseFont.createFont("arial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, true, fontBytes, null);
+                    return BaseFont.createFont(
+                            "arial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, true, fontBytes, null);
                 }
             }
         } catch (Exception e) {

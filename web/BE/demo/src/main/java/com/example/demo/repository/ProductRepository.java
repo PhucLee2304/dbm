@@ -3,7 +3,6 @@ package com.example.demo.repository;
 import java.util.List;
 import java.util.Optional;
 
-import com.example.demo.dto.tien.TopProductDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -56,5 +55,4 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Transactional
     @Query("DELETE FROM Product p WHERE p.id = :productId")
     void deleteProductById(@Param("productId") Long productId);
-
 }

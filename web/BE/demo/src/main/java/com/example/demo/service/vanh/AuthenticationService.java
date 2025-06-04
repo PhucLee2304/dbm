@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import com.example.demo.service.tien.DashboardService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +17,7 @@ import com.example.demo.request.vanh.AddCustomerRequest;
 import com.example.demo.request.vanh.AddStaffRequest;
 import com.example.demo.request.vanh.AddSupplierRequest;
 import com.example.demo.request.vanh.LoginRequest;
+import com.example.demo.service.tien.DashboardService;
 import com.example.demo.utils.JwtUtil;
 import com.example.demo.utils.ResponseData;
 
@@ -39,7 +38,7 @@ public class AuthenticationService implements AuthenticationInterface {
     private final DashboardService dashboardService;
     private final SimpMessagingTemplate simpMessagingTemplate;
 
-    private void updateUserDashboard(){
+    private void updateUserDashboard() {
         ResponseData totalUsers = dashboardService.getTotalUsers();
         simpMessagingTemplate.convertAndSend("/topic/dashboard/total-users", totalUsers);
 
@@ -54,11 +53,11 @@ public class AuthenticationService implements AuthenticationInterface {
     public ResponseData addCustomer(AddCustomerRequest request) {
         try {
             if (userRepository.existsByEmail(request.getEmail().toLowerCase())) {
-                return ResponseData.error("Email already exists");
+                return ResponseData.error("Email đã tồn tại");
             }
 
             if (userRepository.existsByPhone(request.getPhone().toLowerCase())) {
-                return ResponseData.error("Phone already exists");
+                return ResponseData.error("Số điện thoại đã tồn tại");
             }
 
             User user = new User();
@@ -89,8 +88,7 @@ public class AuthenticationService implements AuthenticationInterface {
             data.put("role", RoleEnum.CUSTOMER.toString());
             //            data.put("customer", customerToCustomerDTO(customer));
 
-
-            ResponseData responseData = ResponseData.success("Registered new customer successfully", token);
+            ResponseData responseData = ResponseData.success("Đăng ký khách hàng mới thành công", token);
 
             if (responseData.isSuccess()) {
                 updateUserDashboard();
@@ -98,7 +96,7 @@ public class AuthenticationService implements AuthenticationInterface {
 
             return responseData;
 
-//            return ResponseData.success("Registered new customer successfully", token);
+            //            return ResponseData.success("Đăng ký khách hàng mới thành công", token);
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
@@ -109,7 +107,7 @@ public class AuthenticationService implements AuthenticationInterface {
     public ResponseData addStaff(AddStaffRequest request) {
         try {
             if (userRepository.existsByEmail(request.getEmail().toLowerCase())) {
-                return ResponseData.error("Email already exists");
+                return ResponseData.error("Email đã tồn tại");
             }
 
             User user = new User();
@@ -126,7 +124,7 @@ public class AuthenticationService implements AuthenticationInterface {
 
             Optional<Branch> branchOptional = branchRepository.findById(request.getBranchId());
             if (branchOptional.isEmpty()) {
-                return ResponseData.error("Branch not found");
+                return ResponseData.error("Không tìm thấy chi nhánh");
             }
             Branch branch = branchOptional.get();
 
@@ -139,7 +137,8 @@ public class AuthenticationService implements AuthenticationInterface {
 
             staffRepository.save(staff);
 
-            ResponseData responseData = ResponseData.success("Registered new staff successfully", staffToStaffDTO(staff));
+            ResponseData responseData =
+                    ResponseData.success("Đăng ký nhân viên mới thành công", staffToStaffDTO(staff));
 
             if (responseData.isSuccess()) {
                 updateUserDashboard();
@@ -147,7 +146,7 @@ public class AuthenticationService implements AuthenticationInterface {
 
             return responseData;
 
-//            return ResponseData.success("Registered new staff successfully", staffToStaffDTO(staff));
+            //            return ResponseData.success("Đăng ký nhân viên mới thành công", staffToStaffDTO(staff));
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
@@ -168,22 +167,22 @@ public class AuthenticationService implements AuthenticationInterface {
         staffDTO.setRole(staff.getUser().getRole().toString());
         staffDTO.setActive(staff.getUser().isActive());
 
-        return ResponseData.success("Convert staff successfully", staffDTO);
+        return ResponseData.success("Chuyển đổi thông tin nhân viên thành công", staffDTO);
     }
 
     @Override
     public ResponseData addSupplier(AddSupplierRequest request) {
         try {
             if (supplierRepository.existsByEmail(request.getEmail().toLowerCase())) {
-                return ResponseData.error("Email already exists");
+                return ResponseData.error("Email đã tồn tại");
             }
 
             if (supplierRepository.existsByPhone(request.getPhone())) {
-                return ResponseData.error("Phone already exists");
+                return ResponseData.error("Số điện thoại đã tồn tại");
             }
 
             if (supplierRepository.existsByAddress(request.getAddress())) {
-                return ResponseData.error("Address already exists");
+                return ResponseData.error("Địa chỉ đã tồn tại");
             }
 
             Supplier supplier = new Supplier();
@@ -194,7 +193,7 @@ public class AuthenticationService implements AuthenticationInterface {
 
             supplierRepository.save(supplier);
 
-            return ResponseData.success("Registered new supplier successfully", supplier);
+            return ResponseData.success("Đăng ký nhà cung cấp mới thành công", supplier);
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
@@ -207,20 +206,20 @@ public class AuthenticationService implements AuthenticationInterface {
             Optional<User> userOptional =
                     userRepository.findByEmail(request.getEmail().toLowerCase());
             if (userOptional.isEmpty()) {
-                return ResponseData.error("Email not found");
+                return ResponseData.error("Không tìm thấy email");
             }
             User user = userOptional.get();
 
             //            if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
-            //                return ResponseData.error("Wrong password");
+            //                return ResponseData.error("Mật khẩu không đúng");
             //            }
 
             if (!request.getPassword().equals(user.getPassword())) {
-                return ResponseData.error("Wrong password");
+                return ResponseData.error("Mật khẩu không đúng");
             }
 
             if (!user.isActive()) {
-                return ResponseData.error("User is not active");
+                return ResponseData.error("Tài khoản không hoạt động");
             }
 
             ResponseData generateTokenResponse = jwtUtil.generateToken(user);
@@ -229,14 +228,14 @@ public class AuthenticationService implements AuthenticationInterface {
             }
 
             String token = generateTokenResponse.getData().toString();
-            //            return ResponseData.success("Login successfully", token);
+            //            return ResponseData.success("Đăng nhập thành công", token);
             Map<String, Object> data = new HashMap<>();
             data.put("token", token);
 
             String role = user.getRole().toString();
             data.put("role", role);
 
-            return ResponseData.success("Login successfully", data);
+            return ResponseData.success("Đăng nhập thành công", data);
 
             //            if(role.equals("ADMIN")){
             //                data.put("admin", user);

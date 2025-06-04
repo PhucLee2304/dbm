@@ -81,12 +81,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     categoryInput.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
                 });
             } else {
-                showToast("Error", response.message, "error");
+                showToast("Lỗi", response.message, "error");
             }
         },
         error: function(error) {
-            console.error("Error loading categories:", error);
-            showToast("Error", "Lỗi khi kết nối server danh mục", "error");
+            console.error("Lỗi khi tải danh mục:", error);
+            showToast("Lỗi", "Lỗi khi kết nối server danh mục", "error");
         }
     });
 
@@ -101,12 +101,12 @@ document.addEventListener("DOMContentLoaded", () => {
 //                    supplierInput.innerHTML += `<option value="${sup.id}">${sup.name}</option>`;
 //                });
 //            } else {
-//                showToast("Error", "Không load được danh sách nhà cung cấp", "error");
+//                showToast("Lỗi", "Không load được danh sách nhà cung cấp", "error");
 //            }
 //       },
 //       error: function(error) {
-//            console.error("Error loading suppliers:", error);
-//            showToast("Error", "Lỗi khi kết nối server nhà cung cấp", "error");
+//            console.error("Lỗi khi tải nhà cung cấp:", error);
+//            showToast("Lỗi", "Lỗi khi kết nối server nhà cung cấp", "error");
 //        }
 //    });
 
@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
             input.value = "";
         });
 
-        modalTitle.textContent = "Add new product";
+        modalTitle.textContent = "Thêm sản phẩm mới";
         modal.style.display = "block";
     });
 
@@ -145,12 +145,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     products = response.data;
                     renderTable(products);
                 } else {
-                    showToast("Server error", response.message, "error");
+                    showToast("Lỗi máy chủ", response.message, "error");
                 }
             },
             error: function(error){
-                console.error("Client error: " + error);
-                showToast("Error", error.responseText, "error");
+                console.error("Lỗi client: " + error);
+                showToast("Lỗi", error.responseText, "error");
             }
             // error: function(xhr) {
             //     let errorMsg = "Lỗi không xác định";
@@ -169,7 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function renderTable(data) {
         tableBody.innerHTML = "";
         if (data.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="7" class="no-data">No data found</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="7" class="no-data">Không có dữ liệu</td></tr>';
             return;
         }
 
@@ -192,8 +192,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     </ul>
                 </td>
                 <td>
-                    <button class="edit-btn" onclick="editProduct(${product.id})">Update</button>
-                    <button class="delete-btn" onclick="deleteProduct(${product.id})">Delete</button>
+                    <button class="edit-btn" onclick="editProduct(${product.id})">Cập nhật</button>
+                    <button class="delete-btn" onclick="deleteProduct(${product.id})">Xóa</button>
                 </td>
             `;
             tableBody.appendChild(row);
@@ -222,7 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
         //     stockInput.value = dto ? dto.stock : "";
         // });
 
-        modalTitle.textContent = "Update product";
+        modalTitle.textContent = "Cập nhật sản phẩm";
         modal.style.display = "block";
     };
 
@@ -236,15 +236,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 headers: {"Authorization": "Bearer " + localStorage.getItem("token")},
                 success: function(response) {
                     if (response.success) {
-                        showToast("Success", response.message, "success");
+                        showToast("Thành công", response.message, "success");
                         fetchProducts();
                     } else {
-                        showToast("Server error", response.message, "error");
+                        showToast("Lỗi máy chủ", response.message, "error");
                     }
                 },
                 error: function(error){
-                    console.error("Client error: " + error);
-                    showToast("Error", error.responseText, "error");
+                    console.error("Lỗi client: " + error);
+                    showToast("Lỗi", error.responseText, "error");
                 }
                 // error: function(xhr) {
                 //     showToast("Lỗi", `Xóa thất bại (${xhr.status})`, "error");
@@ -278,7 +278,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Validate dữ liệu
         if (!request.name || !request.categoryId ||
             !request.supplierId || isNaN(request.price)) {
-            return showToast("Error", "Please fill in all information", "error");
+            return showToast("Lỗi", "Vui lòng điền đầy đủ thông tin", "error");
         }
 
         const isEditMode = !!idInput.value;
@@ -296,14 +296,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (response.success) {
                     fetchProducts();
                     modal.style.display = "none";
-                    showToast("Success", response.message, "success");
+                    showToast("Thành công", response.message, "success");
                 } else {
-                    showToast("Error", response.message, "error");
+                    showToast("Lỗi", response.message, "error");
                 }
             },
             error: function(error){
-                console.error("Client error: " + error);
-                showToast("Error", error.responseText, "error");
+                console.error("Lỗi client: " + error);
+                showToast("Lỗi", error.responseText, "error");
             }
             // error: function(xhr) {
             //     showToast("Lỗi", `Thao tác thất bại (${xhr.status})`, "error");
