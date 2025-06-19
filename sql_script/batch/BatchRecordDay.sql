@@ -4,8 +4,8 @@ GO
 CREATE OR ALTER PROCEDURE InsertBatchRecordDay
 AS
 BEGIN
-    DECLARE @batch_size INT = 500;  -- Batch size of 500
-    DECLARE @total_records INT = 1000000;  -- Total records to insert
+    DECLARE @batch_size INT = 10;  -- Batch size of 500
+    DECLARE @total_records INT = 100;  -- Total records to insert
     DECLARE @current_batch INT = 1;  -- Batch counter
     DECLARE @counter INT = 0;  -- Record counter in each batch
 

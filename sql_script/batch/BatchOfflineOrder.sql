@@ -37,7 +37,7 @@ BEGIN
         SET @total = @shipping_fee;
 
         -- Lấy thời gian hiện tại
-        SET @created = GETDATE();
+        SET @created = DATEADD(SECOND, FLOOR(RAND() * 86400), DATEADD(DAY, -FLOOR(RAND() * 30), CAST(GETDATE() AS DATETIME)));
 
         -- Lấy status ngẫu nhiên (CANCELLED, COMPLETED, PENDING)
         SET @status = (SELECT TOP 1 status FROM (VALUES ('CANCELLED'), ('COMPLETED'), ('PENDING')) AS t(status) ORDER BY NEWID());
