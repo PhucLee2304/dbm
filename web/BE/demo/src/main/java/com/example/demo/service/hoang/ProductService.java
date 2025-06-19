@@ -2,7 +2,6 @@ package com.example.demo.service.hoang;
 
 import java.util.*;
 
-import com.example.demo.service.tien.DashboardService;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +12,7 @@ import com.example.demo.entity.*;
 import com.example.demo.interfaces.hoang.ProductInterface;
 import com.example.demo.repository.*;
 import com.example.demo.request.hoang.AddProductRequest;
+import com.example.demo.service.tien.DashboardService;
 import com.example.demo.utils.ResponseData;
 
 import lombok.RequiredArgsConstructor;
@@ -55,7 +55,7 @@ public class ProductService implements ProductInterface {
         return new ArrayList<>(map.values());
     }
 
-    private void updateProductDashboard(){
+    private void updateProductDashboard() {
         ResponseData totalProducts = dashboardService.getTotalProducts();
         simpMessagingTemplate.convertAndSend("/topic/dashboard/total-products", totalProducts);
     }
@@ -65,17 +65,17 @@ public class ProductService implements ProductInterface {
     public ResponseData addProduct(AddProductRequest request) {
         try {
             if (!categoryRepository.existsById(request.getCategoryId())) {
-                return ResponseData.error("Category does not exist");
+                return ResponseData.error("Danh mục không tồn tại");
             }
 
             if (!supplierRepository.existsById(request.getSupplierId())) {
-                return ResponseData.error("Supplier does not exist");
+                return ResponseData.error("Nhà cung cấp không tồn tại");
             }
 
             for (Map.Entry<Long, Long> entry : request.getMapBranchStock().entrySet()) {
                 Long branchId = entry.getKey();
                 if (!branchRepository.existsById(branchId)) {
-                    return ResponseData.error("Branch does not exist");
+                    return ResponseData.error("Chi nhánh không tồn tại");
                 }
             }
 
@@ -108,15 +108,16 @@ public class ProductService implements ProductInterface {
 
             branchProductRepository.saveAll(branchProducts);
 
-            ResponseData responseData = ResponseData.success("Add new product successfully", toProductDTOs(branchProducts));
+            ResponseData responseData =
+                    ResponseData.success("Thêm sản phẩm mới thành công", toProductDTOs(branchProducts));
 
-            if (responseData.isSuccess()){
+            if (responseData.isSuccess()) {
                 updateProductDashboard();
             }
 
             return responseData;
 
-//            return ResponseData.success("Add new product successfully", toProductDTOs(branchProducts));
+            //            return ResponseData.success("Thêm sản phẩm mới thành công", toProductDTOs(branchProducts));
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
@@ -129,18 +130,18 @@ public class ProductService implements ProductInterface {
         try {
             Optional<Product> productOptional = productRepository.findById(id);
             if (productOptional.isEmpty()) {
-                return ResponseData.error("Product does not exist");
+                return ResponseData.error("Sản phẩm không tồn tại");
             }
             Product product = productOptional.get();
 
             Optional<Category> categoryOptional = categoryRepository.findById(request.getCategoryId());
             if (categoryOptional.isEmpty()) {
-                return ResponseData.error("Category does not exist");
+                return ResponseData.error("Danh mục không tồn tại");
             }
 
             Optional<Supplier> supplierOptional = supplierRepository.findById(request.getSupplierId());
             if (supplierOptional.isEmpty()) {
-                return ResponseData.error("Supplier does not exist");
+                return ResponseData.error("Nhà cung cấp không tồn tại");
             }
 
             Map<BranchProduct, Long> map = new HashMap<>();
@@ -149,7 +150,7 @@ public class ProductService implements ProductInterface {
                 Optional<BranchProduct> branchProductOptional =
                         branchProductRepository.findByBranchIdAndProductId(branchId, product.getId());
                 if (branchProductOptional.isEmpty()) {
-                    return ResponseData.error("Branch Product does not exist");
+                    return ResponseData.error("Sản phẩm chi nhánh không tồn tại");
                 }
 
                 map.put(branchProductOptional.get(), entry.getValue());
@@ -172,7 +173,7 @@ public class ProductService implements ProductInterface {
             }
             branchProductRepository.saveAll(branchProducts);
 
-            return ResponseData.success("Update product successfully", toProductDTOs(branchProducts));
+            return ResponseData.success("Cập nhật sản phẩm thành công", toProductDTOs(branchProducts));
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
@@ -186,7 +187,7 @@ public class ProductService implements ProductInterface {
 
             List<ProductDTO> productDTOs = toProductDTOs(branchProducts);
 
-            return ResponseData.success("Fetch all products successfully", productDTOs);
+            return ResponseData.success("Lấy tất cả sản phẩm thành công", productDTOs);
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
@@ -198,21 +199,21 @@ public class ProductService implements ProductInterface {
     public ResponseData deleteProduct(Long id) {
         try {
             if (!productRepository.existsById(id)) {
-                return ResponseData.error("Product does not exist");
+                return ResponseData.error("Sản phẩm không tồn tại");
             }
 
             branchProductRepository.deleteByProductId(id);
             productRepository.deleteProductById(id);
 
-            ResponseData responseData = ResponseData.success("Deleted product successfully", null);
+            ResponseData responseData = ResponseData.success("Xóa sản phẩm thành công", null);
 
-            if (responseData.isSuccess()){
+            if (responseData.isSuccess()) {
                 updateProductDashboard();
             }
 
             return responseData;
 
-//            return ResponseData.success("Deleted product successfully", null);
+            //            return ResponseData.success("Xóa sản phẩm thành công", null);
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());

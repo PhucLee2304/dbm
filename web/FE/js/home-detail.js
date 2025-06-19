@@ -30,7 +30,7 @@ async function fetchProducts(url) {
         const data = await response.json();
         renderProducts(data.data);
     } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error("Lỗi khi tải sản phẩm:", error);
     }
 }
 
@@ -45,7 +45,7 @@ function renderProducts(products) {
             <a href="detail.html?id=${product.id}">
                 <img src="${product.name}" alt="${product.name}" width="100%">
                 <h3>${product.name}</h3>
-                <p>Price: ${product.price} VND</p>
+                <p>Giá: ${product.price} VNĐ</p>
             </a>
         `;
         productList.appendChild(productCard);
@@ -69,7 +69,7 @@ async function searchProducts() {
             const data = await response.json();
             renderProducts(data.data);
         } catch (error) {
-            console.error("Error fetching products:", error);
+            console.error("Lỗi khi tải sản phẩm:", error);
         }
     }
 }
@@ -89,7 +89,7 @@ async function fetchProductDetail() {
     const urlParams = new URLSearchParams(window.location.search);
     const productId = urlParams.get("id");
     if (!productId) {
-        productDetail.innerHTML = "<h2>Product not found</h2>";
+        productDetail.innerHTML = "<h2>Không tìm thấy sản phẩm</h2>";
         return;
     }
     try {
@@ -103,16 +103,16 @@ async function fetchProductDetail() {
             <img src="${data.data.name}" alt="${data.data.name}">
             <div class="product-info">
                 <h2>${data.data.name}</h2>
-                <p><strong>Category:</strong> ${data.data.categoryName}</p>
-                <p><strong>Price:</strong> ${data.data.price} VND</p>
-                <p><strong>Supplier:</strong> ${data.data.supplierName}</p>
-                <p><strong>Stock:</strong> ${data.data.stock}</p>
-                <button class="buy-button" onclick="goToOrderPage()">Buy</button>
+                <p><strong>Danh mục:</strong> ${data.data.categoryName}</p>
+                <p><strong>Giá:</strong> ${data.data.price} VNĐ</p>
+                <p><strong>Nhà cung cấp:</strong> ${data.data.supplierName}</p>
+                <p><strong>Số lượng:</strong> ${data.data.stock}</p>
+                <button class="buy-button" onclick="goToOrderPage()">Mua</button>
             </div>
         `;
     } catch (error) {
-        productDetail.innerHTML = "<h2>Error loading product details</h2>";
-        console.error("Error fetching product details:", error);
+        productDetail.innerHTML = "<h2>Lỗi khi tải chi tiết sản phẩm</h2>";
+        console.error("Lỗi khi tải chi tiết sản phẩm:", error);
     }
 }
 

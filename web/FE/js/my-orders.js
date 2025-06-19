@@ -103,6 +103,9 @@ function displayOrders(orders) {
         return;
     }
 
+    // Sắp xếp đơn hàng theo ngày tạo giảm dần (mới nhất lên đầu)
+    orders.sort((a, b) => new Date(b.created) - new Date(a.created));
+
     let ordersHTML = "";
     orders.forEach(order => {
         let orderDetailsHTML = "";

@@ -37,10 +37,54 @@ document.addEventListener("DOMContentLoaded", () => {
     const resetFilterBtn = document.getElementById("reset-filter");
 
     let products = [];
-    let filteredProducts = [];
-    let currentPage = 1;
-    const productsPerPage = 10;
-    let totalProducts = 0;
+// <<<<<<< hieu
+
+//     // ============== Load Categories và Suppliers động từ API ==============
+//     // Load categories
+//     $.ajax({
+//         type: "GET",
+//         url: "http://localhost:8080/category/admin/all",
+//         headers: { "Authorization": "Bearer " + localStorage.getItem("token") },
+//         success: function(response) {
+//             if (response.success) {
+//                 response.data.forEach(cat => {
+//                     categoryInput.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
+//                 });
+//             } else {
+//                 showToast("Lỗi", response.message, "error");
+//             }
+//         },
+//         error: function(error) {
+//             console.error("Lỗi khi tải danh mục:", error);
+//             showToast("Lỗi", "Lỗi khi kết nối server danh mục", "error");
+//         }
+//     });
+
+//     // Load suppliers
+// //    $.ajax({
+// //        type: "GET",
+// //        url: "http://localhost:8080/supplier/all",
+// //        headers: { "Authorization": "Bearer " + localStorage.getItem("token") },
+// //        success: function(response) {
+// //            if (response.success) {
+// //                response.data.forEach(sup => {
+// //                    supplierInput.innerHTML += `<option value="${sup.id}">${sup.name}</option>`;
+// //                });
+// //            } else {
+// //                showToast("Lỗi", "Không load được danh sách nhà cung cấp", "error");
+// //            }
+// //       },
+// //       error: function(error) {
+// //            console.error("Lỗi khi tải nhà cung cấp:", error);
+// //            showToast("Lỗi", "Lỗi khi kết nối server nhà cung cấp", "error");
+// //        }
+// //    });
+// =======
+//     let filteredProducts = [];
+//     let currentPage = 1;
+//     const productsPerPage = 10;
+//     let totalProducts = 0;
+// >>>>>>> master
 
     // ============== Modal Controls ==============
     addBtn.addEventListener("click", () => {
@@ -51,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
             input.value = "";
         });
 
-        modalTitle.textContent = "Add new product";
+        modalTitle.textContent = "Thêm sản phẩm mới";
         modal.style.display = "block";
     });
 
@@ -207,23 +251,28 @@ document.addEventListener("DOMContentLoaded", () => {
                     filteredProducts = [];
                     renderTable(products);
                 } else {
-                    showToast("Server error", response.message, "error");
+                    showToast("Lỗi máy chủ", response.message, "error");
                 }
             },
             error: function(error){
-                console.error("Client error: " + error);
-                showToast("Error", error.responseText, "error");
+                console.error("Lỗi client: " + error);
+                showToast("Lỗi", error.responseText, "error");
             }
         });
     }
 
     function renderTable(data) {
         tableBody.innerHTML = "";
+// <<<<<<< hieu
+//         if (data.length === 0) {
+//             tableBody.innerHTML = '<tr><td colspan="7" class="no-data">Không có dữ liệu</td></tr>';
+// =======
 
-        if (!data || data.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="7" class="no-data">No data found</td></tr>';
-            renderPagination(0);
-            calculateStatistics([]);
+//         if (!data || data.length === 0) {
+//             tableBody.innerHTML = '<tr><td colspan="7" class="no-data">No data found</td></tr>';
+//             renderPagination(0);
+//             calculateStatistics([]);
+// >>>>>>> master
             return;
         }
 
@@ -252,8 +301,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     </ul>
                 </td>
                 <td>
-                    <button class="edit-btn" onclick="editProduct(${product.id})">Update</button>
-                    <button class="delete-btn" onclick="deleteProduct(${product.id})">Delete</button>
+                    <button class="edit-btn" onclick="editProduct(${product.id})">Cập nhật</button>
+                    <button class="delete-btn" onclick="deleteProduct(${product.id})">Xóa</button>
                 </td>
             `;
             tableBody.appendChild(row);
@@ -278,7 +327,7 @@ document.addEventListener("DOMContentLoaded", () => {
             stockInput.value = branchStock ? branchStock.stock : "";
         });
 
-        modalTitle.textContent = "Update product";
+        modalTitle.textContent = "Cập nhật sản phẩm";
         modal.style.display = "block";
     };
 
@@ -290,15 +339,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 headers: {"Authorization": "Bearer " + localStorage.getItem("token")},
                 success: function(response) {
                     if (response.success) {
-                        showToast("Success", response.message, "success");
+                        showToast("Thành công", response.message, "success");
                         fetchProducts();
                     } else {
-                        showToast("Server error", response.message, "error");
+                        showToast("Lỗi máy chủ", response.message, "error");
                     }
                 },
                 error: function(error){
-                    console.error("Client error: " + error);
-                    showToast("Error", error.responseText, "error");
+                    console.error("Lỗi client: " + error);
+                    showToast("Lỗi", error.responseText, "error");
                 }
             });
         }
@@ -327,7 +376,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!request.name || !request.categoryId ||
             !request.supplierId || isNaN(request.price)) {
-            return showToast("Error", "Please fill in all information", "error");
+            return showToast("Lỗi", "Vui lòng điền đầy đủ thông tin", "error");
         }
 
         const isEditMode = !!idInput.value;
@@ -345,14 +394,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (response.success) {
                     fetchProducts();
                     modal.style.display = "none";
-                    showToast("Success", response.message, "success");
+                    showToast("Thành công", response.message, "success");
                 } else {
-                    showToast("Error", response.message, "error");
+                    showToast("Lỗi", response.message, "error");
                 }
             },
             error: function(error){
-                console.error("Client error: " + error);
-                showToast("Error", error.responseText, "error");
+                console.error("Lỗi client: " + error);
+                showToast("Lỗi", error.responseText, "error");
             }
         });
     });

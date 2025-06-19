@@ -23,14 +23,14 @@ public class CategoryService implements CategoryInterface {
     public ResponseData addCategory(AddCategoryRequest request) {
         try {
             if (categoryRepository.existsByName(request.getName())) {
-                return ResponseData.error("Category name already exist");
+                return ResponseData.error("Tên danh mục đã tồn tại");
             }
 
             Category category = new Category();
             category.setName(request.getName());
             categoryRepository.save(category);
 
-            return ResponseData.success("Add new category successfully", category);
+            return ResponseData.success("Thêm danh mục mới thành công", category);
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
         }
@@ -41,18 +41,18 @@ public class CategoryService implements CategoryInterface {
         try {
             Optional<Category> optionalCategory = categoryRepository.findById(id);
             if (optionalCategory.isEmpty()) {
-                return ResponseData.error("Category not found");
+                return ResponseData.error("Không tìm thấy danh mục");
             }
             Category category = optionalCategory.get();
 
             if (categoryRepository.existsByName(request.getName())) {
-                return ResponseData.error("Category name already exist");
+                return ResponseData.error("Tên danh mục đã tồn tại");
             }
 
             category.setName(request.getName());
             categoryRepository.save(category);
 
-            return ResponseData.success("Update category successfully", category);
+            return ResponseData.success("Cập nhật danh mục thành công", category);
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
         }
@@ -63,10 +63,10 @@ public class CategoryService implements CategoryInterface {
         try {
             List<Category> categories = categoryRepository.findAll();
             if (categories.isEmpty()) {
-                return ResponseData.error("No categories found");
+                return ResponseData.error("Không tìm thấy danh mục nào");
             }
 
-            return ResponseData.success("Fetched all categories successfully", categories);
+            return ResponseData.success("Lấy tất cả danh mục thành công", categories);
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
         }

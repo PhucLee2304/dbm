@@ -39,7 +39,7 @@ public class AttendanceService implements AttendanceInterface {
                     recordDayRepository.findByTimeSheetIdAndDay(timeSheet.getId(), today);
 
             if (existingRecordOpt.isPresent()) {
-                return ResponseData.error("You have already checked in today");
+                return ResponseData.error("Bạn đã chấm công vào hôm nay");
             }
 
             LocalDateTime now = LocalDateTime.now();
@@ -57,9 +57,9 @@ public class AttendanceService implements AttendanceInterface {
 
             recordDayRepository.save(recordDay);
 
-            return ResponseData.success("Check-in successful", recordDay);
+            return ResponseData.success("Chấm công vào thành công", recordDay);
         } catch (Exception e) {
-            return ResponseData.error("Check-in failed: " + e.getMessage());
+            return ResponseData.error("Chấm công vào thất bại: " + e.getMessage());
         }
     }
 
@@ -74,13 +74,13 @@ public class AttendanceService implements AttendanceInterface {
                     recordDayRepository.findByTimeSheetIdAndDay(timeSheet.getId(), today);
 
             if (existingRecordOpt.isEmpty()) {
-                return ResponseData.error("No check-in record found for today");
+                return ResponseData.error("Không tìm thấy bản ghi chấm công vào hôm nay");
             }
 
             RecordDay recordDay = existingRecordOpt.get();
 
             if (recordDay.getCheckout() != null) {
-                return ResponseData.error("You have already checked out today");
+                return ResponseData.error("Bạn đã chấm công ra hôm nay");
             }
 
             LocalDateTime now = LocalDateTime.now();
@@ -89,21 +89,22 @@ public class AttendanceService implements AttendanceInterface {
             if (now.getHour() > 17 || (now.getHour() == 17 && now.getMinute() > 0)) {
                 recordDay.setCheckOutStatus(AttendanceStatus.ONTIME);
             } else {
-//                 if (recordDay.getStatus() == AttendanceStatus.LATE) recordDay.setStatus(AttendanceStatus.ONTIME);
-//                 else recordDay.setStatus(AttendanceStatus.ONTIME);
+                //                 if (recordDay.getStatus() == AttendanceStatus.LATE)
+                // recordDay.setStatus(AttendanceStatus.ONTIME);
+                //                 else recordDay.setStatus(AttendanceStatus.ONTIME);
                 recordDay.setCheckOutStatus(AttendanceStatus.EARLY);
             }
             recordDayRepository.save(recordDay);
-            return ResponseData.success("Check-out successful", recordDay);
+            return ResponseData.success("Chấm công ra thành công", recordDay);
         } catch (Exception e) {
-            return ResponseData.error("Check-out failed: " + e.getMessage());
+            return ResponseData.error("Chấm công ra thất bại: " + e.getMessage());
         }
     }
 
     private TimeSheet getOrCreateTimeSheet(String staffEmail) {
         Staff staff = staffRepository
                 .findByUserEmail(staffEmail)
-                .orElseThrow(() -> new RuntimeException("Staff not found with id: " + staffEmail));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên với id: " + staffEmail));
         Optional<TimeSheet> timeSheetOpt = timeSheetRepository.findByStaffId(staff.getId());
         if (timeSheetOpt.isEmpty()) {
             TimeSheet newTimeSheet = new TimeSheet();

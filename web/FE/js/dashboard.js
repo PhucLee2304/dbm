@@ -134,7 +134,7 @@ function fetchRevenue() {
     })
     .catch(error => {
         console.error('Error fetching revenue:', error);
-        showToast("Error", "Failed to fetch revenue data", "error", 3000);
+        showToast("Lỗi", "Không thể tải dữ liệu doanh thu", "error", 3000);
     });
 }
 
@@ -157,7 +157,7 @@ function fetchTotalUsers() {
     })
     .catch(error => {
         console.error('Error fetching total users:', error);
-        showToast("Error", "Failed to fetch total users data", "error", 3000);
+        showToast("Lỗi", "Không thể tải dữ liệu tổng người dùng", "error", 3000);
     });
 }
 
@@ -180,7 +180,7 @@ function fetchTotalCustomers() {
     })
     .catch(error => {
         console.error('Error fetching total customers:', error);
-        showToast("Error", "Failed to fetch total customers data", "error", 3000);
+        showToast("Lỗi", "Không thể tải dữ liệu tổng khách hàng", "error", 3000);
     });
 }
 
@@ -203,7 +203,7 @@ function fetchTotalStaffs() {
     })
     .catch(error => {
         console.error('Error fetching total staffs:', error);
-        showToast("Error", "Failed to fetch total staffs data", "error", 3000);
+        showToast("Lỗi", "Không thể tải dữ liệu tổng nhân viên", "error", 3000);
     });
 }
 
@@ -226,7 +226,7 @@ function fetchTotalOrders() {
     })
     .catch(error => {
         console.error('Error fetching total orders:', error);
-        showToast("Error", "Failed to fetch total orders data", "error", 3000);
+        showToast("Lỗi", "Không thể tải dữ liệu tổng đơn hàng", "error", 3000);
     });
 }
 
@@ -249,7 +249,7 @@ function fetchTotalOnlineOrders() {
     })
     .catch(error => {
         console.error('Error fetching total online orders:', error);
-        showToast("Error", "Failed to fetch total online orders data", "error", 3000);
+        showToast("Lỗi", "Không thể tải dữ liệu tổng đơn hàng online", "error", 3000);
     });
 }
 
@@ -272,7 +272,7 @@ function fetchTotalOfflineOrders() {
     })
     .catch(error => {
         console.error('Error fetching total offline orders:', error);
-        showToast("Error", "Failed to fetch total offline orders data", "error", 3000);
+        showToast("Lỗi", "Không thể tải dữ liệu tổng đơn hàng offline", "error", 3000);
     });
 }
 
@@ -295,7 +295,7 @@ function fetchTotalProducts() {
     })
     .catch(error => {
         console.error('Error fetching total products:', error);
-        showToast("Error", "Failed to fetch total products data", "error", 3000);
+        showToast("Lỗi", "Không thể tải dữ liệu tổng sản phẩm", "error", 3000);
     });
 }
 
@@ -318,7 +318,7 @@ function fetchTopProducts() {
     })
     .catch(error => {
         console.error('Error fetching top products:', error);
-        showToast("Error", "Failed to fetch top products data", "error", 3000);
+        showToast("Lỗi", "Không thể tải dữ liệu sản phẩm bán chạy", "error", 3000);
     });
 }
 
@@ -341,7 +341,7 @@ function fetchTopStaff() {
     })
     .catch(error => {
         console.error('Error fetching top staff:', error);
-        showToast("Error", "Failed to fetch top staff data", "error", 3000);
+        showToast("Lỗi", "Không thể tải dữ liệu nhân viên xuất sắc", "error", 3000);
     });
 }
 
@@ -364,7 +364,7 @@ function fetchTopCustomers() {
     })
     .catch(error => {
         console.error('Error fetching top customers:', error);
-        showToast("Error", "Failed to fetch top customers data", "error", 3000);
+        showToast("Lỗi", "Không thể tải dữ liệu khách hàng VIP", "error", 3000);
     });
 }
 
@@ -387,7 +387,7 @@ function fetchDailyRevenue() {
     })
     .catch(error => {
         console.error('Error fetching daily revenue:', error);
-        showToast("Error", "Failed to fetch daily revenue data", "error", 3000);
+        showToast("Lỗi", "Không thể tải dữ liệu doanh thu hàng ngày", "error", 3000);
     });
 }
 
@@ -402,7 +402,7 @@ function connectWebSocket() {
             if (response && response.success) {
                 renderRevenue(response);
             } else {
-                console.error('Invalid data received for revenue');
+                console.error('Dữ liệu không hợp lệ cho doanh thu');
             }
         });
 
@@ -411,7 +411,7 @@ function connectWebSocket() {
             if (response && response.success) {
                 renderTotalUsers(response);
             } else {
-                console.error('Invalid data received for total users');
+                console.error('Dữ liệu không hợp lệ cho tổng người dùng');
             }
         });
 
@@ -420,7 +420,7 @@ function connectWebSocket() {
             if (response && response.success) {
                 renderTotalCustomers(response);
             } else {
-                console.error('Invalid data received for total customers');
+                console.error('Dữ liệu không hợp lệ cho tổng khách hàng');
             }
         });
 
@@ -429,7 +429,7 @@ function connectWebSocket() {
             if (response && response.success) {
                 renderTotalStaffs(response);
             } else {
-                console.error('Invalid data received for total staffs');
+                console.error('Dữ liệu không hợp lệ cho tổng nhân viên');
             }
         });
 
@@ -438,7 +438,7 @@ function connectWebSocket() {
             if (response && response.success) {
                 renderTotalOrders(response);
             } else {
-                console.error('Invalid data received for total orders');
+                console.error('Dữ liệu không hợp lệ cho tổng đơn hàng');
             }
         });
 
@@ -447,7 +447,7 @@ function connectWebSocket() {
             if (response && response.success) {
                 renderTotalOnlineOrders(response);
             } else {
-                console.error('Invalid data received for total online orders');
+                console.error('Dữ liệu không hợp lệ cho tổng đơn hàng online');
             }
         });
 
@@ -456,7 +456,7 @@ function connectWebSocket() {
             if (response && response.success) {
                 renderTotalOfflineOrders(response);
             } else {
-                console.error('Invalid data received for total offline orders');
+                console.error('Dữ liệu không hợp lệ cho tổng đơn hàng offline');
             }
         });
 
@@ -465,7 +465,7 @@ function connectWebSocket() {
             if (response && response.success) {
                 renderTotalProducts(response);
             } else {
-                console.error('Invalid data received for total products');
+                console.error('Dữ liệu không hợp lệ cho tổng sản phẩm');
             }
         });
 
@@ -474,7 +474,7 @@ function connectWebSocket() {
             if (response && response.success) {
                 renderTopProductsChart(response);
             } else {
-                console.error('Invalid data received for top products');
+                console.error('Dữ liệu không hợp lệ cho sản phẩm bán chạy');
             }
         });
 
@@ -483,7 +483,7 @@ function connectWebSocket() {
             if (response && response.success) {
                 renderTopStaffChart(response);
             } else {
-                console.error('Invalid data received for top staff');
+                console.error('Dữ liệu không hợp lệ cho nhân viên xuất sắc');
             }
         });
 
@@ -492,7 +492,7 @@ function connectWebSocket() {
             if (response && response.success) {
                 renderTopCustomersChart(response);
             } else {
-                console.error('Invalid data received for top customers');
+                console.error('Dữ liệu không hợp lệ cho khách hàng VIP');
             }
         });
 
@@ -501,7 +501,7 @@ function connectWebSocket() {
             if (response && response.success) {
                 renderDailyRevenueChart(response);
             } else {
-                console.error('Invalid data received for daily revenue');
+                console.error('Dữ liệu không hợp lệ cho doanh thu hàng ngày');
             }
         });
     });
@@ -985,7 +985,7 @@ function logout() {
         
     } catch (error) {
         console.error("Error during logout:", error);
-        showToast("Error", "Có lỗi xảy ra khi đăng xuất", "error");
+        showToast("Lỗi", "Có lỗi xảy ra khi đăng xuất", "error");
     }
 }
 
@@ -995,7 +995,7 @@ function checkAuthentication() {
     
     if (!token) {
         // Nếu không có token, chuyển hướng về login
-        showToast("Warning", "Vui lòng đăng nhập để truy cập", "error", 3000);
+        showToast("Cảnh báo", "Vui lòng đăng nhập để truy cập", "error", 3000);
         setTimeout(() => {
             window.location.href = "login.html";
         }, 3000);
@@ -1030,11 +1030,11 @@ function initializeExportButton() {
                 a.click();
                 document.body.removeChild(a);
                 window.URL.revokeObjectURL(url);
-                showToast("Success", "Báo cáo đã được tải xuống", "success", 3000);
+                showToast("Thành công", "Báo cáo đã được tải xuống", "success", 3000);
             })
             .catch(error => {
                 console.error("Lỗi khi tải file PDF:", error);
-                showToast("Error", "Không thể tải báo cáo. Vui lòng thử lại sau.", "error");
+                showToast("Lỗi", "Không thể tải báo cáo. Vui lòng thử lại sau.", "error");
             });
         });
     }
@@ -1067,7 +1067,7 @@ function main() {
         
         // Hiển thị thông báo thành công sau khi load xong
         setTimeout(() => {
-            showToast("Success", "Dashboard loaded successfully", "success", 3000);
+            showToast("Thành công", "Tải dashboard thành công", "success", 3000);
         }, 1000);
     }, 500);
 
@@ -1089,7 +1089,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check if Chart.js is loaded
     if (typeof Chart === 'undefined') {
         console.error('Chart.js is not loaded!');
-        showToast("Error", "Chart.js library not loaded", "error");
+        showToast("Lỗi", "Thư viện Chart.js chưa được tải", "error");
         return;
     }
     
