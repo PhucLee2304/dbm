@@ -5,8 +5,8 @@ CREATE OR ALTER PROCEDURE InsertBatchOnlineOrders
 AS
 BEGIN
     DECLARE @counter INT = 1;
-    DECLARE @batch_size INT = 1000;  -- Số lượng đơn hàng cần chèn mỗi batch
-    DECLARE @total_orders INT = 1000000; -- Tổng số đơn hàng cần chèn
+    DECLARE @batch_size INT = 100;  -- Số lượng đơn hàng cần chèn mỗi batch
+    DECLARE @total_orders INT = 1000; -- Tổng số đơn hàng cần chèn
     DECLARE @order_id BIGINT;
     DECLARE @created DATETIME;
     DECLARE @shipping_fee FLOAT;
@@ -34,7 +34,7 @@ BEGIN
         PRINT 'Processing batch ' + CAST(@counter AS NVARCHAR(10)) + ' of ' + CAST(@total_orders / @batch_size AS NVARCHAR(10));
 
         -- Khởi tạo các giá trị cần thiết cho đơn hàng
-        SET @created = GETDATE();
+        SET @created = DATEADD(SECOND, FLOOR(RAND() * 86400), DATEADD(DAY, -FLOOR(RAND() * 30), CAST(GETDATE() AS DATETIME)));
         SET @status = (SELECT TOP 1 status FROM (VALUES ('CANCELLED'), ('COMPLETED'), ('PENDING')) AS t(status) ORDER BY NEWID());
         SET @note = NEWID();  -- Tạo UUID ngẫu nhiên cho note
         SET @shipping_fee = ROUND(RAND() * 45 + 5, 2);  -- Giá trị ngẫu nhiên từ 5 đến 50
