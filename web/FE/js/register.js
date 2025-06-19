@@ -28,7 +28,7 @@ document.getElementById('form').addEventListener('submit', function(e) {
     const confirmPassword = document.getElementById('confirmPassword').value;
 
     if (password !== confirmPassword) {
-        showToast("Error", "Password and confirm password do not match", "error");
+        showToast("Lỗi", "Mật khẩu và xác nhận mật khẩu không khớp", "error");
         return;
     }
 
@@ -48,7 +48,7 @@ document.getElementById('form').addEventListener('submit', function(e) {
         success: function(response) {
             if(response.success){
                 localStorage.setItem("token", response.data.token);
-                showToast("Success", response.message, "success", 1000);
+                showToast("Thành công", response.message, "success", 1000);
                 if(response.data.role === "ADMIN"){
                     setTimeout(function() {
                         window.location.href = "../html/dashboard.html";
@@ -64,11 +64,11 @@ document.getElementById('form').addEventListener('submit', function(e) {
                 }
                 
             } else {
-                showToast("Server error", response.message, "error");
+                showToast("Lỗi máy chủ", response.message, "error");
             }
         },
         error: function(error){
-            console.error("Client error: " + error);
+            console.error("Lỗi client: " + error);
         },
     });
 });

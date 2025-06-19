@@ -8,7 +8,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.entity.BranchProduct;
 import com.example.demo.entity.Customer;
 import com.example.demo.entity.Order;
 import com.example.demo.entity.OrderDetail;
@@ -16,6 +18,7 @@ import com.example.demo.entity.OrderOnline;
 import com.example.demo.entity.User;
 import com.example.demo.enums.OrderStatusEnum;
 import com.example.demo.interfaces.tien.CustomerOrderInterface;
+import com.example.demo.repository.BranchProductRepository;
 import com.example.demo.repository.CustomerRepository;
 import com.example.demo.repository.OrderDetailRepository;
 import com.example.demo.repository.OrderOnlineRepository;
@@ -32,6 +35,7 @@ public class CustomerOrderService implements CustomerOrderInterface {
     private final OrderOnlineRepository orderOnlineRepository;
     private final OrderDetailRepository orderDetailRepository;
     private final CustomerRepository customerRepository;
+    private final BranchProductRepository branchProductRepository;
     private final UserUtil userUtil;
 
     @Override
@@ -51,8 +55,8 @@ public class CustomerOrderService implements CustomerOrderInterface {
             }
             Customer customer = customerOptional.get();
 
-            // Lấy danh sách các đơn hàng online của customer
-            List<OrderOnline> orderOnlines = orderOnlineRepository.findByCustomerId(customer.getId());
+            // Lấy danh sách các đơn hàng online của customer sắp xếp theo ngày tạo giảm dần
+            List<OrderOnline> orderOnlines = orderOnlineRepository.findByCustomerIdOrderByCreatedDesc(customer.getId());
             if (orderOnlines.isEmpty()) {
                 return ResponseData.success("Không có đơn hàng nào", Collections.emptyList());
             }
@@ -62,7 +66,7 @@ public class CustomerOrderService implements CustomerOrderInterface {
             for (OrderOnline orderOnline : orderOnlines) {
                 Order order = orderOnline.getOrder();
                 Map<String, Object> orderData = new HashMap<>();
-                
+
                 // Thông tin cơ bản của đơn hàng
                 orderData.put("id", order.getId());
                 orderData.put("subtotal", order.getSubtotal());
@@ -70,17 +74,17 @@ public class CustomerOrderService implements CustomerOrderInterface {
                 orderData.put("total", order.getTotal());
                 orderData.put("created", order.getCreated());
                 orderData.put("status", order.getStatus());
-                
+
                 // Thông tin người nhận
                 orderData.put("recipientName", orderOnline.getRecipientName());
                 orderData.put("recipientPhone", orderOnline.getRecipientPhone());
                 orderData.put("recipientAddress", orderOnline.getRecipientAddress());
                 orderData.put("note", orderOnline.getNote());
-                
+
                 // Lấy chi tiết đơn hàng
                 List<OrderDetail> orderDetails = orderDetailRepository.findAllByOrderId(order.getId());
                 orderData.put("orderDetails", orderDetails);
-                
+
                 result.add(orderData);
             }
 
@@ -120,14 +124,14 @@ public class CustomerOrderService implements CustomerOrderInterface {
                 return ResponseData.error("Không tìm thấy đơn hàng online");
             }
             OrderOnline orderOnline = orderOnlineOptional.get();
-            
+
             if (!orderOnline.getCustomer().getId().equals(customer.getId())) {
                 return ResponseData.error("Bạn không có quyền xem đơn hàng này");
             }
 
             // Chuẩn bị kết quả trả về
             Map<String, Object> orderData = new HashMap<>();
-            
+
             // Thông tin cơ bản của đơn hàng
             orderData.put("id", order.getId());
             orderData.put("subtotal", order.getSubtotal());
@@ -135,13 +139,13 @@ public class CustomerOrderService implements CustomerOrderInterface {
             orderData.put("total", order.getTotal());
             orderData.put("created", order.getCreated());
             orderData.put("status", order.getStatus());
-            
+
             // Thông tin người nhận
             orderData.put("recipientName", orderOnline.getRecipientName());
             orderData.put("recipientPhone", orderOnline.getRecipientPhone());
             orderData.put("recipientAddress", orderOnline.getRecipientAddress());
             orderData.put("note", orderOnline.getNote());
-            
+
             // Lấy chi tiết đơn hàng
             List<OrderDetail> orderDetails = orderDetailRepository.findAllByOrderId(order.getId());
             orderData.put("orderDetails", orderDetails);
@@ -153,6 +157,7 @@ public class CustomerOrderService implements CustomerOrderInterface {
     }
 
     @Override
+    @Transactional
     public ResponseData cancelOrder(Long id) {
         try {
             // Lấy thông tin người dùng hiện tại
@@ -182,16 +187,29 @@ public class CustomerOrderService implements CustomerOrderInterface {
                 return ResponseData.error("Không tìm thấy đơn hàng online");
             }
             OrderOnline orderOnline = orderOnlineOptional.get();
-            
+
             if (!orderOnline.getCustomer().getId().equals(customer.getId())) {
                 return ResponseData.error("Bạn không có quyền hủy đơn hàng này");
             }
-            
+
             // Kiểm tra trạng thái đơn hàng, chỉ cho phép hủy đơn hàng đang ở trạng thái PENDING
             if (order.getStatus() != OrderStatusEnum.PENDING) {
                 return ResponseData.error("Chỉ có thể hủy đơn hàng đang ở trạng thái chờ xử lý");
             }
-            
+
+            // Lấy tất cả OrderDetail của đơn hàng này để hoàn trả stock
+            List<OrderDetail> orderDetails = orderDetailRepository.findAllByOrderId(order.getId());
+
+            // Hoàn trả stock cho từng sản phẩm
+            for (OrderDetail orderDetail : orderDetails) {
+                BranchProduct branchProduct = orderDetail.getBranchProduct();
+                if (branchProduct != null) {
+                    // Cộng lại số lượng đã trừ khi tạo đơn hàng
+                    branchProduct.setStock(branchProduct.getStock() + orderDetail.getQuantity());
+                    branchProductRepository.save(branchProduct);
+                }
+            }
+
             // Cập nhật trạng thái đơn hàng
             order.setStatus(OrderStatusEnum.CANCELLED);
             orderRepository.save(order);
