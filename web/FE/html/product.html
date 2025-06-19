@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management</title>
+    <link rel="stylesheet" href="../css/product.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+</head>
+<body>
+<div class="sidebar">
+    <ul>
+        <li><a href="./dashboard.html">Dashboard</a></li>
+        <li><a href="./staff.html">Nhân viên</a></li>
+        <li><a href="./product.html">Sản phẩm</a></li>
+        <li><a href="./all-customer.html">Khách hàng</a></li>
+        <li><a href="./order.html">Đơn hàng</a></li>
+    </ul>
+</div>
+
+<div class="container">
+    <h1>Product Management</h1>
+
+    <!-- Phần thống kê -->
+    <div class="statistics">
+        <div class="stat-card total-products">
+            <div class="stat-icon">📊</div>
+            <div class="stat-content">
+                <h3>Total Products</h3>
+                <p id="total-products">0</p>
+            </div>
+        </div>
+        <div class="stat-card inventory-value">
+            <div class="stat-icon">💰</div>
+            <div class="stat-content">
+                <h3>Inventory Value</h3>
+                <p id="inventory-value">$0</p>
+            </div>
+        </div>
+        <div class="stat-card highest-price">
+            <div class="stat-icon">⬆️</div>
+            <div class="stat-content">
+                <h3>Highest Price</h3>
+                <p id="highest-price">$0</p>
+            </div>
+        </div>
+        <div class="stat-card lowest-price">
+            <div class="stat-icon">⬇️</div>
+            <div class="stat-content">
+                <h3>Lowest Price</h3>
+                <p id="lowest-price">$0</p>
+            </div>
+        </div>
+        <div class="stat-card average-price">
+            <div class="stat-icon">📈</div>
+            <div class="stat-content">
+                <h3>Avg Price</h3>
+                <p id="average-price">$0</p>
+            </div>
+        </div>
+        <div class="stat-card out-of-stock">
+            <div class="stat-icon">⚠️</div>
+            <div class="stat-content">
+                <h3>Out of Stock</h3>
+                <p id="out-of-stock">0</p>
+            </div>
+        </div>
+        <div class="stat-card top-category">
+            <div class="stat-icon">🏆</div>
+            <div class="stat-content">
+                <h3>Top Category</h3>
+                <p id="top-category">-</p>
+            </div>
+        </div>
+        <div class="stat-card total-stock">
+            <div class="stat-icon">📦</div>
+            <div class="stat-content">
+                <h3>Total Stock</h3>
+                <p id="total-stock">0</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="search-box">
+        <input type="text" placeholder="Search for products...">
+        <button>Search</button>
+    </div>
+
+
+    <div class="filter-section">
+        <div class="filter-group">
+            <label for="min-stock">Stock ≥:</label>
+            <input type="number" id="min-stock" placeholder="Minimum stock" min="0">
+        </div>
+
+        <div class="filter-group">
+            <label for="price-range">Price Range:</label>
+            <div class="price-range-inputs">
+                <input type="number" id="min-price" placeholder="Min" min="0">
+                <span>to</span>
+                <input type="number" id="max-price" placeholder="Max" min="0">
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <label for="stock-status">Stock Status:</label>
+            <select id="stock-status">
+                <option value="">All</option>
+                <option value="in-stock">In Stock</option>
+                <option value="out-of-stock">Out of Stock</option>
+            </select>
+        </div>
+
+        <button id="apply-filter">Apply Filters</button>
+        <button id="reset-filter">Reset</button>
+    </div>
+
+    <button class="add-btn">Add Product</button>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Product Name</th>
+            <th>Category</th>
+            <th>Supplier</th>
+            <th>Price</th>
+            <th>Branch Stocks</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <div class="pagination">
+        <button id="first-page">First</button>
+        <button id="prev-page">Previous</button>
+        <div id="page-numbers"></div>
+        <button id="next-page">Next</button>
+        <button id="last-page">Last</button>
+    </div>
+</div>
+
+<div class="modal" id="product-modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modal-title">Add Product</h2>
+        <form id="product-form">
+            <input type="hidden" id="product-id">
+
+            <label>Product Name:</label>
+            <input type="text" id="product-name" required>
+
+            <label>Category:</label>
+            <input type="text" id="product-category" placeholder="Enter category id" required>
+
+            <label>Supplier:</label>
+            <input type="text" id="product-supplier" placeholder="Enter supplier id" required>
+
+            <label>Price:</label>
+            <input type="number" id="product-price" step="0.01" required>
+
+            <div id="branch-stocks">
+                <h3>Branch Stocks</h3>
+                <div class="branch-input">
+                    <input type="hidden" class="branch-id" value="1">
+                    <label>ONLINE</label>
+                    <input type="number" class="stock-input" min="0" placeholder="0">
+                </div>
+                <div class="branch-input">
+                    <input type="hidden" class="branch-id" value="2">
+                    <label>HANOI</label>
+                    <input type="number" class="stock-input" min="0" placeholder="0">
+                </div>
+            </div>
+
+            <button type="submit" id="save-btn">Save</button>
+        </form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script src="../js/product.js"></script>
+</body>
+</html>
