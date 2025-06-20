@@ -9,6 +9,7 @@ import com.example.demo.repository.RecordDayRepository;
 import com.example.demo.repository.SalaryMonthlyRepository;
 import com.example.demo.repository.StaffRepository;
 import com.example.demo.repository.TimeSheetRepository;
+import com.example.demo.utils.RecordDayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,8 @@ public class SalaryService {
                 .findByTimeSheetIdsAndMonthAndYear(timeSheetIds, month, year);
 
         double totalHours = records.stream()
-                .mapToDouble(RecordDay::getTotalHours).sum();
+                .mapToDouble(record -> RecordDayUtils.calculateTotalHours(record))
+                .sum();
 
         double totalSalary = totalHours * salaryPerHour;
 

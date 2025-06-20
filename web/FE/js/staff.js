@@ -551,7 +551,6 @@ document.addEventListener('DOMContentLoaded', function() {
     $(document).ready(function () {
     
 
-    // Thay thế phần xử lý chấm công trong staff.js
 
 // Cải thiện event listener cho nút Xem chấm công
 attendanceBtn.replaceWith(attendanceBtn.cloneNode(true));
@@ -763,7 +762,7 @@ $(document).ready(function() {
 });
 });
 
-// Thêm vào cuối file staff.js, thay thế phần xử lý lương hiện tại
+//
 
 // Cải thiện event listener cho nút xem lương
 document.addEventListener('click', function(e) {
@@ -1074,7 +1073,7 @@ function viewInvoice(staffId, month, year) {
     fetch(`http://localhost:8080/admin/salary/invoice/pdf?staffId=${staffId}&month=${month}&year=${year}`, {
         method: 'GET',
         headers: {
-            'Authorization': `Bearer ${token}`, // nếu không dùng token thì bỏ dòng này
+            'Authorization': `Bearer ${token}`, 
         }
     })
     .then(response => {
