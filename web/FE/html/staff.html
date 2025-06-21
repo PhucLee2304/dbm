@@ -50,6 +50,9 @@
             <!-- Add new button for adding staff -->
             <div class="action-bar">
                 <button id="addStaffBtn" class="add-btn">Thêm nhân viên</button>
+                <!-- Add new button -->
+                <button id="openProductivityBtn" class="add-btn">Thống kê năng suất nhân viên</button>
+
             </div>
             
             <table id="staffTable">
@@ -93,9 +96,12 @@
             </div>
             <div class="action-buttons">
                 <button id="editStaffBtn">Sửa</button>
+                <button id="attendanceBtn" class="attendanceBtn" data-id="">Xem chấm công</button>
                 <button id="cancelViewBtn">Hủy</button>
+                 
             </div>
         </div>
+
     </div>
 
     <!-- Modal for editing staff -->
@@ -192,6 +198,157 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal thống kê năng suất -->
+<div id="productivityModal" class="modal">
+  <div class="modal-content">
+    <!-- <span class="close">&times;</span> -->
+    <h2>Thống kê năng suất nhân viên</h2>
+    
+    <table id="productivityTable">
+      <thead>
+        <tr>
+          <th>Mã NV</th>
+          <th>Số ngày làm</th>
+          <th>Tổng giờ</th>
+          <th>Năng suất (giờ/ngày)</th>
+          <th>Phân loại</th>
+          <th>Cảnh báo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Dữ liệu năng suất sẽ được đổ vào đây -->
+      </tbody>
+    </table>
+
+    <div class="modal-footer">
+      <button id="closeProductivityBtn">Đóng</button>
+    </div>
+  </div>
+</div>
+
+
+    <div id="attendanceModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Lịch sử chấm công - <span id="attendanceStaffName"></span></h2>
+
+    <table id="attendanceTable">
+      <thead>
+        <tr>
+          <th>Ngày</th>
+          <th>Giờ check-in</th>
+          <th>Giờ check-out</th>
+          <th>Thời gian làm (giờ)</th>
+          <th>Trạng thái</th>
+        </tr>
+      </thead>
+      <tbody id="attendanceTableBody">
+        <!-- Dữ liệu chấm công sẽ được thêm ở đây -->
+        </tbody>
+
+    </table>
+    <div class="action-buttons">
+        <button id="btnViewSalary" data-staffid="">Xem thông tin lương tháng</button>
+      <button id="closeAttendanceBtn">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<div id="salaryModal" class="modal">
+        <div class="modal-content">
+            <!-- <span class="close">&times;</span> -->
+            <h3>Thông tin lương và thanh toán</h3>
+            
+            <div class="salary-info-header">
+                <p><strong>Năm:</strong> <span id="salaryYear">2025</span></p>
+               
+            </div>
+
+            <div class="table-container">
+                <table id="salaryTable">
+                    <thead>
+                        <tr>
+                            <th>Tháng</th>
+                            <th>Số giờ làm</th>
+                            <th>Lương/giờ</th>
+                            <th>Tổng lương</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="salaryTableBody">
+                        <!-- Dữ liệu lương sẽ được thêm ở đây -->
+                        <tr>
+                            <td colspan="6" class="loading">Đang tải dữ liệu lương...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="modal-footer">
+                <button id="closeSalaryModal">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal xem chi tiết hóa đơn (tuỳ chọn) -->
+    <div id="invoiceModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Chi tiết hóa đơn lương</h3>
+            
+            <div class="invoice-details">
+                <div class="invoice-header">
+                    <h4>Hóa đơn thanh toán lương</h4>
+                    <p><strong>Mã hóa đơn:</strong> <span id="invoiceId"></span></p>
+                    <p><strong>Nhân viên:</strong> <span id="invoiceStaffName"></span></p>
+                    <p><strong>Tháng:</strong> <span id="invoiceMonth"></span></p>
+                    <p><strong>Năm:</strong> <span id="invoiceYear"></span></p>
+                </div>
+                
+                <div class="invoice-body">
+                    <table class="invoice-table">
+                        <tr>
+                            <td>Số giờ làm việc:</td>
+                            <td><span id="invoiceHours"></span> giờ</td>
+                        </tr>
+                        <tr>
+                            <td>Lương theo giờ:</td>
+                            <td><span id="invoiceHourlyRate"></span> VNĐ</td>
+                        </tr>
+                        <tr>
+                            <td>Tổng lương cơ bản:</td>
+                            <td><span id="invoiceBaseSalary"></span> VNĐ</td>
+                        </tr>
+                        <tr>
+                            <td>Phụ cấp:</td>
+                            <td><span id="invoiceAllowance">0</span> VNĐ</td>
+                        </tr>
+                        <tr>
+                            <td>Khấu trừ:</td>
+                            <td><span id="invoiceDeduction">0</span> VNĐ</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td><strong>Tổng cộng:</strong></td>
+                            <td><strong><span id="invoiceTotal"></span> VNĐ</strong></td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="invoice-footer">
+                    <p><strong>Ngày thanh toán:</strong> <span id="invoicePaymentDate"></span></p>
+                    <p><strong>Trạng thái:</strong> <span class="status-paid">Đã thanh toán</span></p>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button id="printInvoiceBtn">In hóa đơn</button>
+                <button id="closeInvoiceModal">Đóng</button>
+            </div>
+        </div>
+    </div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

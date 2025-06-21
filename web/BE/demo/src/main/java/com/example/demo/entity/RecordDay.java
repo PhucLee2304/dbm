@@ -37,4 +37,13 @@ public class RecordDay {
 
     @Enumerated(EnumType.STRING)
     AttendanceStatus checkOutStatus;
+
+//    public double getTotalHours() {
+//        if (checkin != null && checkout != null) {
+//            return java.time.Duration.between(checkin, checkout).toMinutes() / 60.0;
+//        }
+//        return 0;
+//    }
+
+
 }
