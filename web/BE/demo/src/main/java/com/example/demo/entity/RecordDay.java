@@ -37,4 +37,5 @@ public class RecordDay {
 
     @Enumerated(EnumType.STRING)
     AttendanceStatus checkOutStatus;
+
 }

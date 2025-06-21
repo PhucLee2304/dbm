@@ -86,3 +86,14 @@ CREATE TABLE RecordDay (
     PRIMARY KEY (day, time_sheet_id),
     FOREIGN KEY (time_sheet_id) REFERENCES TimeSheet(id)
 );
+
+CREATE TABLE salary_monthly (
+    id BIGINT PRIMARY KEY IDENTITY(1,1),
+    staff_id BIGINT NOT NULL,
+    month INT NOT NULL,
+    year INT NOT NULL,
+    total_hours FLOAT NOT NULL,
+    hourly_salary FLOAT NOT NULL,
+    total_salary FLOAT NOT NULL,
+    created_at DATETIME DEFAULT GETDATE()
+);

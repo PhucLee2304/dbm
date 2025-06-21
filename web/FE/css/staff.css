@@ -1,4 +1,6 @@
-/* Sidebar Styling */
+/* ==========================================================================
+   SIDEBAR STYLING
+   ========================================================================== */
 .sidebar {
     position: fixed;
     top: 0;
@@ -27,10 +29,13 @@
     display: block;
 }
 
-.sidebar li a strong{
+.sidebar li a strong {
     color: #218838;
 }
 
+/* ==========================================================================
+   LAYOUT
+   ========================================================================== */
 body {
     margin-left: 250px;
     transition: margin-left 0.3s;
@@ -58,7 +63,9 @@ body {
     margin-bottom: 20px;
 }
 
-/* Search Container Styles */
+/* ==========================================================================
+   SEARCH CONTAINER
+   ========================================================================== */
 .search-container {
     background-color: #f8f9fa;
     border: 1px solid #ddd;
@@ -101,25 +108,63 @@ body {
     background-color: white;
 }
 
-#searchButton, #resetButton {
+/* ==========================================================================
+   BUTTONS BASE STYLES
+   ========================================================================== */
+button {
     padding: 10px 20px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-weight: bold;
+    transition: all 0.3s ease;
 }
 
-#searchButton {
+#searchButton, .add-btn {
     background-color: #28a745;
     color: white;
 }
 
-#resetButton {
+#searchButton:hover, .add-btn:hover {
+    background-color: #218838;
+}
+
+#resetButton, #cancelViewBtn, #cancelEditBtn, #closeSalaryModal {
     background-color: #6c757d;
     color: white;
 }
 
-/* Table Styles */
+#resetButton:hover, #cancelViewBtn:hover, #cancelEditBtn:hover, #closeSalaryModal:hover {
+    background-color: #545b62;
+}
+
+#editStaffBtn, #saveStaffBtn, #createStaffBtn {
+    background-color: #007bff;
+    color: white;
+}
+
+#editStaffBtn:hover, #saveStaffBtn:hover, #createStaffBtn:hover {
+    background-color: #0056b3;
+}
+
+.view-btn, .attendanceBtn, #btnViewSalary {
+    background-color: #17a2b8;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-right: 8px;
+}
+
+.view-btn:hover, .attendanceBtn:hover, #btnViewSalary:hover {
+    background-color: #138496;
+}
+
+/* ==========================================================================
+   TABLE STYLES
+   ========================================================================== */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -143,13 +188,17 @@ th {
     gap: 10px;
 }
 
-/* Status badge styles */
-.status-badge {
+/* ==========================================================================
+   STATUS BADGES
+   ========================================================================== */
+.status-badge, .salary-status {
     display: inline-block;
     padding: 5px 10px;
     border-radius: 4px;
     font-weight: bold;
     text-align: center;
+    font-size: 12px;
+    text-transform: uppercase;
 }
 
 .status-active {
@@ -162,33 +211,60 @@ th {
     color: white;
 }
 
-/* View button styles */
-.view-btn {
-    background-color: #17a2b8;
-    color: white;
-    border: none;
+.status-paid {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.status-unpaid {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Attendance status styles */
+.status-good {
+    color: #28a745;
+    background-color: #d4edda;
+    padding: 4px 8px;
     border-radius: 4px;
-    padding: 5px 15px;
-    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
 }
 
-.view-btn:hover {
-    background-color: #138496;
+.status-warning {
+    color: #ffc107;
+    background-color: #fff3cd;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
 }
 
-/* Modal styles */
-.modal {
+.status-missing {
+    color: #dc3545;
+    background-color: #f8d7da;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* ==========================================================================
+   MODAL STYLES
+   ========================================================================== */
+.modal, #attendanceModal, #salaryModal {
     display: none;
     position: fixed;
-    z-index: 1;
+    z-index: 1000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgb(0,0,0);
-    background-color: rgba(0,0,0,0.4);
-    padding-top: 60px;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s ease-in-out;
 }
 
 .modal-content {
@@ -196,9 +272,27 @@ th {
     margin: 5% auto;
     padding: 20px;
     border: 1px solid #888;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modal .modal-content {
     width: 80%;
     max-width: 600px;
-    border-radius: 8px;
+}
+
+#attendanceModal .modal-content {
+    max-width: 900px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+#salaryModal .modal-content {
+    width: 90%;
+    max-width: 1200px;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 .close {
@@ -206,59 +300,165 @@ th {
     float: right;
     font-size: 28px;
     font-weight: bold;
+    cursor: pointer;
 }
 
-.close:hover,
-.close:focus {
+.close:hover, .close:focus {
     color: black;
     text-decoration: none;
-    cursor: pointer;
 }
 
-/* Staff details styling */
-.staff-info {
-    background-color: #f8f9fa;
-    padding: 15px;
-    border-radius: 5px;
+/* Modal headers */
+#attendanceModal h2, #salaryModal h3 {
+    color: #333;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
     margin-bottom: 20px;
-}
-
-.staff-info p {
-    margin: 8px 0;
-}
-
-.action-buttons {
-    margin-top: 20px;
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-}
-
-button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-#editStaffBtn, #saveStaffBtn, #createStaffBtn {
-    background-color: #007bff;
-    color: white;
-}
-
-#cancelViewBtn, #cancelEditBtn {
-    background-color: #6c757d;
-    color: white;
-}
-
-.no-data {
     text-align: center;
-    color: #6c757d;
-    font-style: italic;
+    font-size: 1.5em;
 }
 
-/* Form styling */
+#attendanceStaffName {
+    color: #007bff;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   SPECIALIZED TABLE STYLES
+   ========================================================================== */
+#attendanceTable, #salaryTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 14px;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+#attendanceTable th, #salaryTable th {
+    background-color: #f8f9fa;
+    color: #333;
+    font-weight: 600;
+    padding: 12px 8px;
+    text-align: center;
+    border-bottom: 2px solid #dee2e6;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+#salaryTable thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+#salaryTable th {
+    padding: 15px 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#attendanceTable td, #salaryTable td {
+    padding: 10px 8px;
+    border-bottom: 1px solid #dee2e6;
+    vertical-align: middle;
+    text-align: center;
+}
+
+#attendanceTable tbody tr:hover, #salaryTable tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: translateX(2px);
+    transition: all 0.2s ease;
+}
+
+#attendanceTable tbody tr.even-row, #salaryTable tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Specialized cell styles */
+.checkin-time, .checkout-time {
+    font-family: 'Courier New', monospace;
+    font-weight: 500;
+}
+
+.work-hours, .hours-cell {
+    text-align: right;
+    font-weight: 500;
+    color: #28a745;
+}
+
+.month-cell {
+    font-weight: 600;
+    color: #007bff;
+}
+
+.hourly-salary-cell {
+    color: #6c757d;
+}
+
+.total-salary-cell {
+    color: #007bff;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+/* ==========================================================================
+   SALARY ACTION BUTTONS
+   ========================================================================== */
+.btn-pay-salary, .btn-view-invoice {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+}
+
+.btn-pay-salary {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+}
+
+.btn-pay-salary:hover:not(:disabled) {
+    background: linear-gradient(45deg, #218838, #1a9b82);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+}
+
+.btn-view-invoice {
+    background: linear-gradient(45deg, #007bff, #6610f2);
+    color: white;
+}
+
+.btn-view-invoice:hover {
+    background: linear-gradient(45deg, #0056b3, #520dc2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+}
+
+.btn-disabled {
+    background: #6c757d !important;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.btn-disabled:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* ==========================================================================
+   FORM STYLES
+   ========================================================================== */
 .form-group {
     margin-bottom: 15px;
 }
@@ -277,23 +477,143 @@ button {
     box-sizing: border-box;
 }
 
-/* Add Button Styles */
+/* ==========================================================================
+   UTILITY CLASSES
+   ========================================================================== */
 .action-bar {
     margin-bottom: 20px;
     display: flex;
     justify-content: flex-end;
 }
 
-.add-btn {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 10px 20px;
-    cursor: pointer;
+.action-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.staff-info {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.staff-info p {
+    margin: 8px 0;
+}
+
+.no-data, .loading, .error {
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+}
+
+.loading {
+    color: #007bff;
+}
+
+.error {
+    color: #dc3545;
+}
+
+.no-data {
+    color: #6c757d;
+}
+
+.summary-row {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    border-top: 3px solid #007bff;
+    font-weight: 600;
+}
+
+.summary-row td {
+    padding: 15px 10px;
+    border-bottom: none;
+}
+
+.summary-status {
+    text-align: left;
+    font-size: 12px;
+}
+
+.summary-status .status-paid, .summary-status .status-unpaid {
+    display: inline-block;
+    margin: 2px 0;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+}
+
+/* ==========================================================================
+   ICONS
+   ========================================================================== */
+.icon-view::before { content: "👁"; margin-right: 5px; }
+.icon-pay::before { content: "💰"; margin-right: 5px; }
+.icon-loading::before { content: "⏳"; margin-right: 5px; animation: spin 1s linear infinite; }
+
+/* ==========================================================================
+   ANIMATIONS
+   ========================================================================== */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN
+   ========================================================================== */
+@media (max-width: 768px) {
+    #attendanceModal .modal-content, #salaryModal .modal-content {
+        width: 95%;
+        margin: 10px auto;
+        padding: 15px;
+    }
+    
+    #attendanceTable, #salaryTable {
+        font-size: 12px;
+    }
+    
+    #attendanceTable th, #attendanceTable td,
+    #salaryTable th, #salaryTable td {
+        padding: 8px 4px;
+    }
+    
+    .checkin-time, .checkout-time {
+        font-size: 11px;
+    }
+    
+    .status span {
+        font-size: 10px;
+        padding: 2px 4px;
+    }
+    
+    .btn-pay-salary, .btn-view-invoice {
+        padding: 4px 8px;
+        font-size: 11px;
+    }
+    
+    #salaryModal h3, #attendanceModal h2 {
+        font-size: 1.2em;
+    }
+}
+
+#productivityTable td:nth-child(5) {
     font-weight: bold;
 }
 
-.add-btn:hover {
-    background-color: #218838;
+#productivityTable td:nth-child(5):contains("Tốt") {
+    color: green;
+}
+#productivityTable td:nth-child(5):contains("Trung bình") {
+    color: orange;
+}
+#productivityTable td:nth-child(5):contains("Thấp") {
+    color: red;
 }

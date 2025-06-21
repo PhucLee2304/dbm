@@ -10,4 +10,5 @@ import com.example.demo.entity.TimeSheet;
 @Repository
 public interface TimeSheetRepository extends JpaRepository<TimeSheet, Long> {
     Optional<TimeSheet> findByStaffId(Long staffId);
+
 }
