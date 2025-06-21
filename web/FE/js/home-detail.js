@@ -43,7 +43,7 @@ function renderProducts(products) {
         productCard.classList.add("product-card");
         productCard.innerHTML = `
             <a href="detail.html?id=${product.id}">
-                <img src="${product.name}" alt="${product.name}" width="100%">
+                <img src="https://516family.com/wp-content/uploads/2020/03/423A7988-731x1024.jpg" alt="${product.name}" width="100%">
                 <h3>${product.name}</h3>
                 <p>Giá: ${product.price} VNĐ</p>
             </a>
@@ -100,7 +100,7 @@ async function fetchProductDetail() {
         localStorage.setItem('selectedProduct', JSON.stringify(data.data));
         
         productDetail.innerHTML = `
-            <img src="${data.data.name}" alt="${data.data.name}">
+            <img src="https://516family.com/wp-content/uploads/2020/03/423A7988-731x1024.jpg" alt="${data.data.name}" style="width: 100%; max-width: 300px; margin-bottom: 20px;">
             <div class="product-info">
                 <h2>${data.data.name}</h2>
                 <p><strong>Danh mục:</strong> ${data.data.categoryName}</p>
