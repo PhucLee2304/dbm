@@ -5,7 +5,7 @@ CREATE OR ALTER PROCEDURE InsertBatchProduct
 AS
 BEGIN
     DECLARE @counter INT = 1;
-    DECLARE @batch_size INT = 10000;  -- Số lượng sản phẩm cần chèn
+    DECLARE @batch_size INT = 1000;  -- Số lượng sản phẩm cần chèn
     DECLARE @product_name NVARCHAR(255);
     DECLARE @product_price FLOAT;
     DECLARE @category_id BIGINT;

@@ -1,4 +1,4 @@
-USE OfflineDB;
+ÔªøUSE OfflineDB;
 GO
 
 CREATE OR ALTER PROCEDURE InsertSalaryMonthly
@@ -8,7 +8,6 @@ BEGIN
 
     DECLARE @month INT, @year INT;
 
-    -- T?o con tr? l?y t?t c? c·c c?p th·ng/n?m cÛ trong b?ng RecordDay
     DECLARE month_cursor CURSOR FOR
     SELECT DISTINCT MONTH(day) AS month, YEAR(day) AS year
     FROM RecordDay;
@@ -18,25 +17,34 @@ BEGIN
 
     WHILE @@FETCH_STATUS = 0
     BEGIN
-        -- Xo· d? li?u c? n?u ?„ t?n t?i
-        DELETE FROM salary_monthly WHERE month = @month AND year = @year;
+        PRINT CONCAT(N'ƒêang t√≠nh l∆∞∆°ng th√°ng ', @month, '/', @year);
 
-        -- TÌnh l??ng v‡ chËn v‡o b?ng
-        INSERT INTO salary_monthly (staff_id, month, year, total_hours, hourly_salary, total_salary)
-        SELECT
-            s.id AS staff_id,
-            @month,
-            @year,
-            SUM(DATEDIFF(MINUTE, rd.checkin, rd.checkout)) / 60.0 AS total_hours,
-            s.salary AS hourly_salary,
-            SUM(DATEDIFF(MINUTE, rd.checkin, rd.checkout)) / 60.0 * s.salary AS total_salary
-        FROM Staff s
-        JOIN TimeSheet ts ON ts.staff_id = s.id
-        JOIN RecordDay rd ON rd.time_sheet_id = ts.id
-        WHERE MONTH(rd.day) = @month AND YEAR(rd.day) = @year
-        GROUP BY s.id, s.salary;
+        MERGE salary_monthly AS target
+        USING (
+            SELECT
+                s.id AS staff_id,
+                @month AS month,
+                @year AS year,
+                SUM(DATEDIFF(MINUTE, rd.checkin, rd.checkout)) / 60.0 AS total_hours,
+                s.salary AS hourly_salary,
+                SUM(DATEDIFF(MINUTE, rd.checkin, rd.checkout)) / 60.0 * s.salary AS total_salary
+            FROM Staff s
+            JOIN TimeSheet ts ON ts.staff_id = s.id
+            JOIN RecordDay rd ON rd.time_sheet_id = ts.id
+            WHERE MONTH(rd.day) = @month AND YEAR(rd.day) = @year
+            GROUP BY s.id, s.salary
+        ) AS source
+        ON target.staff_id = source.staff_id AND target.month = source.month AND target.year = source.year
+        WHEN MATCHED THEN
+            UPDATE SET
+                target.total_hours = source.total_hours,
+                target.hourly_salary = source.hourly_salary,
+                target.total_salary = source.total_salary
+        WHEN NOT MATCHED THEN
+            INSERT (staff_id, month, year, total_hours, hourly_salary, total_salary, created_at)
+            VALUES (source.staff_id, source.month, source.year, source.total_hours, source.hourly_salary, source.total_salary, GETDATE());
 
-        PRINT CONCAT('?„ tÌnh xong l??ng cho th·ng ', @month, '/', @year);
+        PRINT CONCAT(N'ƒê√£ t√≠nh xong l∆∞∆°ng th√°ng ', @month, '/', @year);
 
         FETCH NEXT FROM month_cursor INTO @month, @year;
     END
@@ -44,7 +52,8 @@ BEGIN
     CLOSE month_cursor;
     DEALLOCATE month_cursor;
 
-    PRINT N'?„ ho‡n t?t tÌnh l??ng cho t?t c? c·c th·ng.';
+    PRINT N'ƒê√£ ho√†n t·∫•t t√≠nh l∆∞∆°ng cho t·∫•t c·∫£ c√°c th√°ng.';
 END
 GO
+
 EXEC InsertSalaryMonthly;

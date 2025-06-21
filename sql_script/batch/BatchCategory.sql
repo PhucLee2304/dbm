@@ -10,7 +10,7 @@ BEGIN
     DECLARE @counter INT;
 
     -- Đặt số lượng category muốn chèn (100 categories)
-    SET @batch_size = 100;
+    SET @batch_size = 50;
     SET @counter = 1;
 
     -- Bắt đầu vòng lặp

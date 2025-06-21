@@ -8,7 +8,6 @@ BEGIN
 
     DECLARE @month INT, @year INT;
 
-    -- Con tr? duy?t t?t c? c·c c?p th·ng/n?m cÛ trong OfflineDB
     DECLARE month_cursor CURSOR FOR
     SELECT DISTINCT month, year
     FROM OfflineDB.dbo.salary_monthly;
@@ -18,35 +17,35 @@ BEGIN
 
     WHILE @@FETCH_STATUS = 0
     BEGIN
-        PRINT CONCAT('?ang ETL l??ng th·ng ', @month, '/', @year);
+        PRINT CONCAT(N'ƒêang ETL l∆∞∆°ng th√°ng ', @month, '/', @year);
 
-        -- B?ng t?m l?u d? li?u th·ng ?ang x? l˝
-        IF OBJECT_ID('tempdb..#salary_temp') IS NOT NULL DROP TABLE #salary_temp;
+        -- B·∫≠t IDENTITY_INSERT ƒë·ªÉ ch√®n th·ªß c√¥ng c·ªôt ID
+        SET IDENTITY_INSERT dbm.dbo.salary_monthly ON;
 
-        CREATE TABLE #salary_temp (
-            staff_id BIGINT,
-            month INT,
-            year INT,
-            total_hours FLOAT,
-            hourly_salary FLOAT,
-            total_salary FLOAT
-        );
+        MERGE dbm.dbo.salary_monthly AS target
+        USING (
+            SELECT id, staff_id, month, year, total_hours, hourly_salary, total_salary, created_at
+            FROM OfflineDB.dbo.salary_monthly
+            WHERE month = @month AND year = @year
+        ) AS source
+        ON target.id = source.id
+        WHEN MATCHED THEN
+            UPDATE SET
+                target.staff_id = source.staff_id,
+                target.month = source.month,
+                target.year = source.year,
+                target.total_hours = source.total_hours,
+                target.hourly_salary = source.hourly_salary,
+                target.total_salary = source.total_salary,
+                target.paid = 0,
+                target.created_at = source.created_at  -- gi·ªØ nguy√™n th·ªùi gian t·∫°o
+        WHEN NOT MATCHED BY TARGET THEN
+            INSERT (id, staff_id, month, year, total_hours, hourly_salary, total_salary, paid, created_at)
+            VALUES (source.id, source.staff_id, source.month, source.year, source.total_hours, source.hourly_salary, source.total_salary, 0, source.created_at);
 
-        -- L?y d? li?u t? OfflineDB
-        INSERT INTO #salary_temp (staff_id, month, year, total_hours, hourly_salary, total_salary)
-        SELECT staff_id, month, year, total_hours, hourly_salary, total_salary
-        FROM OfflineDB.dbo.salary_monthly
-        WHERE month = @month AND year = @year;
+        SET IDENTITY_INSERT dbm.dbo.salary_monthly OFF;
 
-        -- Xo· d? li?u c? ? DBM
-        DELETE FROM dbm.dbo.salary_monthly WHERE month = @month AND year = @year;
-
-        -- ChËn d? li?u m?i v‡o DBM
-        INSERT INTO dbm.dbo.salary_monthly (staff_id, month, year, total_hours, hourly_salary, total_salary, paid, created_at)
-        SELECT staff_id, month, year, total_hours, hourly_salary, total_salary, 0, GETDATE()
-        FROM #salary_temp;
-
-        PRINT CONCAT('? ?„ ETL xong th·ng ', @month, '/', @year);
+        PRINT CONCAT(N'ƒê√£ ETL xong th√°ng ', @month, '/', @year);
 
         FETCH NEXT FROM month_cursor INTO @month, @year;
     END
@@ -54,7 +53,6 @@ BEGIN
     CLOSE month_cursor;
     DEALLOCATE month_cursor;
 
-    PRINT N'? ETL SalaryMonthly: Ho‡n t?t x? l˝ t?t c? c·c th·ng.';
+    PRINT N'ƒê√£ ho√†n t·∫•t ETL salary_monthly t·∫•t c·∫£ c√°c th√°ng.';
 END
 GO
-EXEC EtlSalaryMonthly;
