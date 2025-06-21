@@ -4,8 +4,8 @@ GO
 CREATE OR ALTER PROCEDURE InsertBatchOfflineOrders
 AS
 BEGIN
-    DECLARE @batch_size INT = 500;  -- Chèn 1000 đơn hàng mỗi batch
-    DECLARE @total_orders INT = 25000; -- Tổng số đơn hàng cần chèn
+    DECLARE @batch_size INT = 50;  -- Chèn 1000 đơn hàng mỗi batch
+    DECLARE @total_orders INT = 500; -- Tổng số đơn hàng cần chèn
     DECLARE @current_batch INT = 1;  -- Biến đếm cho vòng lặp chính
     DECLARE @order_id BIGINT;
     DECLARE @created DATETIME;
@@ -37,7 +37,7 @@ BEGIN
         SET @total = @shipping_fee;
 
         -- Lấy thời gian hiện tại
-        SET @created = GETDATE();
+        SET @created = DATEADD(SECOND, FLOOR(RAND() * 86400), DATEADD(DAY, -FLOOR(RAND() * 30), CAST(GETDATE() AS DATETIME)));
 
         -- Lấy status ngẫu nhiên (CANCELLED, COMPLETED, PENDING)
         SET @status = (SELECT TOP 1 status FROM (VALUES ('CANCELLED'), ('COMPLETED'), ('PENDING')) AS t(status) ORDER BY NEWID());

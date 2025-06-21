@@ -20,7 +20,7 @@ BEGIN
     DECLARE @stock INT; -- Biến để lưu số lượng tồn kho
 
     -- Lấy thời gian hiện tại
-    SET @created = GETDATE();
+	SET @created = GETDATE();
 
     -- Lấy status ngẫu nhiên (CANCELLED, COMPLETED, PENDING)
     SET @status = (SELECT TOP 1 status FROM (VALUES ('CANCELLED'), ('COMPLETED'), ('PENDING')) AS t(status) ORDER BY NEWID());

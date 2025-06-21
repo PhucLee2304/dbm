@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,7 @@ import com.example.demo.interfaces.hieu.OrderInterface;
 import com.example.demo.repository.*;
 import com.example.demo.request.hieu.AddOrderOfflineRequest;
 import com.example.demo.request.hieu.PrepareOrderOnlineRequest;
+import com.example.demo.service.tien.DashboardService;
 import com.example.demo.utils.ResponseData;
 import com.example.demo.utils.UserUtil;
 
@@ -44,6 +46,34 @@ public class OrderService implements OrderInterface {
     private final StaffRepository staffRepository;
     private final OrderOfflineRepository orderOfflineRepository;
     private final ProductRepository productRepository;
+    private final DashboardService dashboardService;
+    private final SimpMessagingTemplate simpMessagingTemplate;
+
+    private void updateOrderDashboard() {
+        ResponseData revenue = dashboardService.getTotalRevenue();
+        simpMessagingTemplate.convertAndSend("/topic/dashboard/revenue", revenue);
+
+        ResponseData topProducts = dashboardService.getTopProducts();
+        simpMessagingTemplate.convertAndSend("/topic/dashboard/top-product", topProducts);
+
+        ResponseData topStaff = dashboardService.getTopStaff();
+        simpMessagingTemplate.convertAndSend("/topic/dashboard/top-staff", topStaff);
+
+        ResponseData topCustomer = dashboardService.getTopCustomer();
+        simpMessagingTemplate.convertAndSend("/topic/dashboard/top-customer", topCustomer);
+
+        ResponseData dailyRevenueLastMonth = dashboardService.getEachDayRevenueLastMonth();
+        simpMessagingTemplate.convertAndSend("/topic/dashboard/daily-revenue-last-month", dailyRevenueLastMonth);
+
+        ResponseData totalOrders = dashboardService.getTotalOrders();
+        simpMessagingTemplate.convertAndSend("/topic/dashboard/total-orders", totalOrders);
+
+        ResponseData totalOnlineOrders = dashboardService.getTotalOnlineOrders();
+        simpMessagingTemplate.convertAndSend("/topic/dashboard/total-online-orders", totalOnlineOrders);
+
+        ResponseData totalOfflineOrders = dashboardService.getTotalOfflineOrders();
+        simpMessagingTemplate.convertAndSend("/topic/dashboard/total-offline-orders", totalOfflineOrders);
+    }
 
     @Override
     @Transactional
@@ -57,7 +87,7 @@ public class OrderService implements OrderInterface {
 
             Optional<Customer> customerOptional = customerRepository.findByUserId(user.getId());
             if (customerOptional.isEmpty()) {
-                return ResponseData.error("Customer not found");
+                return ResponseData.error("Không tìm thấy khách hàng");
             }
             Customer customer = customerOptional.get();
 
@@ -82,13 +112,13 @@ public class OrderService implements OrderInterface {
             Optional<BranchProduct> branchProductOptional =
                     branchProductRepository.findByBranchIdAndProductId(1L, request.getProductId());
             if (branchProductOptional.isEmpty()) {
-                return ResponseData.error("Product not found");
+                return ResponseData.error("Không tìm thấy sản phẩm");
             }
 
             BranchProduct branchProduct = branchProductOptional.get();
 
             if (request.getQuantity() > branchProduct.getStock()) {
-                return ResponseData.error("Not enough stock");
+                return ResponseData.error("Không đủ hàng");
             }
 
             // Trừ số lượng sản phẩm trong kho
@@ -118,7 +148,7 @@ public class OrderService implements OrderInterface {
 
             orderRepository.save(order);
 
-            return ResponseData.success("Add new temperature order successfully", order);
+            return ResponseData.success("Thêm hàng tạm thời thành công", order);
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
@@ -130,14 +160,22 @@ public class OrderService implements OrderInterface {
         try {
             Optional<Order> orderOptional = orderRepository.findById(id);
             if (orderOptional.isEmpty()) {
-                return ResponseData.error("Order not found");
+                return ResponseData.error("Không tìm thấy đơn hàng");
             }
 
             Order order = orderOptional.get();
             order.setStatus(OrderStatusEnum.COMPLETED);
             orderRepository.save(order);
 
-            return ResponseData.success("Update temperature order successfully", order);
+            ResponseData responseData = ResponseData.success("Cập nhật đơn hàng thành công", order);
+
+            if (responseData.isSuccess()) {
+                updateOrderDashboard();
+            }
+
+            return responseData;
+
+            //            return ResponseData.success("Update temperature order successfully", order);
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
@@ -145,24 +183,44 @@ public class OrderService implements OrderInterface {
     }
 
     @Override
+    @Transactional
     public ResponseData cancelOrder(Long id) {
         try {
             Optional<Order> orderOptional = orderRepository.findById(id);
             if (orderOptional.isEmpty()) {
-                return ResponseData.error("Order not found");
+                return ResponseData.error("Không tìm thấy đơn hàng");
             }
 
             Order order = orderOptional.get();
-            
+
             // Kiểm tra trạng thái đơn hàng, chỉ cho phép hủy đơn hàng đang ở trạng thái PENDING
             if (order.getStatus() != OrderStatusEnum.PENDING) {
                 return ResponseData.error("Chỉ có thể hủy đơn hàng đang ở trạng thái chờ xử lý");
             }
-            
+
+            // Lấy tất cả OrderDetail của đơn hàng này để hoàn trả stock
+            List<OrderDetail> orderDetails = orderDetailRepository.findAllByOrderId(order.getId());
+
+            // Hoàn trả stock cho từng sản phẩm
+            for (OrderDetail orderDetail : orderDetails) {
+                BranchProduct branchProduct = orderDetail.getBranchProduct();
+                if (branchProduct != null) {
+                    // Cộng lại số lượng đã trừ khi tạo đơn hàng
+                    branchProduct.setStock(branchProduct.getStock() + orderDetail.getQuantity());
+                    branchProductRepository.save(branchProduct);
+                }
+            }
+
             order.setStatus(OrderStatusEnum.CANCELLED);
             orderRepository.save(order);
 
-            return ResponseData.success("Hủy đơn hàng thành công", order);
+            ResponseData responseData = ResponseData.success("Hủy đơn hàng thành công", order);
+
+            if (responseData.isSuccess()) {
+                updateOrderDashboard();
+            }
+
+            return responseData;
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
@@ -179,12 +237,12 @@ public class OrderService implements OrderInterface {
             User user = (User) getUserInfoResponse.getData();
 
             if (!user.getRole().toString().equals("STAFF")) {
-                return ResponseData.error("Only staff can action");
+                return ResponseData.error("Chỉ nhân viên mới có thể thực hiện hành động này");
             }
 
             Optional<Staff> staffOptional = staffRepository.findByUserId(user.getId());
             if (staffOptional.isEmpty()) {
-                return ResponseData.error("Staff not found");
+                return ResponseData.error("Không tìm thấy thông tin nhân viên");
             }
             Staff staff = staffOptional.get();
 
@@ -192,10 +250,10 @@ public class OrderService implements OrderInterface {
                     productRepository.findAllProductByBranchId(staff.getBranch().getId(), keyword);
 
             if (products.isEmpty()) {
-                return ResponseData.error("Product not found");
+                return ResponseData.error("Không tìm thấy sản phẩm");
             }
 
-            return ResponseData.success("Fetched all products successfully", products);
+            return ResponseData.success("Lấy danh sách sản phẩm thành công", products);
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
@@ -212,12 +270,12 @@ public class OrderService implements OrderInterface {
             User user = (User) getUserInfoResponse.getData();
 
             if (!user.getRole().toString().equals("STAFF")) {
-                return ResponseData.error("Only staff can add offline order");
+                return ResponseData.error("Chỉ nhân viên mới có thể tạo đơn hàng tại cửa hàng");
             }
 
             Optional<Staff> staffOptional = staffRepository.findByUserId(user.getId());
             if (staffOptional.isEmpty()) {
-                return ResponseData.error("Staff not found");
+                return ResponseData.error("Không tìm thấy thông tin nhân viên");
             }
             Staff staff = staffOptional.get();
 
@@ -240,12 +298,12 @@ public class OrderService implements OrderInterface {
                     Optional<BranchProduct> branchProductOptional = branchProductRepository.findByBranchIdAndProductId(
                             staff.getBranch().getId(), productId);
                     if (branchProductOptional.isEmpty()) {
-                        return ResponseData.error("Product not found");
+                        return ResponseData.error("Không tìm thấy sản phẩm");
                     }
 
                     BranchProduct branchProduct = branchProductOptional.get();
                     if (branchProduct.getStock() < quantity) {
-                        return ResponseData.error("Not enough stock");
+                        return ResponseData.error("Không đủ hàng trong kho");
                     }
 
                     Map<BranchProduct, Integer> branchProductQuantitiesMap = new HashMap<>();
@@ -292,9 +350,17 @@ public class OrderService implements OrderInterface {
 
             orderRepository.save(order);
 
-            //            return ResponseData.success("Add new order offline successfully", order);
-            return ResponseData.success(
-                    "Add new order offline successfully", toOrderOfflineDTO(orderOffline, orderDetails));
+            ResponseData responseData = ResponseData.success(
+                    "Thêm đơn hàng Offline thành công", toOrderOfflineDTO(orderOffline, orderDetails));
+
+            if (responseData.isSuccess()) {
+                updateOrderDashboard();
+            }
+
+            return responseData;
+
+            //            return ResponseData.success("Add new order offline successfully",
+            // toOrderOfflineDTO(orderOffline, orderDetails));
 
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
@@ -310,9 +376,9 @@ public class OrderService implements OrderInterface {
             }
             User user = (User) getUserInfoResponse.getData();
 
-            List<Order> orders = orderRepository.findAll();
+            List<Order> orders = orderRepository.findAllByOrderByCreatedDesc();
             if (orders.isEmpty()) {
-                return ResponseData.success("No orders found", Collections.emptyList());
+                return ResponseData.success("Không có đơn hàng nào", Collections.emptyList());
             }
 
             // Convert orders to DTOs with additional information
@@ -355,7 +421,7 @@ public class OrderService implements OrderInterface {
                 orderDTOs.add(orderDTO);
             }
 
-            return ResponseData.success("Fetched all orders successfully", orderDTOs);
+            return ResponseData.success("Lấy danh sách đơn hàng thành công", orderDTOs);
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
         }
@@ -372,7 +438,7 @@ public class OrderService implements OrderInterface {
 
             Optional<Order> orderOpt = orderRepository.findById(id);
             if (orderOpt.isEmpty()) {
-                return ResponseData.error("Order not found");
+                return ResponseData.error("Không tìm thấy đơn hàng");
             }
 
             Order order = orderOpt.get();
@@ -410,7 +476,7 @@ public class OrderService implements OrderInterface {
             List<OrderDetail> orderDetails = orderDetailRepository.findAllByOrderId(order.getId());
             orderDTO.put("orderDetails", orderDetails);
 
-            return ResponseData.success("Fetched order successfully", orderDTO);
+            return ResponseData.success("Lấy thông tin đơn hàng thành công", orderDTO);
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
         }

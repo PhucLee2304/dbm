@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const productSearch = document.getElementById('productSearch');
     const productResults = document.getElementById('productResults');
-    const productImage = document.getElementById('productImage');
+    // const productImage = document.getElementById('productImage');
     const productName = document.getElementById('productName');
     const productPrice = document.getElementById('productPrice');
     const productId = document.getElementById('productId');
@@ -156,14 +156,14 @@ document.addEventListener('DOMContentLoaded', function() {
     if (productIdFromUrl) {
         const productNameFromUrl = urlParams.get('productName');
         const productPriceFromUrl = urlParams.get('productPrice');
-        const productImageFromUrl = urlParams.get('productImage');
+        // const productImageFromUrl = urlParams.get('productImage');
         
         if (productIdFromUrl && productNameFromUrl && productPriceFromUrl) {
             const productFromUrl = {
                 id: parseInt(productIdFromUrl),
                 name: productNameFromUrl,
                 price: parseFloat(productPriceFromUrl),
-                image: productImageFromUrl || 'https://via.placeholder.com/150?text=' + encodeURIComponent(productNameFromUrl)
+                // image: productImageFromUrl || 'https://via.placeholder.com/150?text=' + encodeURIComponent(productNameFromUrl)
             };
             
             selectProduct(productFromUrl);
@@ -218,11 +218,11 @@ document.addEventListener('DOMContentLoaded', function() {
         productName.textContent = product.name;
         productPrice.textContent = `${product.price.toLocaleString('vi-VN')} VND`;
         
-        if (product.image) {
-            productImage.src = product.image;
-        } else {
-            productImage.src = 'https://via.placeholder.com/150?text=' + encodeURIComponent(product.name);
-        }
+        // if (product.image) {
+        //     productImage.src = product.image;
+        // } else {
+        //     productImage.src = 'https://via.placeholder.com/150?text=' + encodeURIComponent(product.name);
+        // }
         
         quantity.disabled = false;
         decreaseQuantity.disabled = false;

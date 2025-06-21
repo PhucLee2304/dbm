@@ -5,8 +5,8 @@ CREATE OR ALTER PROCEDURE InsertBatchOnlineOrders
 AS
 BEGIN
     DECLARE @counter INT = 1;
-    DECLARE @batch_size INT = 1000;  -- Số lượng đơn hàng cần chèn mỗi batch
-    DECLARE @total_orders INT = 1000000; -- Tổng số đơn hàng cần chèn
+    DECLARE @batch_size INT = 50;  -- Số lượng đơn hàng cần chèn mỗi batch
+    DECLARE @total_orders INT = 500; -- Tổng số đơn hàng cần chèn
     DECLARE @order_id BIGINT;
     DECLARE @created DATETIME;
     DECLARE @shipping_fee FLOAT;

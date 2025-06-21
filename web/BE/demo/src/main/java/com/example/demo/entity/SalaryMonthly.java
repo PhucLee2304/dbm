@@ -11,7 +11,13 @@ public class SalaryMonthly {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "staff_id", insertable = false, updatable = false)
+    private Staff staff;
+
+    @Column(name = "staff_id")
     private Long staffId;
+
     private int month;
     private int year;
     private double totalHours;

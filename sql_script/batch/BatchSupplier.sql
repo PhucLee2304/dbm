@@ -4,9 +4,9 @@ GO
 CREATE OR ALTER PROCEDURE InsertSupplierBatch
 AS
 BEGIN
-    DECLARE @batch_size INT = 1000;  -- Kích thước mỗi nhóm (batch)
+    DECLARE @batch_size INT = 10;  -- Kích thước mỗi nhóm (batch)
     DECLARE @current_batch INT = 1;   -- Biến để theo dõi nhóm hiện tại
-    DECLARE @total_records INT = 10000;  -- Tổng số bản ghi cần chèn
+    DECLARE @total_records INT = 100;  -- Tổng số bản ghi cần chèn
     DECLARE @supplier_name NVARCHAR(255);
     DECLARE @supplier_email NVARCHAR(255);
     DECLARE @supplier_phone NVARCHAR(255);

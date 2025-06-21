@@ -5,7 +5,7 @@ CREATE OR ALTER PROCEDURE InsertBatchStaff
 AS
 BEGIN
     DECLARE @counter INT = 1;
-    DECLARE @batch_size INT = 10000;  -- Số lượng nhân viên cần chèn
+    DECLARE @batch_size INT = 50;  -- Số lượng nhân viên cần chèn
     DECLARE @staff_id BIGINT;
     DECLARE @staff_code VARCHAR(255);
     DECLARE @expiry_date DATE;

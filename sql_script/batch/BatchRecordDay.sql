@@ -1,98 +1,86 @@
-USE OfflineDB;  -- Switch to OfflineDB database
+﻿USE OfflineDB;
 GO
 
 CREATE OR ALTER PROCEDURE InsertBatchRecordDay
 AS
 BEGIN
-    DECLARE @batch_size INT = 500;  -- Batch size of 500
-    DECLARE @total_records INT = 1000000;  -- Total records to insert
-    DECLARE @current_batch INT = 1;  -- Batch counter
-    DECLARE @counter INT = 0;  -- Record counter in each batch
+    DECLARE @batch_size INT = 10;       -- Số bản ghi mỗi batch
+    DECLARE @total_records INT = 50;    -- Tổng số bản ghi cần chèn mỗi ngày
+    DECLARE @current_batch INT;
+    DECLARE @counter INT;
 
-    -- Loop to insert records in batches
-    WHILE @counter < @total_records
+    DECLARE @start_day DATE = DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1);  -- Ngày 1 của tháng hiện tại
+    DECLARE @end_day DATE = CAST(GETDATE() AS DATE);                                 -- Ngày hiện tại
+    DECLARE @day DATE = @start_day;
+
+    -- Vòng lặp từ ngày 1 đến ngày hiện tại
+    WHILE @day <= @end_day
     BEGIN
-        -- Start a transaction for each batch
-        BEGIN TRANSACTION;
+        PRINT 'Bắt đầu chèn bản ghi cho ngày: ' + CAST(@day AS NVARCHAR(10));
 
-        -- Print batch progress
-        PRINT 'Processing batch ' + CAST(@current_batch AS NVARCHAR(10)) + ' of ' + CAST(@total_records / @batch_size + 1 AS NVARCHAR(10));
+        SET @current_batch = 1;
+        SET @counter = 0;
 
-        -- Insert records in batches
-        DECLARE @staff_id BIGINT;
-        DECLARE @time_sheet_id BIGINT;
-        DECLARE @day DATE = GETDATE();  -- Get current date for attendance
-        DECLARE @checkin DATETIME;
-        DECLARE @checkout DATETIME;
-        DECLARE @in_status VARCHAR(255);
-        DECLARE @out_status VARCHAR(255);
-
-        WHILE @counter < @batch_size AND @counter < @total_records
+        -- Lặp để chèn dữ liệu theo batch cho mỗi ngày
+        WHILE @counter < @total_records
         BEGIN
-            -- Select a random staff from the Staff table
-            SELECT TOP 1
-                @staff_id = id
-            FROM [dbo].[Staff]
-            ORDER BY NEWID();  -- Random selection
+            BEGIN TRANSACTION;
 
-            -- Get the time_sheet_id for the selected staff
-            SELECT @time_sheet_id = id
-            FROM [dbo].[TimeSheet]
-            WHERE staff_id = @staff_id;
+            PRINT '  Đang xử lý batch ' + CAST(@current_batch AS NVARCHAR(10)) + ' cho ngày ' + CAST(@day AS NVARCHAR(10));
 
-            -- Check if a record already exists for the day and staff
-            IF EXISTS (SELECT 1 FROM [dbo].[RecordDay] WHERE time_sheet_id = @time_sheet_id AND day = @day)
+            DECLARE @staff_id BIGINT;
+            DECLARE @time_sheet_id BIGINT;
+            DECLARE @checkin DATETIME;
+            DECLARE @checkout DATETIME;
+            DECLARE @in_status VARCHAR(255);
+            DECLARE @out_status VARCHAR(255);
+
+            DECLARE @inner_counter INT = 0;
+
+            WHILE @inner_counter < @batch_size AND @counter < @total_records
             BEGIN
-                -- Skip the current iteration if record exists, and continue to the next record
-                PRINT 'Record for day ' + CAST(@day AS NVARCHAR(10)) + ' and staff_id ' + CAST(@staff_id AS NVARCHAR(10)) + ' already exists. Skipping.';
+                -- Chọn ngẫu nhiên một nhân viên
+                SELECT TOP 1
+                    @staff_id = id
+                FROM [dbo].[Staff]
+                ORDER BY NEWID();
+
+                -- Lấy time_sheet_id tương ứng
+                SELECT @time_sheet_id = id
+                FROM [dbo].[TimeSheet]
+                WHERE staff_id = @staff_id;
+
+                -- Kiểm tra trùng lặp bản ghi
+                IF EXISTS (SELECT 1 FROM [dbo].[RecordDay] WHERE time_sheet_id = @time_sheet_id AND day = @day)
+                BEGIN
+                    PRINT '    Bỏ qua vì đã tồn tại: staff_id = ' + CAST(@staff_id AS NVARCHAR(10)) + ', day = ' + CAST(@day AS NVARCHAR(10));
+                    SET @counter = @counter + 1;
+                    CONTINUE;
+                END
+
+                -- Tạo giờ check-in và check-out ngẫu nhiên
+                SET @checkin = DATEADD(MINUTE, ROUND(RAND() * 60, 0), CAST(CAST(@day AS NVARCHAR(10)) + ' 07:30:00' AS DATETIME));
+                SET @checkout = DATEADD(MINUTE, ROUND(RAND() * 30, 0), CAST(CAST(@day AS NVARCHAR(10)) + ' 16:30:00' AS DATETIME));
+
+                SET @in_status = CASE WHEN @checkin > CAST(CAST(@day AS NVARCHAR(10)) + ' 08:00:00' AS DATETIME) THEN 'LATE' ELSE 'ONTIME' END;
+                SET @out_status = CASE WHEN @checkout < CAST(CAST(@day AS NVARCHAR(10)) + ' 17:00:00' AS DATETIME) THEN 'EARLY' ELSE 'ONTIME' END;
+
+                INSERT INTO [dbo].[RecordDay] (day, time_sheet_id, checkin, checkout, in_status, out_status)
+                VALUES (@day, @time_sheet_id, @checkin, @checkout, @in_status, @out_status);
+
                 SET @counter = @counter + 1;
-                CONTINUE;  -- Skip this iteration and continue with the next one
+                SET @inner_counter = @inner_counter + 1;
             END
 
-            -- Calculate random check-in time between 7:30 AM and 8:30 AM
-            SET @checkin = DATEADD(MINUTE, ROUND(RAND() * 60 + 450, 0), CAST(CAST(@day AS NVARCHAR(10)) + ' 07:30:00' AS DATETIME));
+            COMMIT TRANSACTION;
 
-            -- Calculate random checkout time between 4:30 PM and 5:00 PM
-            SET @checkout = DATEADD(MINUTE, ROUND(RAND() * 30 + 270, 0), CAST(CAST(@day AS NVARCHAR(10)) + ' 16:30:00' AS DATETIME));
-
-            -- Check-in status (Late/OnTime)
-            IF @checkin > CAST(CAST(@day AS NVARCHAR(10)) + ' 08:00:00' AS DATETIME)
-                SET @in_status = 'LATE';
-            ELSE
-                SET @in_status = 'ONTIME';
-
-            -- Checkout status (Early/OnTime)
-            IF @checkout < CAST(CAST(@day AS NVARCHAR(10)) + ' 17:00:00' AS DATETIME)
-                SET @out_status = 'EARLY';
-            ELSE
-                SET @out_status = 'ONTIME';
-
-            -- Insert into RecordDay table
-            INSERT INTO [dbo].[RecordDay] (day, time_sheet_id, checkin, checkout, in_status, out_status)
-            VALUES
-            (
-                @day,
-                @time_sheet_id,
-                @checkin,
-                @checkout,
-                @in_status,
-                @out_status
-            );
-
-            -- Increment the counter for the batch
-            SET @counter = @counter + 1;
+            PRINT '  Batch ' + CAST(@current_batch AS NVARCHAR(10)) + ' cho ngày ' + CAST(@day AS NVARCHAR(10)) + ' hoàn tất.';
+            SET @current_batch = @current_batch + 1;
         END
 
-        -- Commit the transaction for the current batch
-        COMMIT TRANSACTION;
-
-        -- Reset counter and increment batch number for the next iteration
-        SET @counter = 0;
-        SET @current_batch = @current_batch + 1;
-
-        PRINT 'Batch ' + CAST(@current_batch AS NVARCHAR(10)) + ' processed successfully.';
+        SET @day = DATEADD(DAY, 1, @day);  -- Tăng ngày
     END
 
-    PRINT 'Batch processing completed for 1 million records in RecordDay.';
+    PRINT 'Đã hoàn tất chèn dữ liệu từ ngày 1 đến hiện tại.';
 END;
 GO
