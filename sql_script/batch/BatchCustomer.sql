@@ -4,9 +4,9 @@ GO
 CREATE OR ALTER PROCEDURE InsertCustomerBatch
 AS
 BEGIN
-    DECLARE @batch_size INT = 1000;  -- Kích thước mỗi nhóm (batch)
+    DECLARE @batch_size INT = 10;  -- Kích thước mỗi nhóm (batch)
     DECLARE @current_batch INT = 1;   -- Biến để theo dõi nhóm hiện tại
-    DECLARE @total_records INT = 1000000;  -- Tổng số bản ghi cần chèn
+    DECLARE @total_records INT = 100;  -- Tổng số bản ghi cần chèn
     DECLARE @user_id BIGINT;
     DECLARE @user_email VARCHAR(255);
     DECLARE @user_phone VARCHAR(20);
